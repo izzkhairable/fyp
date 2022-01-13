@@ -1,0 +1,238 @@
+  <!doctype html>
+  <html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> 
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+      integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous">
+    </script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+      integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous">
+    </script>
+    
+    <title>TSH - Automated Quotation System</title>
+  </head>
+
+  <body onload="test()">
+    <div class="wrapper">
+      <!-- Sidebar  -->
+      <nav id="sidebar" class="bg-light shadow">
+        <ul class="list-unstyled components">
+          <li>
+            <div class="container mb-5">
+              <div class="row">
+                <div class="col-sm">
+                  <img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="100" height="100"
+                    class="rounded-circle" alt="Cinque Terre">
+                </div>
+                <div class="col-sm align-self-center">
+                  <b>Peter Parker</b>
+                  <br>
+                  Avenger
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="text-center">
+            <a href="home.html">Quotations</a>
+          </li>
+          <li class="text-center">
+            <a href="#">Portfolio</a>
+          </li>
+          <li class="text-center">
+            <a href="#">Settings</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page Content  -->
+      <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+          <div class="container-fluid">
+            <div style="width: 262px">
+              <a class="fw-bold text-primary fs-6" href="index.html">TSH Quotation Management</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item active">
+                  <a id="page-name" class="font-weight-bold">Home</a>
+                </li>
+              </ul>
+            </div>
+            <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+              data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="Toggle navigation">
+              <i class="fas fa-align-justify"></i>
+            </button>
+          </div>
+        </nav>
+        <!-- Home page content -->
+        <div id="home">
+        <!-- Quotation Status -->
+          <div>
+            <div class="pt-3 fw-bold d-flex flex-row bd-highlight mb-3">
+              <!-- overall quotation status to be the biggest box -->
+              <div class="shadow p-2 text-center flex-fill bd-highlight bg-white">Overall Quotation Status (largest)
+                <hr>
+                <p>this is a chart</p>
+              </div>
+              
+              <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Requires Editing
+                <hr>
+                <p class="fw-bold fs-2 text-danger">6</p>
+              </div>
+
+              <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Pending Approval
+                <hr>
+                <p class="fw-bold fs-2 text-warning">2</p>
+              </div>
+              <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Approved
+                <hr>
+                <p class="fw-bold fs-2 text-success">10</p>
+              </div>
+              <div class="p-2 flex-fill bd-highlight"></div>
+            </div>
+          </div>
+          
+
+          <!-- break to the next box -->
+          <br>
+
+          <!-- next box -->
+          <!-- Quotes -->
+          <div class= "shadow bg-white">
+            <nav class="navbar navbar-expand-lg navbar-light">
+              <div class="container-fluid">
+                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <form class="d-flex">
+                      <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search Quote" aria-label="search" aria-describedby="search">
+                      </div>
+                    </form>                
+                  </ul>   
+
+                  <div class="d-flex dropdown flex-row bd-highlight">
+                    <button class="btn btn-secondary dropdown-toggle shadow-sm" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Action
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="#">Delete</a></li>
+                    </ul>
+                  </div>
+                  
+                  <div class= "d-flex dropdown flex-row bd-highlight ms-3">
+                    <button type="button" class="btn btn-info text-light shadow-sm">New</button>
+                  </div>
+              </div>
+            </nav>
+            
+            <!-- Basics for table visualisation -->
+            <div class="mx-3">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col"><i class="bi bi-app"></i></th>
+                    <th scope="col">CAD/CAM File</th>
+                    <th scope="col">Company</th>
+                    <th scope="col">Point of Contact</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Total Cost</th>
+                    <th scope="col">Total Parts</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row"><input type="checkbox"></th>
+                    <td><a href="#" class="link-primary">C100001 <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                    <td>Kinergy Corp</td>
+                    <td>Calvin</td>
+                    <td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>
+                    <td>$6900</td>
+                    <td>18</td>
+                    <td>
+                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                      <a href="edit.html"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
+                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><input type="checkbox"></th>
+                    <td><a href="#" class="link-primary">C100002 <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                    <td>XXX Industries</td>
+                    <td>Desmond</td>
+                    <td><button type="button" class="btn btn-warning btn-sm">Pending Approval</button></td>
+                    <td>$5100</td>
+                    <td>20</td>
+                    <td>
+                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><input type="checkbox"></th>
+                    <td><a href="#" class="link-primary">C100003 <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                    <td>XX Electronics</td>
+                    <td>Izzat</td>
+                    <td><button type="button" class="btn btn-success btn-sm">Approved</button></td>
+                    <td>$7820</td>
+                    <td>8</td>
+                    <td>
+                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <!--closes the content div -->
+      </div>
+    <!-- closes wrapper div body -->
+    </div>
+
+    <script src="home.js?v=1"></script>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <!-- Popper.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous">
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous">
+    </script>
+    <!-- jQuery Custom Scroller CDN -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js">
+    </script>]
+  </body>
+
+  </html>
+  <!--
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous">
+    </script>
+  -->
