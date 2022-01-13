@@ -50,9 +50,6 @@
             <a href="home.html">Quotations</a>
           </li>
           <li class="text-center">
-            <a href="#">Portfolio</a>
-          </li>
-          <li class="text-center">
             <a href="#">Settings</a>
           </li>
         </ul>
@@ -82,10 +79,11 @@
         </nav>
 
       <!-- Edit Quote Page-->
-        <div id="edit-quote">
+        <div>
           <div id="parts-info">
             <div class = "pt-3 d-flex flex-row bd-highlight mb-3 col-6">
               <div class="shadow p-2 text-left flex-fill bd-highlight bg-white"><b>Quote for Kinergy Corp</b>
+                <button data-bs-toggle="modal" data-bs-target="#edit-quote" type="button" class="btn btn-outline-secondary float-end"><i class="bi bi-pencil"></i></button>
                 <hr>
                 <div class="d-flex my-2">
                   <div class="col-2">
@@ -219,6 +217,28 @@
                   <input type="text" id="supplier" name="supplier" placeholder="Taobao"><br><br>
                   <label for="link">Link</label><br>
                   <input type="text" id="link" name="link" placeholder="world.taobao.com"><br><br>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary shadow-sm">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Quote Details Modal-->
+          <div class="modal fade" id="edit-quote" tabindex="-1" aria-labelledby="editQuoteLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Edit Quote Details</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <label for="partno">Company Name</label><br>
+                  <input type="text" id="company" name="company" placeholder="Kinergy Corp"><br><br>
+                  <label for="partno">Point Of Contact</label><br>
+                  <input type="text" id="contact" name="contact" placeholder="Calvin"><br><br>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
