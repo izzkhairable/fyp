@@ -1,16 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-
+import pyodbc 
 
 app = Flask(__name__)
+#i think the below line can remove
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-7REM3J1\SQLEXPRESS/myerp101?driver=SQL+Server?trusted_connection=yes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
-
-import pyodbc 
 
 conn = pyodbc.connect('Driver={SQL Server};'
                       'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
@@ -18,57 +17,42 @@ conn = pyodbc.connect('Driver={SQL Server};'
                       'Trusted_Connection=yes;')
 
 cursor = conn.cursor()
-cursor.execute('SELECT * FROM dbo.quotation')
 
-for row in cursor:
-    print(row)
+#template for getting data
+@app.route("/test")
+def test():
+    cursor.execute('SELECT * FROM dbo.quotation')
 
-conn.close()
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
 
-class Quotations(db.Model):
-    __tablename__ = 'dbo.quotation'
+    return results
 
-    quotation_id = db.Column(db.String, primary_key=True)
-    customer_email = db.Column(db.String(64), nullable=False)
-    assigned_staff_email = db.Column(db.String(64), nullable=False)
-    rfq_date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(64), nullable=False)
-
-    def to_dict(self):
-        '''
-        converts the object into a dictionary.
-        the keys respond to database columns
-        '''
-        columns = self.__mapper__.column_attrs.keys()
-        result = {}
-        for column in columns:
-            result[column] = getattr(self, column)
-        return result
-
-@app.route("/quotations")
-def get_quotations():
-    quotationlist = Quotations.query.all()
-    print(quotationlist)
-    if len(quotationlist):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "quotations": [quotation.to_dict() for quotation in quotationlist]
-                }
-            }
-        )
-    return jsonify(
-        {
+#template for inserting data
+@app.route("/insert", methods=['POST'])
+def insert():
+    data = request.get_json()
+    cursor.execute('''
+                INSERT INTO dbo.quotation (quotation_id, customer_email, assigned_staff_email, rfq_date, status)
+                VALUES
+                (?, ?, ?, ?, ?)
+                ''', data["quotation_id"], data["customer_email"], data["assigned_staff_email"], data["rfq_date"], data["status"])
+    try:
+        conn.commit()
+        return jsonify(data), 201
+    except Exception:
+        return jsonify({
             "code": 404,
-            "message": "There are no quotations available currently."
-        }
-    )
+            "message": "Unable to commit to database."
+        }), 404
 
 @app.route("/")
 def home():
     return "test"
-
 
 # to be at the bottom
 if __name__ == '__main__':
