@@ -18,10 +18,13 @@ conn = pyodbc.connect('Driver={SQL Server};'
 
 cursor = conn.cursor()
 
-#template for getting data
-@app.route("/test")
-def test():
-    cursor.execute('SELECT * FROM dbo.quotation')
+@app.route("/quotations")
+def get_quotations():
+    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(SSIT.unit_price*SSIT.qty) as total_cost, SUM(SSIT.qty) as total_parts, QT.quotation_id, status FROM dbo.quotation as QT 
+    INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
+    INNER JOIN dbo.staff as ST ON QT.assigned_staff_email = ST.staff_email
+    INNER JOIN dbo.supplier_source_item as SSIT ON QT.quotation_id = SSIT.quotation_id
+    GROUP BY QT.quotation_id, CT.company_name, ST.first_name, status''')
 
     columns = [column[0] for column in cursor.description]
     results = {}

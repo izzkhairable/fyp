@@ -1,8 +1,13 @@
-function test() {
+function start(){
+    document.getElementById("quotations").innerHTML = ``
+    get_quotations();
+}
+
+function get_quotations() {
   $(async() => {           
   // Change serviceURL to your own
-  var serviceURL = "http://localhost:5000/test";
-
+  var serviceURL = "http://localhost:5000/quotations";
+  
   try {
       const response =
       await fetch(
@@ -12,8 +17,29 @@ function test() {
       if (response.status === 200) {
           // success case
           console.log(result);
-          console.log(result[0]["status"])
-          
+          for (var quotation in result) {
+              var button = `<td><button type="button" class="btn btn-warning btn-sm">Pending</button></td>`;
+              if (result[quotation].status == 'approved'){
+                  button = `<td><button type="button" class="btn btn-success btn-sm">Approved</button></td>`
+              }
+              if (result[quotation].status == 'requires_editing') {
+                button = `<td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>`
+              }
+              document.getElementById("quotations").innerHTML +=
+              `<tr>
+                <th scope="row"><input type="checkbox"></th>
+                <td><a href="#" class="link-primary">${result[quotation].quotation_id} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                <td>${result[quotation].company}</td>
+                <td>${result[quotation].contact}</td>
+                ${button}
+                <td>$${result[quotation].total_cost}</td>
+                <td>${result[quotation].total_parts}</td>
+                <td>
+                    <a href="edit.html#${result[quotation].quotation_id}"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
+                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                </td>
+            </tr>`
+          }
           } else if (response.status == 404) {
               // No Rows
               console.log(result.message);

@@ -26,7 +26,7 @@
     <title>TSH - Automated Quotation System</title>
   </head>
 
-  <body>
+  <body onload="start()">
     <div class="wrapper">
       <!-- Sidebar  -->
       <nav id="sidebar" class="bg-light shadow">
@@ -69,6 +69,9 @@
                   <a id="page-name" class="font-weight-bold">Home</a>
                 </li>
               </ul>
+            </div>
+            <div class="float-end">
+              <a href="index.html"><button class="btn btn-secondary">Login</button></a>
             </div>
             <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
               data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -153,46 +156,8 @@
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row"><input type="checkbox"></th>
-                    <td><a href="#" class="link-primary">C100001 <i class="bi bi-box-arrow-in-up-right"></i></a></td>
-                    <td>Kinergy Corp</td>
-                    <td>Calvin</td>
-                    <td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>
-                    <td>$6900</td>
-                    <td>18</td>
-                    <td>
-                      <a href="edit.html"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
-                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox"></th>
-                    <td><a href="#" class="link-primary">C100002 <i class="bi bi-box-arrow-in-up-right"></i></a></td>
-                    <td>XXX Industries</td>
-                    <td>Desmond</td>
-                    <td><button type="button" class="btn btn-warning btn-sm">Pending Approval</button></td>
-                    <td>$5100</td>
-                    <td>20</td>
-                    <td>
-                      <a href="edit.html"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
-                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row"><input type="checkbox"></th>
-                    <td><a href="#" class="link-primary">C100003 <i class="bi bi-box-arrow-in-up-right"></i></a></td>
-                    <td>XX Electronics</td>
-                    <td>Izzat</td>
-                    <td><button type="button" class="btn btn-success btn-sm">Approved</button></td>
-                    <td>$7820</td>
-                    <td>8</td>
-                    <td>
-                      <a href="edit.html"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
-                      <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                    </td>
-                  </tr>
+                <tbody id="quotations">
+                  
                 </tbody>
               </table>
             </div>
