@@ -1,3 +1,4 @@
+import re
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -33,6 +34,23 @@ def get_quotations():
         results[i] = dict(zip(columns, row))
         i += 1
 
+    return results
+
+@app.route("/quotationParts/<string:quotation_id>")
+def get_quotation_parts(quotation_id):
+    print(quotation_id)
+    cursor.execute('''SELECT QIT.mfg_pn, QIT.uom, QIT.description, QIT.qty, CONVERT(varchar, SSIT.unit_price) as price, SSIT.unit_price*SSIT.qty as sub_total, ST.supplier_name, ST.supplier_website FROM dbo.quotation_item as QIT 
+    INNER JOIN dbo.supplier_source_item as SSIT on QIT.quotation_id = SSIT.quotation_id AND QIT.mfg_pn = SSIT.mfg_pn
+    INNER JOIN dbo.supplier as ST on SSIT.supplier_id = ST.supplier_id
+    WHERE QIT.quotation_id = ?''', quotation_id)
+
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    print(results)
     return results
 
 #template for inserting data
