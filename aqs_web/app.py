@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import pyodbc 
@@ -51,6 +51,37 @@ def get_quotation_parts(quotation_id):
         i += 1
     print(results)
     return results
+
+#testing base for rbac
+@app.route("/login", methods = ['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        keyed_username = request.form['username']
+        keyed_password = request.form['password']
+
+        #get user
+        username_result = cursor.execute("SELECT * FROM XXX WHERE username = %s", [keyed_username])
+
+        if username_result != 0:
+            password = cursor.fetchone()['password']
+
+            #might need to implement password encryption
+            #to check if logger info helps, if not change
+            if password == keyed_password:
+                app.logger.info("Login Successful")
+            else:
+                app.logger.info("Login Unsuccessful")
+        else:
+            app.logger.info("no user")
+    # return render_template("login.html")
+    else:
+        #might need to set up a template folder
+        #return render_template("login.html")
+
+        #OR use a redirecting URL // module import
+        return redirect(url_for("login.html"))
+
+
 
 #template for inserting data
 @app.route("/insert", methods=['POST'])
