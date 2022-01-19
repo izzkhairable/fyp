@@ -1,0 +1,7 @@
+template1:
+  customer: Makino
+  bom_column: BOM LEVEL, Level, Row, Item, Component number, Object description, Quantity, Un, Ict, B, Price
+  db_col_mapping:
+    part_no: Component number
+    description: Object description
+    qty: Quantity
