@@ -1,0 +1,34 @@
+[
+    {
+        "undefined": "A1",
+        "NO. PART NUMBER": "1000025",
+        "DESCRIPTION": "WIRE: HOOK-UP WIRE, ALPHA WIRE, 16 \r\nAWG, BROWN, MFG PN: 6716 BR005",
+        "QTY": "260",
+        "UOM": "mm",
+        "MFG PN.": "6716 BR005"
+    },
+    {
+        "undefined": "A2",
+        "NO. PART NUMBER": "1000242",
+        "DESCRIPTION": "CONTACT: CRIMP RECEPTACLE, \r\nINSULATED, FASTON 250, 6.35 X 0.8MM, 18 \r\n- 22 AWG, FEMALE, MFG PN: 2-520407-2",
+        "QTY": "2",
+        "UOM": "pc",
+        "MFG PN.": "2-520407-2"
+    },
+    {
+        "undefined": "A3",
+        "NO. PART NUMBER": "1000082",
+        "DESCRIPTION": "LABEL: HEAT SHRINK TUBING, DYMO, \r\nBLACK ON YELLOW, 12MM TUBE DIA, \r\nSHRINK RATIO 3:1, MFG PN: 18056",
+        "QTY": "20",
+        "UOM": "mm",
+        "MFG PN.": "18056"
+    },
+    {
+        "undefined": "A4",
+        "NO. PART NUMBER": "1000035",
+        "DESCRIPTION": "LABEL: DYMO, PERMANENT POLYESTER, \r\nWHITE, 9MM X 5.5M",
+        "QTY": "90",
+        "UOM": "mm",
+        "MFG PN.": "18482"
+    }
+]
