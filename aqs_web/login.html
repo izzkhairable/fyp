@@ -55,14 +55,30 @@
         <span class ="circle shadow-lg"><img src = "images/TSH-Logo-1-320x202.png" class="img-fluid" style="transform: translate(-1px, 36px)"></span>
       </div>
 
+
       <h4 class="mb-3 text-center">TSH Quotation Management<br>Portal Login</h4>
       
-
+      
+      <form action = "http://localhost:5000/login_data", methods = 'POST'>
       <div class="d-flex flex-column bd-highlight mb-3 align-items-center">
+        <div class="mb-3">
+          <label for="keyed_email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="keyed_email" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="keyed_password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="keyed_password">
+        </div>
+        
+        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Submit</button>
+      </div>
+      </form>
+
+      <!-- <div class="d-flex flex-column bd-highlight mb-3 align-items-center">
         <div class="p-2 bd-highlight"><button type="button" class="mb-3 btn btn-light">Salesperson</button></div>
         <div class="p-2 bd-highlight"><button type="button" class="mb-3 btn btn-light">Purchaser</button></div>
         <div class="p-2 bd-highlight"><button type="button" class="btn btn-light">Manager</button></div>
-      </div>
+      </div> -->
 
     </div>
 
