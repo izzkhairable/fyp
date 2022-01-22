@@ -28,14 +28,14 @@ function get_quotations() {
               document.getElementById("quotations").innerHTML +=
               `<tr>
                 <th scope="row"><input type="checkbox"></th>
-                <td><a href="#" class="link-primary">${result[quotation].quotation_id} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                <td><a href="#" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
                 <td>${result[quotation].company}</td>
                 <td>${result[quotation].contact}</td>
                 ${button}
                 <td>$${result[quotation].total_cost}</td>
                 <td>${result[quotation].total_parts}</td>
                 <td>
-                    <a href="edit.html#${result[quotation].quotation_id}"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
+                    <a href="edit.html#${result[quotation].quotation_no}"><button type="button" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button></a>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`

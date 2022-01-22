@@ -20,11 +20,11 @@ cursor = conn.cursor()
 
 @app.route("/quotations")
 def get_quotations():
-    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(SSIT.unit_price*SSIT.qty) as total_cost, SUM(SSIT.qty) as total_parts, QT.quotation_id, status FROM dbo.quotation as QT 
+    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(CQIT.unit_price*CQIT.qty) as total_cost, SUM(CQIT.qty) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
     INNER JOIN dbo.staff as ST ON QT.assigned_staff_email = ST.staff_email
-    INNER JOIN dbo.supplier_source_item as SSIT ON QT.quotation_id = SSIT.quotation_id
-    GROUP BY QT.quotation_id, CT.company_name, ST.first_name, status''')
+    INNER JOIN dbo.crawled_quotation_item as CQIT ON QT.quotation_no = CQIT.quotation_no
+    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -35,13 +35,11 @@ def get_quotations():
 
     return results
 
-@app.route("/quotationParts/<string:quotation_id>")
-def get_quotation_parts(quotation_id):
-    print(quotation_id)
-    cursor.execute('''SELECT QIT.mfg_pn, QIT.uom, QIT.description, QIT.qty, CONVERT(varchar, SSIT.unit_price) as price, SSIT.unit_price*SSIT.qty as sub_total, ST.supplier_name, ST.supplier_website FROM dbo.quotation_item as QIT 
-    INNER JOIN dbo.supplier_source_item as SSIT on QIT.quotation_id = SSIT.quotation_id AND QIT.mfg_pn = SSIT.mfg_pn
-    INNER JOIN dbo.supplier as ST on SSIT.supplier_id = ST.supplier_id
-    WHERE QIT.quotation_id = ?''', quotation_id)
+@app.route("/quotationParts/<string:quotation_no>")
+def get_quotation_parts(quotation_no):
+    print(quotation_no)
+    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, total_price) as total_price, is_drawing, drawing_no, set_no from dbo.quotation_component as QCT
+    WHERE QCT.quotation_no = ?;''', quotation_no)
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -51,7 +49,7 @@ def get_quotation_parts(quotation_id):
         i += 1
     print(results)
     return results
-
+    
 #testing base for rbac
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
