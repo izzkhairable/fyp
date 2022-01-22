@@ -38,7 +38,9 @@ def get_quotations():
 @app.route("/quotationParts/<string:quotation_no>")
 def get_quotation_parts(quotation_no):
     print(quotation_no)
-    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, total_price) as total_price, is_drawing, drawing_no, set_no from dbo.quotation_component as QCT
+    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, total_price) as total_price, is_drawing, drawing_no, set_no,
+    STUFF((SELECT ','+CQIT.url, CQIT.supplier_name, CONVERT(varchar, CQIT.unit_price) as unit_price, CONVERT(varchar, CQIT.qty) as qty from dbo.crawled_quotation_item as CQIT WHERE QCT.quotation_no = CQIT.quotation_no AND QCT.row = CQIT.row for xml path('')),1,1,'') Concats
+    FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?;''', quotation_no)
 
     columns = [column[0] for column in cursor.description]

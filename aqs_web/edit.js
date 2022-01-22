@@ -21,6 +21,7 @@ function getQuotationParts(){
         if (response.status === 200) {
             // success case
             console.log(result)
+            console.log(result[1]["Concats"].split(','))
             for (var part in result) {
               document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
