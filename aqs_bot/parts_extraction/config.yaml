@@ -1,9 +1,10 @@
 template1:
-  customer: Makino
+  customer: Makino2
+  customer_email: darkdrium_19942@hotmail.com
+  customer_website: www.makino2.com
   bom_column: BOM LEVEL, Level, Row, Item, Component number, Object description, Quantity, Un, Ict, B, Price
   drawing_column: PART DESCRIPTION, PART NO / SPEC, MA NO, MFGR / ALT, UNIT, QTY
   db_col_mapping:
-    row: Row
     part_no: Component number
     description: Object description
     qty: Quantity
