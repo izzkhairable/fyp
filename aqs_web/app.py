@@ -1,18 +1,23 @@
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-import pyodbc 
+from flask_rbac import UserMixin, RoleMixin
+import hashlib
+import pyodbc
 
 app = Flask(__name__)
 #i think the below line can remove
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-7REM3J1\SQLEXPRESS/myerp101?driver=SQL+Server?trusted_connection=yes'
+
+#remember to change the "DESKTOP-7REM3J1\SQLEXPRESS" to your own server name
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-KNDFRSA/myerp101?driver=SQL+Server?trusted_connection=yes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
 
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-KNDFRSA;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -53,35 +58,39 @@ def get_quotation_parts(quotation_no):
     return results
     
 #testing base for rbac
-@app.route("/login", methods = ['GET', 'POST'])
+@app.route("/login_data", methods = ['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        keyed_username = request.form['username']
-        keyed_password = request.form['password']
+        keyed_username = request.form['keyed_email']
+        keyed_password = request.form['keyed_password']
+
+        #hash keyed password
+        hashed_password = hashlib.sha1(keyed_password.encode())
 
         #get user
-        username_result = cursor.execute("SELECT * FROM XXX WHERE username = %s", [keyed_username])
+        username_result = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username])
+        
+        #match password
 
+        #will need to check password validation again through SQL query instead -> checking if hashlib function working
         if username_result != 0:
             password = cursor.fetchone()['password']
-
-            #might need to implement password encryption
+    
             #to check if logger info helps, if not change
-            if password == keyed_password:
+            if password == hashed_password:
                 app.logger.info("Login Successful")
+                return render_template("test.html")
             else:
                 app.logger.info("Login Unsuccessful")
+                return render_template("test.html")
         else:
             app.logger.info("no user")
     # return render_template("login.html")
     else:
-        #might need to set up a template folder
-        #return render_template("login.html")
+        #template folder set up for better framework
 
         #OR use a redirecting URL // module import
-        return redirect(url_for("login.html"))
-
-
+        return render_template("test.html")
 
 #template for inserting data
 @app.route("/insert", methods=['POST'])
