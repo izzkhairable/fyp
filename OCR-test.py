@@ -9,6 +9,8 @@ except ImportError:
     import Image
 import pytesseract
 
+pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+
 #read your file
 file=r'C:/Users/Admin/Downloads/photo_2022-01-18_23-39-26.jpg'
 img = cv2.imread(file,0)
