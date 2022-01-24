@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_rbac import UserMixin, RoleMixin
 import hashlib
 import urllib
 import pyodbc
