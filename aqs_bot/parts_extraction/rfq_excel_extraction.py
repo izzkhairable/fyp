@@ -28,7 +28,6 @@ def processExcel(filepath):
         qty_col_index = None
         uom_col_index = None
 
-
         part_no_col_list = v['rfq_to_db_mapping']['part_no'].split(',')
         part_no_col_list = [selected_column.lower().strip() for selected_column in part_no_col_list] 
 
@@ -85,7 +84,6 @@ def processExcel(filepath):
         drawing_list = os.listdir(r'%s' % v['drawing_folder'])
         row_unique_key_no = 0
 
-
         for row in ws.rows:
             drawing_found = False
             if start_row < current_row_no:
@@ -141,6 +139,7 @@ def processExcel(filepath):
                             row_unique_key_no, rfq_number, drawing_part_no, drawing_part_uom, drawing_part_description, drawing_part_qty, None, 0, part_no, curr_set)
                                     conn.commit()
                                 row_no+=1
+                            shutil.move(r'%s' % v['drawing_folder'] + '/' + file, r'%s' % v['archive_folder'] + '/' + file)
                     if drawing_found == False:
                         row_unique_key_no+=1
                         cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, uom, description, quantity, total_price, is_drawing, drawing_no, set_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
