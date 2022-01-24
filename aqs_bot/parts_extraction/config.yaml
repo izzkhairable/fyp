@@ -2,11 +2,16 @@ template1:
   customer: Makino2
   customer_email: darkdrium_19942@hotmail.com
   customer_website: www.makino2.com
-  bom_column: BOM LEVEL, Level, Row, Item, Component number, Object description, Quantity, Un, Ict, B, Price
-  drawing_column: PART DESCRIPTION, PART NO / SPEC, MA NO, MFGR / ALT, UNIT, QTY
-  db_col_mapping:
+  rfq_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\rfq
+  drawing_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\drawing
+  archive_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\archive
+  rfq_to_db_mapping:
     part_no: Component number
     description: Object description
     qty: Quantity
     uom: Un
-    price: Price
+  drawing_to_db_mapping:
+    part_no: PART NO / PART SPEC
+    description: PART DESCRIPTION
+    qty: QTY
+    uom: UNIT
