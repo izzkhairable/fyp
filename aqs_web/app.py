@@ -1,23 +1,22 @@
 from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_rbac import UserMixin, RoleMixin
 import hashlib
+import urllib
 import pyodbc
 
 app = Flask(__name__)
+params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-7REM3J1\SQLEXPRESS;DATABASE=myerp101;Trusted_Connection=yes;')
+app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 #i think the below line can remove
-
-#remember to change the "DESKTOP-7REM3J1\SQLEXPRESS" to your own server name
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-KNDFRSA/myerp101?driver=SQL+Server?trusted_connection=yes'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-7REM3J1\SQLEXPRESS/myerp101?driver=SQL+Server?trusted_connection=yes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
 
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-KNDFRSA;'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -44,7 +43,8 @@ def get_quotations():
 def get_quotation_parts(quotation_no):
     print(quotation_no)
     cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, total_price) as total_price, is_drawing, drawing_no, set_no,
-    STUFF((SELECT ','+CQIT.url, CQIT.supplier_name, CONVERT(varchar, CQIT.unit_price) as unit_price, CONVERT(varchar, CQIT.qty) as qty from dbo.crawled_quotation_item as CQIT WHERE QCT.quotation_no = CQIT.quotation_no AND QCT.row = CQIT.row for xml path('')),1,1,'') Concats
+    STUFF((SELECT ','+CQIT.url, CQIT.supplier_name, CONVERT(varchar, CQIT.unit_price) as unit_price, CONVERT(varchar, CQIT.qty) as qty
+    FROM dbo.crawled_quotation_item as CQIT WHERE QCT.quotation_no = CQIT.quotation_no AND QCT.row = CQIT.row for xml path('')),1,1,'') Concats
     FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?;''', quotation_no)
 
