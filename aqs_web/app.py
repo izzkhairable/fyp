@@ -15,8 +15,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
+#put ur server name here
+#desmond: DESKTOP-7REM3J1\SQLEXPRESS
+#calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -26,7 +29,7 @@ cursor = conn.cursor()
 def get_quotations():
     cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(CQIT.unit_price*CQIT.qty) as total_cost, SUM(CQIT.qty) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
-    INNER JOIN dbo.staff as ST ON QT.assigned_staff_email = ST.staff_email
+    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     INNER JOIN dbo.crawled_quotation_item as CQIT ON QT.quotation_no = CQIT.quotation_no
     GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
 
@@ -42,8 +45,8 @@ def get_quotations():
 # in progress
 @app.route("/salesperson/<string:supervisor_id>")
 def get_salesperson(supervisor_id):
-    cursor.execute('''SELECT (ST.first_name + ' ' + ST.last_name) as staff_name, ST.staff_email as email, SUM(QT.status = 'pending' + QT.status = 'rejected') as amendment, SUM(QT.status = 'sent') as pending, SUM(QT.status = 'approved') as sended FROM dbo.quotation as QT 
-    INNER JOIN dbo.staff as ST ON QT.assigned_staff_email = ST.staff_email
+    cursor.execute('''SELECT (ST.first_name + ' ' + ST.last_name) as staff_name, ST.staff_email as email, (SELECT COUNT(*) WHERE QT.status = 'pending' OR QT.status = 'rejected') as amendment, (SELECT COUNT(*) WHERE QT.status = 'sent') as pending, (SELECT COUNT(*) WHERE QT.status = 'approve') as sended FROM dbo.quotation as QT 
+    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     WHERE ST.supervisor = ?;''', supervisor_id)
 
     columns = [column[0] for column in cursor.description]

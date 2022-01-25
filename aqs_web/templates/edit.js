@@ -1,5 +1,5 @@
 function saveChanges(){
-  location.href = "home.html";
+  location.href = "salesperson_home.html";
 }
 
 function start(){
