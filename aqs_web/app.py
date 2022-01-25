@@ -43,10 +43,14 @@ def get_quotations():
     return results
 
 @app.route("/salesperson/<int:supervisor_id>")
-def get_salesperson(supervisor_id):
-    cursor.execute('''SELECT (ST.first_name + ' ' + ST.last_name) as staff_name, ST.staff_email as email, (SELECT COUNT(*) WHERE QT.status = 'pending' OR QT.status = 'rejected') as amendment, (SELECT COUNT(*) WHERE QT.status = 'sent') as pending, (SELECT COUNT(*) WHERE QT.status = 'approved') as sended 
-    FROM dbo.staff as ST, dbo.quotation as QT
-    WHERE ST.id = QT.assigned_staff and ST.supervisor = ?;''', supervisor_id)
+def get_salespersons_under_supervisor(supervisor_id):
+    cursor.execute('''SELECT first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
+    SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
+    SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) as pending
+    FROM dbo.quotation as QT
+    JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
+    WHERE ST.supervisor = ?
+    GROUP BY first_name, last_name, staff_email;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -57,7 +61,41 @@ def get_salesperson(supervisor_id):
 
     return results
 
-@app.route("/salesperson_under_supervisor_quotations/<int:supervisor_id>")
+@app.route("/supervisor_quotations_numbers/<int:supervisor_id>")
+def get_quotations_numbers_supervisor(supervisor_id):
+    cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
+    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
+    WHERE ST.supervisor = ?
+    GROUP BY QT.status;''', supervisor_id)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+
+    return results
+
+# TO DOOOO
+@app.route("/supervisor_quotations_attention/<int:supervisor_id>")
+def get_supervisor_salesperson_quotations(supervisor_id):
+    cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
+    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
+    WHERE ST.supervisor = ?
+    GROUP BY QT.status;''', supervisor_id)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+
+    return results
+
+# TO DOOOO
+@app.route("/supervisor_all_quotations/<int:supervisor_id>")
 def get_supervisor_salesperson_quotations(supervisor_id):
     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
     FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
