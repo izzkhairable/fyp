@@ -19,7 +19,7 @@ CORS(app)
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -42,13 +42,28 @@ def get_quotations():
 
     return results
 
-# in progress
-@app.route("/salesperson/<string:supervisor_id>")
+@app.route("/salesperson/<int:supervisor_id>")
 def get_salesperson(supervisor_id):
-    cursor.execute('''SELECT (ST.first_name + ' ' + ST.last_name) as staff_name, ST.staff_email as email, (SELECT COUNT(*) WHERE QT.status = 'pending' OR QT.status = 'rejected') as amendment, (SELECT COUNT(*) WHERE QT.status = 'sent') as pending, (SELECT COUNT(*) WHERE QT.status = 'approve') as sended FROM dbo.quotation as QT 
-    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    WHERE ST.supervisor = ?;''', supervisor_id)
+    cursor.execute('''SELECT (ST.first_name + ' ' + ST.last_name) as staff_name, ST.staff_email as email, (SELECT COUNT(*) WHERE QT.status = 'pending' OR QT.status = 'rejected') as amendment, (SELECT COUNT(*) WHERE QT.status = 'sent') as pending, (SELECT COUNT(*) WHERE QT.status = 'approved') as sended 
+    FROM dbo.staff as ST, dbo.quotation as QT
+    WHERE ST.id = QT.assigned_staff and ST.supervisor = ?;''', supervisor_id)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
 
+    return results
+
+@app.route("/salesperson_under_supervisor_quotations/<int:supervisor_id>")
+def get_supervisor_salesperson_quotations(supervisor_id):
+    cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
+    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
+    WHERE ST.supervisor = ?
+    GROUP BY QT.status;''', supervisor_id)
+    
     columns = [column[0] for column in cursor.description]
     results = {}
     i = 0
