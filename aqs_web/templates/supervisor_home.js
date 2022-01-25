@@ -1,17 +1,14 @@
-function saveChanges() {
-    location.href = "home.html";
-}
-
 function start() {
-    getQuotationParts();
+    getSalesperson();
 }
 
-function getQuotationParts() {
-    var quotation_no = window.location.href.split("#")[1];
+// in progress
+function getSalesperson() {
+    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/quotationParts/" + quotation_no;
-        document.getElementById("parts").innerHTML = "";
+        var serviceURL = "http://localhost:5000/salesperson/" + supervisor_id;
+        document.getElementById("salesperson").innerHTML = "";
         try {
             const response =
                 await fetch(
@@ -23,22 +20,15 @@ function getQuotationParts() {
             if (response.status === 200) {
                 // success case
                 console.log(result)
-                console.log(result[1]["Concats"].split(','))
-                for (var part in result) {
-                    document.getElementById("parts").innerHTML += `<tr>
-                  <th scope="row"><input type="checkbox"></th>
-                  <td>${result[part].component_no}</td>
-                  <td>${result[part].uom}</td>
-                  <td>${result[part].description}</td>
-                  <td>${result[part].quantity}</td>
-                  <td>$${result[part].total_price}</td>
-                  <td>${result[part].is_drawing}</td>
-                  <td>${result[part].drawing_no}</td>
-                  <td>${result[part].set_no}</td>
-                  <td>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                  </td>
+                for (var salesperson in result) {
+                    document.getElementById("salesperson").innerHTML += `<tr>
+                  <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="100"
+                    height="100" class="rounded-circle"></th>
+                  <td>${result[salesperson].name}</td>
+                  <td>${result[salesperson].email}</td>
+                  <td>${result[salesperson].amendment}</td>
+                  <td>${result[salesperson].pending}</td>
+                  <td>$${result[salesperson].sended}</td>
                 </tr>`
                 }
             } else if (response.status == 404) {

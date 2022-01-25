@@ -16,7 +16,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -29,6 +29,22 @@ def get_quotations():
     INNER JOIN dbo.staff as ST ON QT.assigned_staff_email = ST.staff_email
     INNER JOIN dbo.crawled_quotation_item as CQIT ON QT.quotation_no = CQIT.quotation_no
     GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
+
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+
+    return results
+
+# in progress
+@app.route("/salesperson/<string:supervisor_id>")
+def get_salesperson(supervisor_id):
+    cursor.execute('''SELECT (ST.first_name + ' ' + ST.last_name) as staff_name, ST.staff_email as email, SUM(QT.status = 'pending' + QT.status = 'rejected') as amendment, SUM(QT.status = 'sent') as pending, SUM(QT.status = 'approved') as sended FROM dbo.quotation as QT 
+    INNER JOIN dbo.staff as ST ON QT.assigned_staff_email = ST.staff_email
+    WHERE ST.supervisor = ?;''', supervisor_id)
 
     columns = [column[0] for column in cursor.description]
     results = {}
