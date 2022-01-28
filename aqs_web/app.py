@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask import session
 import hashlib
 import urllib
 import pyodbc
 
 app = Flask(__name__)
-params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-7REM3J1\SQLEXPRESS;DATABASE=myerp101;Trusted_Connection=yes;')
+params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-KNDFRSA;DATABASE=myerp101;Trusted_Connection=yes;')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 #i think the below line can remove
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-7REM3J1\SQLEXPRESS/myerp101?driver=SQL+Server?trusted_connection=yes'
@@ -18,8 +20,9 @@ CORS(app)
 #put ur server name here
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
+#jingwen: DESKTOP-KNDFRSA
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Server=DESKTOP-KNDFRSA;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -129,40 +132,43 @@ def get_quotation_parts(quotation_no):
     print(results)
     return results
     
-#testing base for rbac
+#rbac
+#ensure the login functionality is working: TO DO
 @app.route("/login_data", methods = ['POST', 'GET'])
 def login():
     if request.method == 'POST':
         keyed_username = request.form['keyed_email']
         keyed_password = request.form['keyed_password']
 
-        #hash keyed password
-        hashed_password = hashlib.sha1(keyed_password.encode())
-
-        #get user
-        username_result = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username])
-        
-        #match password
+        # username_result = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username])
 
         #will need to check password validation again through SQL query instead -> checking if hashlib function working
-        if username_result != 0:
-            password = cursor.fetchone()['password']
-    
-            #to check if logger info helps, if not change
-            if password == hashed_password:
-                app.logger.info("Login Successful")
+        user = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username]).first()
+        if user:
+            hashed_password = hashlib.sha256(keyed_password.encode())
+            if keyed_password == hashed_password:
+                login_user(user)
+                #TO DO: need to ensure that logging in returns the user role
                 return render_template("test.html")
-            else:
-                app.logger.info("Login Unsuccessful")
-                return render_template("test.html")
-        else:
-            app.logger.info("no user")
-    # return render_template("login.html")
     else:
-        #template folder set up for better framework
-
-        #OR use a redirecting URL // module import
+        #use a redirecting URL // module import
         return render_template("test.html")
+
+#get the current user role logged in and display: TO DO
+#issue now is to make sure the roles are all displayed on the page properly
+@login_required
+def role_homepage():
+    print(current_user.role)
+    return render_template("index.html", data = current_user.role)
+
+#logout, clear session
+@app.route('/logout', method = ['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    session.clear()
+    #do you want to return index html??
+    return render_template("index.html")
 
 #template for inserting data
 @app.route("/insert", methods=['POST'])
