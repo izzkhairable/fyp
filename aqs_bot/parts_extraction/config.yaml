@@ -5,6 +5,7 @@ template1:
   rfq_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\rfq
   drawing_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\drawing
   archive_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\archive
+  unprocessed_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\unprocessed
   rfq_to_db_mapping:
     part_no: Component number
     description: Object description
