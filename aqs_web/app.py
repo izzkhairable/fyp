@@ -1,8 +1,12 @@
 from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask import session
+from flask_bcrypt import Bcrypt
 import hashlib
 import urllib
 import pyodbc
@@ -13,6 +17,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % par
 #i think the below line can remove
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-7REM3J1\SQLEXPRESS/myerp101?driver=SQL+Server?trusted_connection=yes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+#i dont know how to configure secret key, but it is needed for flask_wtf
+app.config['SECRET_KEY'] = 'thisisasecretkey'
 
 db = SQLAlchemy(app)
 CORS(app)
@@ -81,21 +88,21 @@ def get_quotations_numbers_supervisor(supervisor_id):
     return results
 
 # TO DOOOO
-@app.route("/supervisor_quotations_attention/<int:supervisor_id>")
-def get_supervisor_salesperson_quotations(supervisor_id):
-    cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
-    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
-    WHERE ST.supervisor = ?
-    GROUP BY QT.status;''', supervisor_id)
+# @app.route("/supervisor_quotations_attention/<int:supervisor_id>")
+# def get_supervisor_salesperson_quotations(supervisor_id):
+#     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
+#     FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
+#     WHERE ST.supervisor = ?
+#     GROUP BY QT.status;''', supervisor_id)
     
-    columns = [column[0] for column in cursor.description]
-    results = {}
-    i = 0
-    for row in cursor:
-        results[i] = dict(zip(columns, row))
-        i += 1
+#     columns = [column[0] for column in cursor.description]
+#     results = {}
+#     i = 0
+#     for row in cursor:
+#         results[i] = dict(zip(columns, row))
+#         i += 1
 
-    return results
+#     return results
 
 # TO DOOOO
 @app.route("/supervisor_all_quotations/<int:supervisor_id>")
@@ -131,38 +138,86 @@ def get_quotation_parts(quotation_no):
         i += 1
     print(results)
     return results
-    
+
+#for login required
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Staff.query.get(int(user_id))
+
 #rbac
-#ensure the login functionality is working: TO DO
-@app.route("/login_data", methods = ['POST', 'GET'])
+#ensure the login functionality is working: loginform not working
+class Staff(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    staff_email = db.Column(db.String(255), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(255), nullable=False)
+    supervisor = db.Column(db.String(255), nullable=False)
+
+class LoginForm(FlaskForm):
+    #enter email
+    keyed_email = StringField(validators = [InputRequired(), Length(min = 4, max = 100 )], render_kw={"placeholder": "Email"})
+    #enter password
+    keyed_password = PasswordField(validators=[InputRequired(), Length(min = 4, max = 50)], render_kw={"placeholder": "Password"})
+    #submit button with the word "Login"
+    submit = SubmitField("Login")
+
+@app.route("/login", methods = ['POST', 'GET'])
 def login():
-    if request.method == 'POST':
-        keyed_username = request.form['keyed_email']
-        keyed_password = request.form['keyed_password']
+    form = LoginForm()
+    if form.validate_on_submit():
+         keyed_user = Staff.query.filter_by(staff_email = form.keyed_email.data).first()
+         if keyed_user:
+              #get hashed password
+            hashed_pw = hashlib.sha256(form.keyed_password.encode().hexdigest())
+            #  #check if passwords match
+            if hashed_pw == keyed_user.password:
+                 login_user(keyed_user)
+                 return redirect(url_for('test'))
+    return render_template('login.html', form = LoginForm())
 
-        # username_result = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username])
 
-        #will need to check password validation again through SQL query instead -> checking if hashlib function working
-        user = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username]).first()
-        if user:
-            hashed_password = hashlib.sha256(keyed_password.encode())
-            if keyed_password == hashed_password:
-                login_user(user)
-                #TO DO: need to ensure that logging in returns the user role
-                return render_template("test.html")
-    else:
-        #use a redirecting URL // module import
-        return render_template("test.html")
+# @app.route('/login', methods = ['POST', 'GET'] )
+# def login():
+#     form = LoginForm()
+#     return render_template('login.html', form = form) 
+
+
+    # if request.method == 'POST':
+    #     keyed_username = request.form['keyed_email']
+    #     keyed_password = request.form['keyed_password']
+    #     user=Staff.query.filter_by(keyed_email=form.staff_email.data).first()
+    #     # username_result = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username])
+
+    #     #will need to check password validation again through SQL query instead -> checking if hashlib function working
+    #     # user = cursor.execute("SELECT first_name FROM dbo.staff WHERE staff_email = %s", [keyed_username]).first()
+    #     # role = cursor.execute("SELECT role from dbo.staff WHERE first_name =  %s", keyed_password) 
+    #     if user:
+    #         hashed_password = hashlib.sha256(keyed_password.encode())
+    #         if keyed_password == hashed_password:
+    #             login_user(user)
+    #             #TO DO: need to ensure that logging in returns the user role
+    #             return redirect(url_for('test'), )
+
+    # else:
+    #     #use a redirecting URL // module import
+    #     return render_template("test.html")
 
 #get the current user role logged in and display: TO DO
 #issue now is to make sure the roles are all displayed on the page properly
+@app.route('/test', methods = ['GET', 'POST'])
 @login_required
-def role_homepage():
+def test():
     print(current_user.role)
-    return render_template("index.html", data = current_user.role)
+    return render_template("test.html", data = current_user.role)
 
 #logout, clear session
-@app.route('/logout', method = ['GET', 'POST'])
+@app.route('/logout', methods = ['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
