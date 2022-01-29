@@ -87,22 +87,21 @@ def get_quotations_numbers_supervisor(supervisor_id):
 
     return results
 
-# TO DOOOO
-# @app.route("/supervisor_quotations_attention/<int:supervisor_id>")
-# def get_supervisor_salesperson_quotations(supervisor_id):
-#     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
-#     FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
-#     WHERE ST.supervisor = ?
-#     GROUP BY QT.status;''', supervisor_id)
+# Display quotations from salespersons that needs approval
+@app.route("/supervisor_quotations_attention/<int:supervisor_id>")
+def get_supervisor_salesperson_pending_quotations(supervisor_id):
+    cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, ST.first_name, ST.last_name
+                    FROM quotation as QT, staff as ST, customer as C
+                    WHERE ST.id = QT.assigned_staff and C.company_email = QT.customer_email and status = 'sent' and ST.supervisor=?''', supervisor_id)
     
-#     columns = [column[0] for column in cursor.description]
-#     results = {}
-#     i = 0
-#     for row in cursor:
-#         results[i] = dict(zip(columns, row))
-#         i += 1
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
 
-#     return results
+    return results
 
 # Displays all quotations from salesperson under supervisor
 @app.route("/supervisor_all_quotations/<int:supervisor_id>")

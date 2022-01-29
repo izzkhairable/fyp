@@ -30,11 +30,11 @@ cursor = conn.cursor()
 
 @app.route("/quotations")
 def get_quotations():
-    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(CQIT.unit_price*CQIT.qty) as total_cost, SUM(CQIT.qty) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
-    INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
-    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    INNER JOIN dbo.crawled_quotation_item as CQIT ON QT.quotation_no = CQIT.quotation_no
-    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
+    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
+                    INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
+                    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
+                    INNER JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
+                    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -45,16 +45,17 @@ def get_quotations():
 
     return results
 
+# Display all the salesperson + their quotation analytics
 @app.route("/salesperson/<int:supervisor_id>")
 def get_salespersons_under_supervisor(supervisor_id):
     cursor.execute('''SELECT first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
-    SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
-    SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) as pending,
-    SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) as rejected
-    FROM dbo.quotation as QT
-    JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
-    WHERE ST.supervisor = ?
-    GROUP BY first_name, last_name, staff_email;''', supervisor_id)
+                    SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
+                    SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) as pending,
+                    SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) as rejected
+                    FROM dbo.quotation as QT
+                    JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
+                    WHERE ST.supervisor = ?
+                    GROUP BY first_name, last_name, staff_email;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -65,12 +66,13 @@ def get_salespersons_under_supervisor(supervisor_id):
 
     return results
 
+# Display total quotation numbers of all salesperson under supervisor
 @app.route("/supervisor_quotations_numbers/<int:supervisor_id>")
 def get_quotations_numbers_supervisor(supervisor_id):
     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
-    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
-    WHERE ST.supervisor = ?
-    GROUP BY QT.status;''', supervisor_id)
+                    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
+                    WHERE ST.supervisor = ?
+                    GROUP BY QT.status;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -81,22 +83,21 @@ def get_quotations_numbers_supervisor(supervisor_id):
 
     return results
 
-# TO DOOOO
-# @app.route("/supervisor_quotations_attention/<int:supervisor_id>")
-# def get_supervisor_salesperson_quotations(supervisor_id):
-#     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
-#     FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
-#     WHERE ST.supervisor = ?
-#     GROUP BY QT.status;''', supervisor_id)
+# Display quotations from salespersons that needs approval
+@app.route("/supervisor_quotations_attention/<int:supervisor_id>")
+def get_supervisor_salesperson_pending_quotations(supervisor_id):
+    cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, ST.first_name, ST.last_name
+                    FROM quotation as QT, staff as ST, customer as C
+                    WHERE ST.id = QT.assigned_staff and C.company_email = QT.customer_email and status = 'sent' and ST.supervisor=?''', supervisor_id)
     
-#     columns = [column[0] for column in cursor.description]
-#     results = {}
-#     i = 0
-#     for row in cursor:
-#         results[i] = dict(zip(columns, row))
-#         i += 1
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
 
-#     return results
+    return results
 
 # Displays all quotations from salesperson under supervisor
 @app.route("/supervisor_all_quotations/<int:supervisor_id>")
