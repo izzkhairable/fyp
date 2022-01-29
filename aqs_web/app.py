@@ -6,7 +6,6 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask import session
-from flask_bcrypt import Bcrypt
 import hashlib
 import urllib
 import pyodbc
@@ -14,8 +13,6 @@ import pyodbc
 app = Flask(__name__)
 params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-KNDFRSA;DATABASE=myerp101;Trusted_Connection=yes;')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
-#i think the below line can remove
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://DESKTOP-7REM3J1\SQLEXPRESS/myerp101?driver=SQL+Server?trusted_connection=yes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #i dont know how to configure secret key, but it is needed for flask_wtf
@@ -29,7 +26,7 @@ CORS(app)
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-KNDFRSA;'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -37,10 +34,10 @@ cursor = conn.cursor()
 
 @app.route("/quotations")
 def get_quotations():
-    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(CQIT.unit_price*CQIT.qty) as total_cost, SUM(CQIT.qty) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
+    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    INNER JOIN dbo.crawled_quotation_item as CQIT ON QT.quotation_no = CQIT.quotation_no
+    INNER JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
     GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
 
     columns = [column[0] for column in cursor.description]
@@ -124,9 +121,7 @@ def get_supervisor_salesperson_quotations(supervisor_id):
 @app.route("/quotationParts/<string:quotation_no>")
 def get_quotation_parts(quotation_no):
     print(quotation_no)
-    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, total_price) as total_price, is_drawing, drawing_no, set_no,
-    STUFF((SELECT ','+CQIT.url, CQIT.supplier_name, CONVERT(varchar, CQIT.unit_price) as unit_price, CONVERT(varchar, CQIT.qty) as qty
-    FROM dbo.crawled_quotation_item as CQIT WHERE QCT.quotation_no = CQIT.quotation_no AND QCT.row = CQIT.row for xml path('')),1,1,'') Concats
+    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info
     FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?;''', quotation_no)
 

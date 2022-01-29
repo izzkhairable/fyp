@@ -21,7 +21,6 @@ function getQuotationParts(){
         if (response.status === 200) {
             // success case
             console.log(result)
-            console.log(result[1]["Concats"].split(','))
             for (var part in result) {
               document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
@@ -30,9 +29,9 @@ function getQuotationParts(){
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
                 <td>$${result[part].total_price}</td>
-                <td>${result[part].is_drawing}</td>
-                <td>${result[part].drawing_no}</td>
-                <td>${result[part].set_no}</td>
+                <td>${result[part].is_bom}</td>
+                <td>${result[part].bom_no}</td>
+                <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
