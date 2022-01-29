@@ -123,7 +123,7 @@ def get_supervisor_salesperson_quotations(supervisor_id):
 @app.route("/quotationParts/<string:quotation_no>")
 def get_quotation_parts(quotation_no):
     print(quotation_no)
-    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info
+    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
     FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?;''', quotation_no)
 
