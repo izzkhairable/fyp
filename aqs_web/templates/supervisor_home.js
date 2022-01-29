@@ -125,7 +125,8 @@ function getQuotesThatRequireAttention() {
                         ${result[quotation].company_name}<br>
                         ${result[quotation].rfq_date}<br>
                         Assigned to: ${result[quotation].first_name} ${result[quotation].last_name}
-                    </div>`;
+                    </div>
+                    <br>`;
                 }
             } else if (response.status == 404) {
                 // No Rows
