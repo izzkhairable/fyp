@@ -1,7 +1,3 @@
-function saveChanges() {
-    location.href = "home.html";
-}
-
 function start() {
     getQuotationParts();
 }

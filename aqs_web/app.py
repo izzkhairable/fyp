@@ -29,7 +29,7 @@ CORS(app)
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
 conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-KNDFRSA;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
@@ -175,6 +175,7 @@ def login():
          if keyed_user:
               #get hashed password
             hashed_pw = hashlib.sha256(form.keyed_password.encode().hexdigest())
+            print(hashed_pw)
             #  #check if passwords match
             if hashed_pw == keyed_user.password:
                  login_user(keyed_user)
