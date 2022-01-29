@@ -27,7 +27,7 @@ function getSalesperson() {
                     height="30" class="rounded-circle"></th>
                   <td class="fw-bold text-primary"><a href="#"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
                   <td>${result[salesperson].staff_email}</td>
-                  <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].pending}</u></a></td>
+                  <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].rejected}</u></a></td>
                   <td class="fw-bold text-primary text-center"><a href="#"><u>${result[salesperson].sent}</u></a></td>
                   <td class="fw-bold text-success text-center"><a href="#"><u>${result[salesperson].approved}</u></a></td>
                 </tr>`
@@ -59,8 +59,9 @@ function getSalespersonTotalQuotes() {
         // Change serviceURL to your own
         var serviceURL = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
         document.getElementById("approved").innerHTML = "";
-        document.getElementById("pending").innerHTML = "";
+        document.getElementById("draft").innerHTML = "";
         document.getElementById("sent").innerHTML = "";
+        document.getElementById("rejected").innerHTML = "";
         try {
             const response =
                 await fetch(
@@ -75,10 +76,12 @@ function getSalespersonTotalQuotes() {
                 for (var status in result) {
                     if (result[status].status == 'approved') {
                         document.getElementById("approved").innerHTML = result[status].num;
-                    } else if (result[status].status == 'pending') {
-                        document.getElementById("pending").innerHTML = result[status].num;
-                    } else {
+                    } else if (result[status].status == 'sent') {
                         document.getElementById("sent").innerHTML = result[status].num;
+                    } else if (result[status].status == 'draft') {
+                        document.getElementById("draft").innerHTML = result[status].num;
+                    } else {
+                        document.getElementById("rejected").innerHTML = result[status].num;
                     }
                 }
             } else if (response.status == 404) {
