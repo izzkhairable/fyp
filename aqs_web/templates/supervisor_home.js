@@ -4,7 +4,6 @@ function start() {
     getQuotesThatRequireAttention();
 }
 
-// in progress
 function getSalesperson() {
     var supervisor_id = "1";
     $(async () => {
@@ -77,13 +76,43 @@ function getSalespersonTotalQuotes() {
                 for (var status in result) {
                     if (result[status].status == 'approved') {
                         document.getElementById("approved").innerHTML = result[status].num;
+                        var approved = result[status].num;
                     } else if (result[status].status == 'sent') {
                         document.getElementById("sent").innerHTML = result[status].num;
+                        var sent = result[status].num;
                     } else if (result[status].status == 'draft') {
                         document.getElementById("draft").innerHTML = result[status].num;
+                        var draft = result[status].num;
                     } else {
                         document.getElementById("rejected").innerHTML = result[status].num;
+                        var rejected = result[status].num
                     }
+                }
+                google.charts.load("current", {
+                    packages: ["corechart"]
+                });
+                google.charts.setOnLoadCallback(drawChart);
+                
+                function drawChart() {
+                    
+                    var data = google.visualization.arrayToDataTable([
+                        ['Status', 'Number'],
+                        ['Pending Review', sent],
+                        ['Need Amendments', rejected],
+                        ['Approved', approved],
+                        ['Draft', draft]
+                    ]);
+                
+                    var options = {
+                        pieHole: 0.9,
+                        height: 200,
+                        width: 500,
+                        colors: ['blue','red','green','grey']
+                    };
+                
+                    var chart = new google.visualization.PieChart(document.getElementById('dashboard-chart'));
+                    chart.draw(data, options);
+                    console.log("yoyoyo");
                 }
             } else if (response.status == 404) {
                 // No Rows
