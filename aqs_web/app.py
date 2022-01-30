@@ -49,6 +49,19 @@ def get_quotations():
 
     return results
 
+@app.route("/partinfo/<string:component_no>")
+def get_partinfo(component_no):
+    cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE component_no = ?''', component_no)
+
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+
+    return results
+
 # Display all the salesperson + their quotation analytics
 @app.route("/salesperson/<int:supervisor_id>")
 def get_salespersons_under_supervisor(supervisor_id):

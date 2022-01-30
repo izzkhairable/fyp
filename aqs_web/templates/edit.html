@@ -199,36 +199,13 @@
                 <div class="modal-body text-center">
                   <label for="remark"><b>Remark</b></label><br>
                   <textarea id="remark" name="remark" rows="5" cols="100"></textarea><br><br>
-                  <table class="table table-borderless">
-                    <tr>
-                      <th scope="col">Unit Price</th>
-                      <th scope="col">Supplier</th>
-                      <th scope="col">Link</th>
-                      <th scope="col">Quantity</th>
-                    </tr>
-                    <tr>
-                      <td>
-                        <input type="number" id="price" name="price" placeholder="9.89"><br><br>
-                      </td>
-                      <td>
-                        <input type="text" id="supplier" name="supplier" placeholder="Taobao"><br><br>
-                      </td>
-                      <td>
-                        <input type="text" id="link" name="link" placeholder="world.taobao.com"><br><br>
-                      </td>
-                      <td>
-                        <input type="number" id="quantity" name="quantity" placeholder="18"><br><br>
-                      </td>
-                      <td>
-                        <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                      </td>
-                    </tr>
+                  <table class="table table-borderless" id="edit-suppliers">
                   </table>
-                  <a>Add Supplier</a>
+                  <button type="button" class="btn btn-link float-start" onclick="addSupplier()">Add Supplier</button>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary shadow-sm">Save Changes</button>
+                  <button type="button" class="btn btn-primary shadow-sm" onclick="saveEdits()">Save Changes</button>
                 </div>
               </div>
             </div>

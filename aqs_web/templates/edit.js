@@ -36,7 +36,7 @@ function getQuotationParts(){
                 <td>$${result[part].total_price}</td>
                 <td>${result[part].remark}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
@@ -53,7 +53,7 @@ function getQuotationParts(){
                 <td>$${result[part].total_price}</td>
                 <td>${result[part].remark}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}', '${result[part].crawl_info}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
@@ -75,8 +75,83 @@ function getQuotationParts(){
     });
 }
 
-function editParts(component_no, remark, crawl_info){
+function editParts(component_no, remark){
   document.getElementById("editModalLabel").innerHTML = "Edit Part - " + component_no;
-  console.log(remark)
-  console.log(crawl_info);
+  document.getElementById("remark").placeholder = remark;
+  document.getElementById("edit-suppliers").innerHTML = `                    <tr>
+  <th scope="col">Unit Price</th>
+  <th scope="col">Supplier</th>
+  <th scope="col">Link</th>
+  <th scope="col">Quantity</th>
+</tr>`
+  $(async() => {           
+    // Change serviceURL to your own
+    var serviceURL = "http://localhost:5000/partinfo/" + component_no;
+    
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'GET' }
+        );
+        const result = await response.json();
+        if (response.status === 200) {
+            // success case
+            var crawl_info = JSON.parse(result[0]['crawl_info'])
+            for (var unique_supplier in crawl_info){
+              document.getElementById("edit-suppliers").innerHTML += `
+              <tr>
+              <td>
+                $<input type="number" id="price" name="price" placeholder="${crawl_info[unique_supplier].unit_price}"><br><br>
+              </td>
+              <td>
+                <input type="text" id="supplier" name="supplier" placeholder="${crawl_info[unique_supplier].supplier}"><br><br>
+              </td>
+              <td>
+                <input type="text" id="link" name="link" placeholder="${crawl_info[unique_supplier].url}"><br><br>
+              </td>
+              <td>
+                <input type="number" id="quantity" name="quantity" placeholder="${crawl_info[unique_supplier].qty}"><br><br>
+              </td>
+              <td>
+                <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+              </td>
+            </tr>`;
+            }
+            } else if (response.status == 404) {
+                // No Rows
+                console.log(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
+function addSupplier(){
+  document.getElementById("edit-suppliers").innerHTML += `              <tr>
+  <td>
+    $<input type="number" id="price" name="price"><br><br>
+  </td>
+  <td>
+    <input type="text" id="supplier" name="supplier"><br><br>
+  </td>
+  <td>
+    <input type="text" id="link" name="link"><br><br>
+  </td>
+  <td>
+    <input type="number" id="quantity" name="quantity"><br><br>
+  </td>
+  <td>
+    <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+  </td>
+</tr>`;
+}
+
+function saveEdits(){
+  
 }
