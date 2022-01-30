@@ -275,6 +275,11 @@ def logout():
 @app.route("/insert", methods=['POST'])
 def insert():
     data = request.get_json()
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''
                 INSERT INTO dbo.quotation (quotation_id, customer_email, assigned_staff_email, rfq_date, status)
                 VALUES
@@ -282,8 +287,10 @@ def insert():
                 ''', data["quotation_id"], data["customer_email"], data["assigned_staff_email"], data["rfq_date"], data["status"])
     try:
         conn.commit()
+        cursor.close()
         return jsonify(data), 201
     except Exception:
+        cursor.close()
         return jsonify({
             "code": 404,
             "message": "Unable to commit to database."
