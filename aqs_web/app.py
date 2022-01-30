@@ -1,3 +1,4 @@
+from sqlite3 import Cursor
 from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -264,20 +265,38 @@ class LoginForm(FlaskForm):
     #submit button with the word "Login"
     submit = SubmitField("Login")
 
-@app.route("/login", methods = ['POST', 'GET'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-         keyed_user = Staff.query.filter_by(staff_email = form.keyed_email.data).first()
-         if keyed_user:
-              #get hashed password
-            hashed_pw = hashlib.sha256(form.keyed_password.encode().hexdigest())
-            print(hashed_pw)
-            #  #check if passwords match
-            if hashed_pw == keyed_user.password:
-                 login_user(keyed_user)
-                 return redirect(url_for('test'))
-    return render_template('login.html', form = LoginForm())
+@app.route("/login/<string:email><string:password>", methods = ['POST', 'GET'])
+def login(email, password):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+
+    cursor = conn.cursor()
+    cursor.execute('''SELECT first_name FROM dbo.staff WHERE staff_email = ?''', email)
+    # role = cursor.execute("SELECT role from dbo.staff WHERE first_name =  %s", password) 
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
+    # form = LoginForm()
+    # if form.validate_on_submit():
+    #      keyed_user = Staff.query.filter_by(staff_email = form.keyed_email.data).first()
+    #      if keyed_user:
+    #           #get hashed password
+    #         hashed_pw = hashlib.sha256(form.keyed_password.encode().hexdigest())
+    #         print(hashed_pw)
+    #         #  #check if passwords match
+    #         if hashed_pw == keyed_user.password:
+    #              login_user(keyed_user)
+    #              return redirect(url_for('test'))
+    # return render_template('login.html', form = LoginForm())
 
 
 # @app.route('/login', methods = ['POST', 'GET'] )
