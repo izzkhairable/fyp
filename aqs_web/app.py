@@ -25,15 +25,20 @@ CORS(app)
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
-conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+# conn = pyodbc.connect('Driver={SQL Server};'
+#                       'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+#                       'Database=myerp101;'
+#                       'Trusted_Connection=yes;')
 
-cursor = conn.cursor()
+# cursor = conn.cursor()
 
 @app.route("/quotations")
 def get_quotations():
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
@@ -46,11 +51,16 @@ def get_quotations():
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-
+    cursor.close()
     return results
 
 @app.route("/partinfo/<string:component_no>")
 def get_partinfo(component_no):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE component_no = ?''', component_no)
 
     columns = [column[0] for column in cursor.description]
@@ -59,12 +69,17 @@ def get_partinfo(component_no):
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-
+    cursor.close()
     return results
 
 # Display all the salesperson + their quotation analytics
 @app.route("/salesperson/<int:supervisor_id>")
 def get_salespersons_under_supervisor(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
     SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
     SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) as pending,
@@ -80,12 +95,17 @@ def get_salespersons_under_supervisor(supervisor_id):
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-
+    cursor.close()
     return results
 
 # Display total quotation numbers of all salesperson under supervisor
 @app.route("/supervisor_quotations_numbers/<int:supervisor_id>")
 def get_quotations_numbers_supervisor(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
     FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
     WHERE ST.supervisor = ?
@@ -97,12 +117,17 @@ def get_quotations_numbers_supervisor(supervisor_id):
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-
+    cursor.close()
     return results
 
 # Display quotations from salespersons that needs approval
 @app.route("/supervisor_quotations_attention/<int:supervisor_id>")
 def get_supervisor_salesperson_pending_quotations(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, ST.first_name, ST.last_name
                     FROM quotation as QT, staff as ST, customer as C
                     WHERE ST.id = QT.assigned_staff and C.company_email = QT.customer_email and status = 'sent' and ST.supervisor=?''', supervisor_id)
@@ -113,12 +138,17 @@ def get_supervisor_salesperson_pending_quotations(supervisor_id):
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-
+    cursor.close()
     return results
 
 # Displays all quotations from salesperson under supervisor
 @app.route("/supervisor_all_quotations/<int:supervisor_id>")
 def get_supervisor_salesperson_quotations(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.rfq_date, status
                    FROM staff as ST, quotation as QT, customer as C
                    WHERE ST.id = QT.assigned_staff AND C.company_email = QT.customer_email AND ST.supervisor = ?''', supervisor_id)
@@ -129,12 +159,17 @@ def get_supervisor_salesperson_quotations(supervisor_id):
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-
+    cursor.close()
     return results
 
 @app.route("/quotationParts/<string:quotation_no>")
 def get_quotation_parts(quotation_no):
     print(quotation_no)
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
     cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
     FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?;''', quotation_no)
@@ -146,6 +181,7 @@ def get_quotation_parts(quotation_no):
         results[i] = dict(zip(columns, row))
         i += 1
     print(results)
+    cursor.close()
     return results
 
 #for login required
