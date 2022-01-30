@@ -32,18 +32,19 @@ CORS(app)
 
 # cursor = conn.cursor()
 
+# Display all quotations
 @app.route("/quotations")
 def get_quotations():
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT CT.company_name as company, ST.first_name as contact, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
+    cursor.execute('''SELECT CT.company_name as company, ST.first_name, ST.last_name, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     INNER JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
-    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, status''')
+    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status''')
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -54,10 +55,57 @@ def get_quotations():
     cursor.close()
     return results
 
+# Display all components under a specific quotation
+@app.route("/quotationParts/<string:quotation_no>")
+def get_quotation_parts(quotation_no):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
+    FROM dbo.quotation_component as QCT
+    WHERE QCT.quotation_no = ?;''', quotation_no)
+
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+
+    cursor.close()
+    return results
+
+# Displays information for a specific quotation
+@app.route("/quotationInfo/<string:quotation_no>")
+def get_quotation_info(quotation_no):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT comment, status, first_name, last_name, company_name
+    FROM dbo.quotation as QT
+    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
+    INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
+    WHERE QT.quotation_no = ?;''', quotation_no)
+
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+
+    cursor.close()
+    return results
+
+# Gets information about a specific component for editing purposes
 @app.route("/partinfo/<string:component_no>")
 def get_partinfo(component_no):
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
@@ -71,6 +119,32 @@ def get_partinfo(component_no):
         i += 1
     cursor.close()
     return results
+
+# Updates database with edited information for each component
+@app.route("/updateComponent", methods=['POST'])
+def update_component():
+    data = request.get_json()
+    print(data)
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.quotation_component
+                SET crawl_info = ?, unit_price = ?
+                WHERE component_no = ?
+                ''', data["edited_crawl_info"], data["unit_price"], data["component_no"])
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
 
 # Display all the salesperson + their quotation analytics
 @app.route("/salesperson/<int:supervisor_id>")
@@ -159,28 +233,6 @@ def get_supervisor_salesperson_quotations(supervisor_id):
     for row in cursor:
         results[i] = dict(zip(columns, row))
         i += 1
-    cursor.close()
-    return results
-
-@app.route("/quotationParts/<string:quotation_no>")
-def get_quotation_parts(quotation_no):
-    print(quotation_no)
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
-    cursor = conn.cursor()
-    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
-    FROM dbo.quotation_component as QCT
-    WHERE QCT.quotation_no = ?;''', quotation_no)
-
-    columns = [column[0] for column in cursor.description]
-    results = {}
-    i = 0
-    for row in cursor:
-        results[i] = dict(zip(columns, row))
-        i += 1
-    print(results)
     cursor.close()
     return results
 

@@ -4,6 +4,7 @@ function saveChanges(){
 
 function start(){
   getQuotationParts();
+  getQuotationInfo();
 }
 
 function getQuotationParts(){
@@ -75,6 +76,38 @@ function getQuotationParts(){
     });
 }
 
+function getQuotationInfo(){
+  var quotation_no = window.location.href.split("#")[1];
+  $(async() => {           
+    // Change serviceURL to your own
+    var serviceURL = "http://localhost:5000/quotationInfo/" + quotation_no;
+    document.getElementById("parts").innerHTML = "";
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'GET' }
+        );
+        const result = await response.json();
+        if (response.status === 200) {
+            // success case
+            document.getElementById("quotation-name").innerHTML = quotation_no + " - " + result[0].company_name;
+            document.getElementById("comments").innerHTML = result[0].comment;
+            document.getElementById("point-of-contact").innerHTML = result[0].first_name + " " + result[0].last_name;
+            } else if (response.status == 404) {
+                // No Rows
+                console.log(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
 function editParts(component_no, remark){
   document.getElementById("editModalLabel").innerHTML = "Edit Part - " + component_no;
   document.getElementById("remark").placeholder = remark;
@@ -97,23 +130,25 @@ function editParts(component_no, remark){
         if (response.status === 200) {
             // success case
             var crawl_info = JSON.parse(result[0]['crawl_info'])
+            var rowid = 0;
             for (var unique_supplier in crawl_info){
+              rowid ++;
               document.getElementById("edit-suppliers").innerHTML += `
-              <tr>
+              <tr id="${rowid}">
               <td>
-                $<input type="number" id="price" name="price" placeholder="${crawl_info[unique_supplier].unit_price}"><br><br>
+                $<input type="number" id="price" name="price" value="${crawl_info[unique_supplier].unit_price}" ><br><br>
               </td>
               <td>
-                <input type="text" id="supplier" name="supplier" placeholder="${crawl_info[unique_supplier].supplier}"><br><br>
+                <input type="text" id="supplier" name="supplier" value="${crawl_info[unique_supplier].supplier}"><br><br>
               </td>
               <td>
-                <input type="text" id="link" name="link" placeholder="${crawl_info[unique_supplier].url}"><br><br>
+                <input type="text" id="link" name="link" value="${crawl_info[unique_supplier].url}"><br><br>
               </td>
               <td>
-                <input type="number" id="quantity" name="quantity" placeholder="${crawl_info[unique_supplier].qty}"><br><br>
+                <input type="number" id="quantity" name="quantity" value="${crawl_info[unique_supplier].qty}"><br><br>
               </td>
               <td>
-                <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                <button type="button" onclick="deleteSupplierRow(${rowid})" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
               </td>
             </tr>`;
             }
@@ -133,7 +168,9 @@ function editParts(component_no, remark){
 }
 
 function addSupplier(){
-  document.getElementById("edit-suppliers").innerHTML += `              <tr>
+  var table = document.getElementById("edit-suppliers");
+  var rowid = table.rows[table.rows.length - 1].id + 1;
+  document.getElementById("edit-suppliers").innerHTML += `              <tr id="${rowid}">
   <td>
     $<input type="number" id="price" name="price"><br><br>
   </td>
@@ -147,11 +184,65 @@ function addSupplier(){
     <input type="number" id="quantity" name="quantity"><br><br>
   </td>
   <td>
-    <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+    <button type="button" onclick="deleteSupplierRow(${rowid})" class="btn btn-sm btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
   </td>
 </tr>`;
 }
 
 function saveEdits(){
-  
+  var component_no = document.getElementById("editModalLabel").innerHTML.split(" - ")[1];
+  var edited_crawl_info = [];
+  var prices = document.getElementsByName("price");
+  var suppliers = document.getElementsByName("supplier");
+  var quantity = document.getElementsByName("quantity");
+  var link = document.getElementsByName("link");
+  var table = document.getElementById("edit-suppliers");
+  var qty = 0;
+  var total_price = 0;
+  for (var i = 1, row; row = table.rows[i]; i++) {
+    supplier = {}
+    supplier["supplier"] = suppliers[i-1].value;
+    supplier["url"] = link[i-1].value;
+    supplier["qty"] = quantity[i-1].value;
+    qty += Number(quantity[i-1].value);
+    supplier['unit_price'] = prices[i-1].value;
+    total_price += Number(quantity[i-1].value) * Number(prices[i-1].value);
+    edited_crawl_info.push(supplier);
+  }
+  var unit_price = total_price / qty;
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/updateComponent";
+    const data = {
+        component_no: component_no,
+        edited_crawl_info: JSON.stringify(edited_crawl_info),
+        unit_price: unit_price
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error saving changes.")
+            }
+            else {
+              location.reload();
+                alert("Successfully saved changes!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
+function deleteSupplierRow(rowid){
+  var row = document.getElementById(rowid);
+  row.parentNode.removeChild(row);
 }

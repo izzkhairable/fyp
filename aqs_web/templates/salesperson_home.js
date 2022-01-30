@@ -30,7 +30,7 @@ function get_quotations() {
                 <th scope="row"><input type="checkbox"></th>
                 <td><a href="edit.html#${result[quotation].quotation_no}" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
                 <td>${result[quotation].company}</td>
-                <td>${result[quotation].contact}</td>
+                <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
                 ${button}
                 <td>$${result[quotation].total_cost}</td>
                 <td>${result[quotation].total_parts}</td>
