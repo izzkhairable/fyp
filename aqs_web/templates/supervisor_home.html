@@ -109,24 +109,24 @@
                         </div>
                     </div>
                     <!-- TO DO -->
-                    <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Need Amendment
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Need Amendment
                         <hr>
-                        <p class="fw-bold fs-2 text-danger" id="pending">20</p>
+                        <p class="fw-bold fs-2 text-danger" id="rejected">20</p>
                     </div>
 
-                    <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Pending Review
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Pending Review
                         <hr>
                         <p class="fw-bold fs-2 text-primary" id="sent">13</p>
                     </div>
 
-                    <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Sent to Customer
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Sent to Customer
                         <hr>
                         <p class="fw-bold fs-2 text-success" id="approved">51</p>
                     </div>
 
-                    <div class="shadow p-2 ms-3 text-center flex-fill bd-highlight bg-white">Draft
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Draft
                         <hr>
-                        <p class="fw-bold fs-2 text-danger">KIV</p>
+                        <p class="fw-bold fs-2 text-danger" id="draft">KIV</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
             <div id="salesperson-quotation">
                 <div class="pt-3 d-flex flex-row bd-highlight mb-3">
                     <!-- Salesperson Table -->
-                    <div class="shadow col-8 bg-white">
+                    <div class="shadow align-self-start col-8 bg-white">
                         <!-- Basics for table visualisation -->
                         <div class="mx-3">
                             <table class="table">
@@ -146,6 +146,7 @@
                                         <th scope="col"><button class="btn btn-primary" disabled>Pending Approval</button></th>
                                         <th scope="col"><button class="btn btn-success" disabled>Sent To Customer</button></th>
                                     </tr>
+                                    
                                 </thead>
                                 <tbody id="salesperson">
 
@@ -154,10 +155,12 @@
                         </div>
                     </div>
                     <!-- Quotation (TO DOOOO)-->
-                    <div class="shadow p-2 ms-3 flex-fill bd-highlight bg-white fw-bold">Requires review
+                    <div class="shadow p-2 ms-3 flex-fill bd-highlight bg-white fw-bold">Requires Your Review
                         <hr>
-                        <div id="quotations-for-review">
-                        </div>
+                        <div class="p-2">
+                            <div id="quotations-for-review">
+                            </div>
+                        </div> 
                     </div>
 
                 </div>

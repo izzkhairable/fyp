@@ -1,17 +1,13 @@
-function saveChanges() {
-    location.href = "home.html";
-}
-
 function start() {
-    getQuotationParts();
+    getAllQuotations();
 }
 
-function getQuotationParts() {
-    var quotation_no = window.location.href.split("#")[1];
+function getAllQuotations() {
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/quotationParts/" + quotation_no;
-        document.getElementById("parts").innerHTML = "";
+        var supervisor_id = 1;
+        var serviceURL = "http://localhost:5000/supervisor_all_quotations/" + supervisor_id;
+        document.getElementById("quotations").innerHTML = "";
         try {
             const response =
                 await fetch(
@@ -23,23 +19,31 @@ function getQuotationParts() {
             if (response.status === 200) {
                 // success case
                 console.log(result)
-                console.log(result[1]["Concats"].split(','))
-                for (var part in result) {
-                    document.getElementById("parts").innerHTML += `<tr>
+                for (var quotation in result) {
+                    document.getElementById("quotations").innerHTML += `<tr>`;
+                    document.getElementById("quotations").innerHTML += `
                   <th scope="row"><input type="checkbox"></th>
-                  <td>${result[part].component_no}</td>
-                  <td>${result[part].uom}</td>
-                  <td>${result[part].description}</td>
-                  <td>${result[part].quantity}</td>
-                  <td>$${result[part].total_price}</td>
-                  <td>${result[part].is_drawing}</td>
-                  <td>${result[part].drawing_no}</td>
-                  <td>${result[part].set_no}</td>
-                  <td>
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                  </td>
-                </tr>`
+                  <td><a href="edit.html#${result[quotation].quotation_no}" class="link-primary"><u>${result[quotation].quotation_no}</u></a></td>
+                  <td>${result[quotation].company_name}</td>
+                  <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
+                  <td>${result[quotation].rfq_date}</td>
+                  <td id="status_${result[quotation].quotation_no}"></td>
+                </tr>`;
+                    if (result[quotation].status == "rejected") {
+                        document.getElementById("status_"+result[quotation].quotation_no).className = "text-danger";
+                        document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Need Amendment";
+                    }
+                    else if (result[quotation].status == "approved") {
+                        document.getElementById("status_"+result[quotation].quotation_no).className = "text-success";
+                        document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Sent to Customer";
+                    }
+                    else if (result[quotation].status == "sent") {
+                        document.getElementById("status_"+result[quotation].quotation_no).className = "text-primary";
+                        document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Pending Approval";
+                    } else {
+                        document.getElementById("status_"+result[quotation].quotation_no).className = "text-secondary";
+                        document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Draft";
+                    }
                 }
             } else if (response.status == 404) {
                 // No Rows

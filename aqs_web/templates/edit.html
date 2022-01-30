@@ -159,10 +159,6 @@
                       <li><a class="dropdown-item" href="#">Delete</a></li>
                     </ul>
                   </div>
-                  
-                  <div class= "d-flex dropdown flex-row bd-highlight ms-3">
-                    <button type="button" onclick="saveChanges()" class="btn btn-primary text-light shadow-sm">Save Changes</button>
-                  </div>
 
                   <div class= "d-flex dropdown flex-row bd-highlight ms-3">
                     <button type="button" class="btn btn-success text-light shadow-sm">Submit For Review</button>
@@ -180,10 +176,9 @@
                     <th scope="col">UOM</th>
                     <th scope="col">Description</th>
                     <th scope="col">Quantity</th>
+                    <th scope="col">Unit Price</th>
                     <th scope="col">Total Price</th>
-                    <th scope="col">Drawing?</th>
-                    <th scope="col">Drawing Number</th>
-                    <th scope="col">Set Number</th>
+                    <th scope="col">Remark</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -195,31 +190,22 @@
 
           <!-- Edit Parts Modal -->
           <div class="modal fade" id="edit-parts" tabindex="-1" aria-labelledby="editPartsLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-xl">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Edit Part - 10000025</h5>
+                  <h5 class="modal-title" id="editModalLabel"></h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                  <label for="partno">Part Number</label><br>
-                  <input type="text" id="partno" name="partno" placeholder="10000025"><br><br>
-                  <label for="description">Description</label><br>
-                  <textarea id="description" name="description" rows="3" cols="50" placeholder="Wire: Hook-Up Wire ALPHA WIRE, 16 AWG, BROWN, MFG PN:6716 BR005"></textarea><br><br>
-                  <label for="quantity">Quantity</label><br>
-                  <input type="number" id="quantity" name="quantity" placeholder="18"><br><br>
-                  <label for="mfgpn">Manufacturing Part Number</label><br>
-                  <input type="text" id="mfgpn" name="mfgpn" placeholder="DR-25-1/4-0 SP"><br><br>
-                  <label for="price">Price</label><br>
-                  $<input type="number" id="price" name="price" placeholder="9.89"><br><br>
-                  <label for="supplier">Supplier</label><br>
-                  <input type="text" id="supplier" name="supplier" placeholder="Taobao"><br><br>
-                  <label for="link">Link</label><br>
-                  <input type="text" id="link" name="link" placeholder="world.taobao.com"><br><br>
+                <div class="modal-body text-center">
+                  <label for="remark"><b>Remark</b></label><br>
+                  <textarea id="remark" name="remark" rows="5" cols="100"></textarea><br><br>
+                  <table class="table table-borderless" id="edit-suppliers">
+                  </table>
+                  <button type="button" class="btn btn-link float-start" onclick="addSupplier()">Add Supplier</button>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary shadow-sm">Save Changes</button>
+                  <button type="button" class="btn btn-primary shadow-sm" onclick="saveEdits()">Save Changes</button>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 function start() {
     getSalesperson();
     getSalespersonTotalQuotes();
+    getQuotesThatRequireAttention();
 }
 
 // in progress
@@ -8,12 +9,12 @@ function getSalesperson() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/salesperson/" + supervisor_id;
+        var getSalesperson = "http://localhost:5000/salesperson/" + supervisor_id;
         document.getElementById("salesperson").innerHTML = "";
         try {
             const response =
                 await fetch(
-                    serviceURL, {
+                    getSalesperson, {
                         method: 'GET'
                     }
                 );
@@ -27,7 +28,7 @@ function getSalesperson() {
                     height="30" class="rounded-circle"></th>
                   <td class="fw-bold text-primary"><a href="#"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
                   <td>${result[salesperson].staff_email}</td>
-                  <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].pending}</u></a></td>
+                  <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].rejected}</u></a></td>
                   <td class="fw-bold text-primary text-center"><a href="#"><u>${result[salesperson].sent}</u></a></td>
                   <td class="fw-bold text-success text-center"><a href="#"><u>${result[salesperson].approved}</u></a></td>
                 </tr>`
@@ -57,14 +58,15 @@ function getSalespersonTotalQuotes() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
+        var getSalespersonTotalQuotes = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
         document.getElementById("approved").innerHTML = "";
-        document.getElementById("pending").innerHTML = "";
+        document.getElementById("draft").innerHTML = "";
         document.getElementById("sent").innerHTML = "";
+        document.getElementById("rejected").innerHTML = "";
         try {
             const response =
                 await fetch(
-                    serviceURL, {
+                    getSalespersonTotalQuotes, {
                         method: 'GET'
                     }
                 );
@@ -75,10 +77,12 @@ function getSalespersonTotalQuotes() {
                 for (var status in result) {
                     if (result[status].status == 'approved') {
                         document.getElementById("approved").innerHTML = result[status].num;
-                    } else if (result[status].status == 'pending') {
-                        document.getElementById("pending").innerHTML = result[status].num;
-                    } else {
+                    } else if (result[status].status == 'sent') {
                         document.getElementById("sent").innerHTML = result[status].num;
+                    } else if (result[status].status == 'draft') {
+                        document.getElementById("draft").innerHTML = result[status].num;
+                    } else {
+                        document.getElementById("rejected").innerHTML = result[status].num;
                     }
                 }
             } else if (response.status == 404) {
@@ -101,12 +105,12 @@ function getQuotesThatRequireAttention() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/supervisor_quotations_attention/" + supervisor_id;
+        var getQuotesThatRequireAttention = "http://localhost:5000/supervisor_quotations_attention/" + supervisor_id;
         document.getElementById("quotations-for-review").innerHTML = "";
         try {
             const response =
                 await fetch(
-                    serviceURL, {
+                    getQuotesThatRequireAttention, {
                         method: 'GET'
                     }
                 );
@@ -114,8 +118,15 @@ function getQuotesThatRequireAttention() {
             if (response.status === 200) {
                 // success case
                 console.log(result)
-                for (var status in result) {
-                    // fill up here
+                for (var quotation in result) {
+                    document.getElementById("quotations-for-review").innerHTML += `
+                    <div class="container rounded" style="background-color:rgb(0, 191, 255, 0.2);">
+                        <span class="text-primary"><a href="#"><u>${result[quotation].quotation_no}</u></a></span><br>
+                        ${result[quotation].company_name}<br>
+                        ${result[quotation].rfq_date}<br>
+                        Assigned to: ${result[quotation].first_name} ${result[quotation].last_name}
+                    </div>
+                    <br>`;
                 }
             } else if (response.status == 404) {
                 // No Rows

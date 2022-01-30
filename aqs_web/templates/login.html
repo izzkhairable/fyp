@@ -52,25 +52,22 @@
   
     <div class = "position-absolute top-50 start-50 translate-middle p-5 mb-2 shadow-lg bg-secondary" style="--bs-bg-opacity: .10; border-radius: 30px;">
       <div class = "pb-3 d-flex justify-content-center">
-        <span class ="circle shadow-lg"><img src = "images/TSH-Logo-1-320x202.png" class="img-fluid" style="transform: translate(-1px, 36px)"></span>
+        <!-- you need set static folder for flask app or else the image cannot load -->
+        <span class ="circle shadow-lg"><img src = "../images/TSH-Logo-1-320x202.png" class="img-fluid" style="transform: translate(-1px, 36px)"></span>
       </div>
-
 
       <h4 class="mb-3 text-center">TSH Quotation Management<br>Portal Login</h4>
       
-      
-      <form action = "http://localhost:5000/login_data", methods = 'POST'>
+      <form>
       <div class="d-flex flex-column bd-highlight mb-3 align-items-center">
         <div class="mb-3">
-          <label for="keyed_email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="keyed_email" aria-describedby="emailHelp">
+          <input type="email" id="email">
         </div>
         <div class="mb-3">
-          <label for="keyed_password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="keyed_password">
+          <input type="password" id="password">
         </div>
         
-        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Submit</button>
+        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px" onclick=login()>Submit</button>
       </div>
       </form>
 
@@ -84,7 +81,8 @@
 
 
 
-    
+    <script src="login.js?v=1"></script>
+
     <!-- jQuery CDN - Slim version (=without AJAX) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
