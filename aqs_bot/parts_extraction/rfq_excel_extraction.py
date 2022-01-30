@@ -47,10 +47,15 @@ def processExcel(filepath):
     ws = wb.worksheets[0]
                     
     start_row = 0
+    level_col_index = None
     part_no_col_index = None
     description_col_index = None
     qty_col_index = None
     uom_col_index = None
+
+    level_col_list = v['rfq_to_db_mapping']['level'].split(',')
+    level_col_list = [selected_column.lower().strip() for selected_column in level_col_list] 
+
 
     part_no_col_list = v['rfq_to_db_mapping']['part_no'].split(',')
     part_no_col_list = [selected_column.lower().strip() for selected_column in part_no_col_list] 
@@ -85,6 +90,11 @@ def processExcel(filepath):
             for col_name in ws[start_row]:
                 all_column_headers_in_excel.append(str(col_name.value).lower().strip())
             
+            for level_col in level_col_list:
+                try:
+                    level_col_index = all_column_headers_in_excel.index(level_col)
+                except ValueError as e:
+                    pass               
             for part_no_col in part_no_col_list:
                 try:
                     part_no_col_index = all_column_headers_in_excel.index(part_no_col)
@@ -107,75 +117,67 @@ def processExcel(filepath):
                     pass
             
             current_row_no = 1
-            curr_set = None
-            drawing_list = os.listdir(v['drawing_folder'])
             row_unique_key_no = 0
 
             for row in ws.rows:
-                drawing_found = False
                 if start_row < current_row_no:
+                    level = row[level_col_index].value
                     part_no = row[part_no_col_index].value
                     description = row[description_col_index].value
                     qty = row[qty_col_index].value
-                    uom = row[uom_col_index].value                            
-                    if row[uom_col_index].value == "SET":
-                        row_unique_key_no+=1
-                        curr_set = part_no
-                        cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, uom, description, quantity, total_price, is_drawing, drawing_no, set_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                                row_unique_key_no, rfq_number, part_no, uom, description, qty, None, 0, None, curr_set)
-                        conn.commit()
+                    uom = row[uom_col_index].value
+                    is_bom = 0 
+
+                    row_unique_key_no+=1
+
+                    try:
+                        current_level = float(level)
+                    except:
+                        if str(row[level_col_index].value).startswith('.'):
+                            current_level = float(str(row[level_col_index].value).replace('.', ''))
+                    
+                    next_level = None
+                    try:
+                        next_level = float(ws[current_row_no+1][level_col_index].value)
+                    except:
+                        if str(ws[current_row_no+1][level_col_index].value).startswith('.'):
+                            next_level = float(str(ws[current_row_no+1][level_col_index].value).replace('.', ''))
+
+                    is_bom = 0
+                    if row_unique_key_no == 1:
+                        if next_level != None:
+                            if next_level > current_level:
+                                is_bom = 1
+                        ## INITIAL INSERT
+                        cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                                            row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, None)
                     else:
-                        drawing_found = False
-                        for file in drawing_list:
-                            if part_no in file:
-                                drawing_found = True
-                                #open the file. insert each row into the drawing_parts table     
-                                wb2 = load_workbook(v['drawing_folder'] + '/' + file)
-                                ws2 = wb2.worksheets[0]
-                                row_no = 1
-                                
-                                row_unique_key_no+=1
-                                cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, uom, description, quantity, total_price, is_drawing, drawing_no, set_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                                row_unique_key_no, rfq_number, part_no, uom, description, qty, None, 1, part_no, curr_set)
-                                conn.commit()
+                        ## AFTER THAT, WE KEEP TRACKING BACK AND COMPARE THE CURRENT LEVEL TO ALL THE PREVIOUS LEVEL. THE NEAREST PREVIOUS LEVEL WITH A LEVEL LOWER THAN CURRENT LEVEL IS OUR SET! < ONLY APPLIES TO NON LEVEL 1
+                        if next_level != None:
+                            if next_level > current_level:
+                                is_bom = 1
+                        
+                        found = False
+                        curr_row = row_unique_key_no-1
+                        while curr_row > 0:
+                            row_level = cursor.execute("select lvl, component_no from dbo.quotation_component where row=? and quotation_no=?", curr_row, rfq_number)
+                            result = row_level.fetchone()
+                            if result != None:
+                                if current_level > result.lvl:
+                                    cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                                            row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, result.component_no)
+                                    conn.commit()
+                                    found = True
+                                    break
+                            curr_row-=1
+                        if found == False:
+                            cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                                    row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, None)
+                            conn.commit()
 
-                                drawing_part_no_col_index = None
-                                drawing_description_col_index = None
-                                drawing_qty_col_index = None
-                                drawing_uom_col_index = None
-                                
-                                drawing_columns = []
-                                for row in ws2.rows:
-                                    if row_no == 1:
-                                        for col in row:
-                                            drawing_columns.append(str(col.value).lower().strip())
-                                
-                                drawing_part_no_col_index  = drawing_columns.index(v['drawing_to_db_mapping']['part_no'].lower().strip())
-                                drawing_description_col_index = drawing_columns.index(v['drawing_to_db_mapping']['description'].lower().strip())
-                                drawing_qty_col_index = drawing_columns.index(v['drawing_to_db_mapping']['qty'].lower().strip())
-                                drawing_uom_col_index = drawing_columns.index(v['drawing_to_db_mapping']['uom'].lower().strip())
-
-                                for row in ws2.rows:
-                                    if 1 < row_no:
-                                        row_unique_key_no+=1
-                                        drawing_part_description = row[drawing_description_col_index].value
-                                        drawing_part_no = row[drawing_part_no_col_index].value
-                                        drawing_part_uom = row[drawing_uom_col_index].value
-                                        drawing_part_qty = row[drawing_qty_col_index].value
-                                        cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, uom, description, quantity, total_price, is_drawing, drawing_no, set_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                                row_unique_key_no, rfq_number, drawing_part_no, drawing_part_uom, drawing_part_description, drawing_part_qty, None, 0, part_no, curr_set)
-                                        conn.commit()
-                                    row_no+=1
-                                # shutil.move(v['drawing_folder'] + '/' + file, v['archive_folder'] + '/' + file)
-                        if drawing_found == False:
-                            row_unique_key_no+=1
-                            cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, uom, description, quantity, total_price, is_drawing, drawing_no, set_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                                row_unique_key_no, rfq_number, part_no, uom, description, qty, None, 0, None, curr_set)
-                            conn.commit()            
                 current_row_no+=1     
     else:
         print("None of the columns you specified are found")
-            #
 
 
 conn = pyodbc.connect('Driver={SQL Server};'
@@ -192,7 +194,6 @@ with open('aqs_bot/parts_extraction/config.yaml') as f:
             cursor.execute("insert into dbo.customer(company_email, company_name, company_website) values (?, ?, ?)", v['customer_email'], v['customer'], v['customer_website'])
             conn.commit()
         ## Scan Makino folder for RFQs and process each of them
-
         rfq_list = os.listdir(v['rfq_folder'])
         for each_rfq in rfq_list:
             rfq_location = v['rfq_folder'] + '/' + each_rfq

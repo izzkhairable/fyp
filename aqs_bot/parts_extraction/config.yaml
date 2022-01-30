@@ -1,18 +1,14 @@
 template1:
+  assigned_staff: 1
   customer: Makino2
   customer_email: darkdrium_19942@hotmail.com
   customer_website: www.makino2.com
   rfq_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\rfq
-  drawing_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\drawing
   archive_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\archive
   unprocessed_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\unprocessed
   rfq_to_db_mapping:
+    level: Level
     part_no: Component number
     description: Object description
     qty: Quantity
     uom: Un
-  drawing_to_db_mapping:
-    part_no: PART NO / PART SPEC
-    description: PART DESCRIPTION
-    qty: QTY
-    uom: UNIT
