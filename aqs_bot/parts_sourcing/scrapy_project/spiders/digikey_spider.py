@@ -71,14 +71,29 @@ class DigikeySpider(scrapy.Spider):
 
         raw = response.xpath("//script[@id='__NEXT_DATA__']/text()").get()
         cleaned_all = json.loads(raw)
-        quantity_available = int(
-            string_cleaning(
-                cleaned_all["props"]["pageProps"]["envelope"]["data"]["priceQuantity"][
-                    "qtyAvailable"
-                ].replace(",", "")
-            )
-        )
 
+        quantity_available = None
+        if (
+            "qtyAvailable"
+            in cleaned_all["props"]["pageProps"]["envelope"]["data"]["priceQuantity"]
+        ):
+            quantity_available = int(
+                string_cleaning(
+                    cleaned_all["props"]["pageProps"]["envelope"]["data"][
+                        "priceQuantity"
+                    ]["qtyAvailable"].replace(",", "")
+                )
+            )
+        if quantity_available == None:
+            quantity_available = int(
+                string_cleaning(
+                    cleaned_all["props"]["pageProps"]["envelope"]["data"]["messages"][
+                        0
+                    ]["message"]
+                    .replace("Factory Stock:", "")
+                    .replace(",", "")
+                )
+            )
         if validate_part_brand(
             response.xpath(
                 "//tr[@data-testid='overview-manufacturer']/td[2]/div/text()"
@@ -126,6 +141,7 @@ class DigikeySpider(scrapy.Spider):
                             "td[1]/text()",
                         )
                         .get()
+                        .replace(",", "")
                     )
                 )
             pricing.append(
@@ -134,7 +150,9 @@ class DigikeySpider(scrapy.Spider):
                         string_cleaning(
                             price.xpath(
                                 "td[1]/text()",
-                            ).get()
+                            )
+                            .get()
+                            .replace(",", "")
                         )
                     ),
                     "max_quantity": max_qty - 1,
@@ -145,6 +163,7 @@ class DigikeySpider(scrapy.Spider):
                             )
                             .get()
                             .replace("$", "")
+                            .replace(",", "")
                         )
                     ),
                 }

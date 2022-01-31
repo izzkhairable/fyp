@@ -1,3 +1,6 @@
+from tkinter.tix import Tree
+
+
 def string_cleaning(str):
     return (
         str.replace("/r", "")
@@ -29,18 +32,19 @@ def get_part_requirements(parts, raw_mfg_pn):
 
 
 def validate_part_brand(raw_manufacturer_brand, description):
-    if (
-        description != ""
-        and description.find(string_cleaning(raw_manufacturer_brand.lower())) != -1
-    ):
-        return True
-    elif (
-        string_cleaning(raw_manufacturer_brand.lower()).find("te connectivity") != -1
-        and description.find("faston 250") != -1
-    ):
-        return True
-    else:
-        return False
+    # if (
+    #     description != ""
+    #     and description.find(string_cleaning(raw_manufacturer_brand.lower())) != -1
+    # ):
+    #     return True
+    # elif (
+    #     string_cleaning(raw_manufacturer_brand.lower()).find("te connectivity") != -1
+    #     and description.find("faston 250") != -1
+    # ):
+    #     return True
+    # else:
+    #     return False
+    return True
 
 
 def validate_quantity_available(quantity_available, quantity_needed, uom):

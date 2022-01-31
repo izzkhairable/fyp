@@ -17,8 +17,10 @@ def combine_results(file_title):
             f"{file_title}.json",
         )
     ) as parts_raw:
-        parts = json.load(parts_raw)
-
+        try:
+            parts = json.load(parts_raw)
+        except:
+            print("An exception occurred")
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -26,7 +28,10 @@ def combine_results(file_title):
             f"{file_title}_digikey_scrapped_data.json",
         )
     ) as digikey_raw:
-        digikey = json.load(digikey_raw)
+        try:
+            digikey = json.load(digikey_raw)
+        except:
+            print("An exception occurred")
 
     with open(
         os.path.join(
@@ -47,7 +52,10 @@ def combine_results(file_title):
             f"{file_title}_rsonline_scrapped_data.json",
         )
     ) as rsonline_raw:
-        rsonline = json.load(rsonline_raw)
+        try:
+            rsonline = json.load(rsonline_raw)
+        except:
+            print("An exception occurred")
 
     with open(
         os.path.join(
@@ -56,7 +64,10 @@ def combine_results(file_title):
             f"{file_title}_element14_scrapped_data.json",
         )
     ) as element14_raw:
-        element14 = json.load(element14_raw)
+        try:
+            element14 = json.load(element14_raw)
+        except:
+            print("An exception occurred")
 
     for part in parts["quotation_component"]:
         part["supplier"] = {}
