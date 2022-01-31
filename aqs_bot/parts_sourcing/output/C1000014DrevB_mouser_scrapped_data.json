@@ -1,0 +1,207 @@
+[
+    {
+        "mfg_pn": "6716 BR005",
+        "description": "Hook-up Wire 16AWG 26/30 MPPE 100ft SPOOL BROWN",
+        "url": "https://www.mouser.sg/ProductDetail/Alpha-Wire/6716-BR005?qs=sMP821TZ7ch0dAcg%2FnocnQ%3D%3D",
+        "pricing_table": [
+            {
+                "quantity": "1",
+                "unit_price": "$184.60",
+                "extended price": "$184.60"
+            },
+            {
+                "quantity": "5",
+                "unit_price": "$174.83",
+                "extended price": "$874.15"
+            },
+            {
+                "quantity": "10",
+                "unit_price": "$155.28",
+                "extended price": "$1,552.80"
+            },
+            {
+                "quantity": "50",
+                "unit_price": "$148.77",
+                "extended price": "$7,438.50"
+            }
+        ],
+        "delivery_days": {
+            "min": 2,
+            "max": 4
+        },
+        "quantity_available": 14,
+        "customer_part_requirement": {
+            "NO.": "A1",
+            "PART NUMBER": "1000025",
+            "DESCRIPTION": "WIRE: HOOK-UP WIRE, ALPHA WIRE, 16 AWG, BROWN, MFG PN: 6716 \r\nBR005",
+            "QTY": "670",
+            "UOM": "mm",
+            "MFG PN.": "6716 BR005"
+        }
+    },
+    {
+        "mfg_pn": "2-520407-2",
+        "description": "Terminals INSULATED RECP 22-18 .250 x .032",
+        "url": "https://www.mouser.sg/ProductDetail/TE-Connectivity-AMP/2-520407-2?qs=g4ENe7ujGXWEUB0eN5gT9g%3D%3D",
+        "pricing_table": [
+            {
+                "quantity": "1",
+                "unit_price": "$0.755",
+                "extended price": "$0.76"
+            },
+            {
+                "quantity": "10",
+                "unit_price": "$0.632",
+                "extended price": "$6.32"
+            },
+            {
+                "quantity": "100",
+                "unit_price": "$0.514",
+                "extended price": "$51.40"
+            },
+            {
+                "quantity": "500",
+                "unit_price": "$0.468",
+                "extended price": "$234.00"
+            },
+            {
+                "quantity": "1,000",
+                "unit_price": "$0.385",
+                "extended price": "$385.00"
+            },
+            {
+                "quantity": "2,000",
+                "unit_price": "$0.349",
+                "extended price": "$698.00"
+            },
+            {
+                "quantity": "5,000",
+                "unit_price": "$0.337",
+                "extended price": "$1,685.00"
+            },
+            {
+                "quantity": "10,000",
+                "unit_price": "$0.315",
+                "extended price": "$3,150.00"
+            },
+            {
+                "quantity": "25,000",
+                "unit_price": "$0.303",
+                "extended price": "$7,575.00"
+            }
+        ],
+        "delivery_days": {
+            "min": 2,
+            "max": 4
+        },
+        "quantity_available": 152724,
+        "customer_part_requirement": {
+            "NO.": "A5",
+            "PART NUMBER": "1000242",
+            "DESCRIPTION": "CONTACT: CRIMP RECEPTACLE, INSULATED, FASTON 250, 6.35 X \r\n0.8MM, 18 - 22 AWG, FEMALE, MFG PN: 2-520407-2",
+            "QTY": "2",
+            "UOM": "pc",
+            "MFG PN.": "2-520407-2"
+        }
+    },
+    {
+        "mfg_pn": "Q2-F3X-3/16-01-MS100FT",
+        "description": "Heat Shrink Tubing and Sleeves 3/16 100FT SPOOL BLACK",
+        "url": "https://www.mouser.sg/ProductDetail/Qualtek/Q2-F3X-3-16-01-MS100FT?qs=%2FbfygUuxYr5HenkaQRCdPg%3D%3D",
+        "pricing_table": [
+            {
+                "quantity": "1",
+                "unit_price": "$17.57",
+                "extended price": "$17.57"
+            },
+            {
+                "quantity": "10",
+                "unit_price": "$13.87",
+                "extended price": "$138.70"
+            },
+            {
+                "quantity": "25",
+                "unit_price": "$12.95",
+                "extended price": "$323.75"
+            },
+            {
+                "quantity": "50",
+                "unit_price": "$12.30",
+                "extended price": "$615.00"
+            },
+            {
+                "quantity": "100",
+                "unit_price": "$12.02",
+                "extended price": "$1,202.00"
+            },
+            {
+                "quantity": "250",
+                "unit_price": "$11.74",
+                "extended price": "$2,935.00"
+            },
+            {
+                "quantity": "500",
+                "unit_price": "$11.16",
+                "extended price": "$5,580.00"
+            }
+        ],
+        "delivery_days": {
+            "min": 2,
+            "max": 4
+        },
+        "quantity_available": 103,
+        "customer_part_requirement": {
+            "NO.": "A8",
+            "PART NUMBER": "1000392",
+            "DESCRIPTION": "HEATSHRINK: QUALTEK, ID 3/16IN, BLACK, UL CERTIFIED, MFG PN: \r\nQ2-F3X-3/16-01-MS100FT",
+            "QTY": "1240",
+            "UOM": "mm",
+            "MFG PN.": "Q2-F3X-3/16-01-\r\nMS100FT"
+        }
+    },
+    {
+        "mfg_pn": "39-00-0077",
+        "description": "Headers & Wire Housings MN-FT TERM 16G FMALE Reel of 4000",
+        "url": "https://www.mouser.sg/ProductDetail/Molex/39-00-0077?qs=53in8j6h7oR9eiMifzSBCQ%3D%3D",
+        "pricing_table": [
+            {
+                "quantity": "4,000",
+                "unit_price": "$0.061",
+                "extended price": "$244.00"
+            },
+            {
+                "quantity": "8,000",
+                "unit_price": "$0.056",
+                "extended price": "$448.00"
+            },
+            {
+                "quantity": "12,000",
+                "unit_price": "$0.05",
+                "extended price": "$600.00"
+            },
+            {
+                "quantity": "24,000",
+                "unit_price": "$0.046",
+                "extended price": "$1,104.00"
+            },
+            {
+                "quantity": "48,000",
+                "unit_price": "$0.043",
+                "extended price": "$2,064.00"
+            }
+        ],
+        "delivery_days": {
+            "min": 2,
+            "max": 4
+        },
+        "quantity_available": 220000,
+        "customer_part_requirement": {
+            "NO.": "A7",
+            "PART NUMBER": "1000268",
+            "DESCRIPTION": "CONTACT: SOCKET, MOLEX, TIN, 16 AWG, CRIMP, MFG PN: 39-00-\r\n0077",
+            "QTY": "3",
+            "UOM": "pc",
+            "MFG PN.": "39-00-0077"
+        }
+    }
+]
