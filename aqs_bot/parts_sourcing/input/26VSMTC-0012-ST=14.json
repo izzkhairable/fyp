@@ -103,6 +103,17 @@
             "is_drawing": null ,
             "set_number": "GV26-A012=13",
             "mfg_pn": "EL8076-000"
+        },
+        {
+            "component_no": "For Testing Misumi",
+            "row": "100000001",
+            "UOM": "EA",
+            "description": "TERM END PLATE 2002~1492, 4 CONN",
+            "quantity":1,
+            "total_price": null,
+            "is_drawing": null ,
+            "set_number": "GV26-A012=13",
+            "mfg_pn": "2002-1492"
         }
     ]
 }
