@@ -132,11 +132,11 @@ class RsonlineSpider(scrapy.Spider):
             if idx < len(raw_table) - 1:
                 max_qty = int(
                     string_cleaning(
-                        raw_table[idx + 1]
-                        .xpath(
+                        price.xpath(
                             "td[1]/text()",
                         )
                         .get()
+                        .split(" - ")[1]
                         .replace("+", "")
                     )
                 )
@@ -148,10 +148,11 @@ class RsonlineSpider(scrapy.Spider):
                                 "td[1]/text()",
                             )
                             .get()
+                            .split(" - ")[0]
                             .replace("+", "")
                         )
                     ),
-                    "max_quantity": max_qty - 1,
+                    "max_quantity": max_qty,
                     "unit_price": float(
                         string_cleaning(
                             price.xpath(

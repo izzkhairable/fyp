@@ -4,7 +4,7 @@ import os
 import math
 
 
-def find_total_price_quantity(file_title):
+def find_unit_price_quantity(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -34,21 +34,17 @@ def find_total_price_quantity(file_title):
                             part["quantity"] >= price_row["min_quantity"]
                             and part["quantity"] <= price_row["max_quantity"]
                         ):
-                            supplier["total_price"] = (
-                                price_row["unit_price"] * part["quantity"]
-                            )
+                            supplier["unit_price"] = price_row["unit_price"]
                             supplier["quantity_by_supplier"] = part["quantity"]
 
                 elif part["UOM"] == "EA" and supplier["quantity_available"] > 0:
-                    print("I am EA with lesser than need", part)
                     for price_row in supplier["pricing_table"]:
                         if (
                             part["quantity"] >= price_row["min_quantity"]
                             and part["quantity"] <= price_row["max_quantity"]
                         ):
-                            supplier["total_price"] = (
-                                price_row["unit_price"] * supplier["quantity_available"]
-                            )
+                            supplier["unit_price"] = price_row["unit_price"]
+
                             supplier["quantity_by_supplier"] = supplier[
                                 "quantity_available"
                             ]
@@ -62,45 +58,42 @@ def find_total_price_quantity(file_title):
                     quantity_needed = math.ceil(
                         part["quantity"] / supplier["selling_length"]
                     )
-                    # print("This is part", part)
                     for price_row in supplier["pricing_table"]:
                         if (
                             part["quantity"] >= price_row["min_quantity"]
                             and part["quantity"] <= price_row["max_quantity"]
                         ):
-                            supplier["total_price"] = (
-                                price_row["unit_price"] * quantity_needed
+                            supplier["unit_price"] = (
+                                price_row["unit_price"] / supplier["selling_length"]
                             )
                             supplier["quantity_by_supplier"] = quantity_needed
                 elif part["UOM"] == "M" and supplier["quantity_available"] > 0:
-                    # print("This is part", part)
-                    print("I am M with lesser than need", part)
                     for price_row in supplier["pricing_table"]:
                         if (
                             part["quantity"] >= price_row["min_quantity"]
                             and part["quantity"] <= price_row["max_quantity"]
                         ):
-                            supplier["total_price"] = (
-                                price_row["unit_price"] * supplier["quantity_available"]
+                            supplier["unit_price"] = (
+                                price_row["unit_price"] / supplier["selling_length"]
                             )
                             supplier["quantity_by_supplier"] = supplier[
                                 "quantity_available"
                             ]
 
                 if (
-                    "total_price" not in supplier
+                    "unit_price" not in supplier
                     and "quantity_by_supplier" not in supplier
                 ):
-                    supplier["total_price"] = None
+                    supplier["unit_price"] = None
                     supplier["quantity_by_supplier"] = None
             if cnt_non_mix_match < 1:
                 part["mix_match"] = True
             else:
                 part["mix_match"] = False
 
-    with open(f"../../output/{file_title}_total_price_quantity_result.json", "w") as fp:
+    with open(f"../../output/{file_title}_unit_price_quantity_result.json", "w") as fp:
         json.dump(parts, fp)
 
 
 if __name__ == "__main__":
-    find_total_price_quantity(sys.argv[1])
+    find_unit_price_quantity(sys.argv[1])

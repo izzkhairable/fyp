@@ -23,7 +23,7 @@
             "UOM": "M",
             "description": "CABLE DUCT 40Wx100H 3240294 Phoenix Contact",
             "quantity": 2.1,
-            "total_price": 44.66,
+            "total_price": null,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "3240294",
@@ -82,11 +82,66 @@
             "UOM": "EA",
             "description": "RELAY IDEC RJ2S-CLD-D24",
             "quantity": 2,
-            "total_price": 39.52,
+            "total_price": null,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "RJ2S-CLD-D24",
             "supplier": {
+                "digikey.sg": {
+                    "mfg_pn": "RJ2S-CLD-D24",
+                    "description": "General Purpose Relay DPDT (2 Form C) 24VDC Coil Socketable",
+                    "selling_length": null,
+                    "url": "https://www.digikey.sg/en/products/detail/idec/RJ2S-CLD-D24/8344355",
+                    "pricing_table": [
+                        {
+                            "min_quantity": 1,
+                            "max_quantity": 9,
+                            "unit_price": 21.39
+                        },
+                        {
+                            "min_quantity": 10,
+                            "max_quantity": 24,
+                            "unit_price": 19.014
+                        },
+                        {
+                            "min_quantity": 25,
+                            "max_quantity": 49,
+                            "unit_price": 18.064
+                        },
+                        {
+                            "min_quantity": 50,
+                            "max_quantity": 99,
+                            "unit_price": 17.113
+                        },
+                        {
+                            "min_quantity": 100,
+                            "max_quantity": 249,
+                            "unit_price": 16.1623
+                        },
+                        {
+                            "min_quantity": 250,
+                            "max_quantity": 499,
+                            "unit_price": 14.7362
+                        },
+                        {
+                            "min_quantity": 500,
+                            "max_quantity": 999,
+                            "unit_price": 13.7855
+                        },
+                        {
+                            "min_quantity": 1000,
+                            "max_quantity": 999999,
+                            "unit_price": 13.07244
+                        }
+                    ],
+                    "delivery_days": {
+                        "min": 2,
+                        "max": 4
+                    },
+                    "quantity_available": 270,
+                    "unit_price": 21.39,
+                    "quantity_by_supplier": 2
+                },
                 "sg.element14.com": {
                     "mfg_pn": "RJ2S-CLD-D24",
                     "description": "DPDT, 250VAC, 30VDC, 8A",
@@ -151,11 +206,31 @@
             "UOM": "EA",
             "description": "CONT.3 POLE 24VDC LC1D09BD, Schneider Electric",
             "quantity": 1,
-            "total_price": 176.01,
+            "total_price": null,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "LC1D09BD",
             "supplier": {
+                "sg.rs-online.com": {
+                    "mfg_pn": "LC1D09BD",
+                    "description": "Schneider Electric TeSys D LC1D 3 Pole Contactor - 9 A, 24 V dc Coil, 3NO, 4 kW",
+                    "url": "https://sg.rs-online.com/web/p/contactors/3949807",
+                    "pricing_table": [
+                        {
+                            "min_quantity": 1,
+                            "max_quantity": 1000000,
+                            "unit_price": 176.01
+                        }
+                    ],
+                    "selling_length": null,
+                    "delivery_days": {
+                        "min": 2,
+                        "max": 4
+                    },
+                    "quantity_available": 36,
+                    "unit_price": 176.01,
+                    "quantity_by_supplier": 1
+                },
                 "sg.element14.com": {
                     "mfg_pn": "LC1D09BD",
                     "description": "TeSys D Series, 9 A, DIN Rail, 690 VAC, 3PST-NO, 3 Pole, 7.5 hp",
@@ -175,15 +250,6 @@
                     "quantity_available": 24,
                     "unit_price": 176.01,
                     "quantity_by_supplier": 1
-                },
-                "se.com": {
-                    "mfg_pn": "LC1D09BD",
-                    "description": "TeSys Deca contactor - 3P(3 NO) - AC-3/AC-3e - <= 440 V 9 A - 24 V DC coil",
-                    "url": "https://www.se.com/sg/en/product/LC1D09BD/tesys-deca-contactor-3p3-no-ac3-ac3e-440-v-9-a-24-v-dc-coil/",
-                    "pricing_table": null,
-                    "selling_length": null,
-                    "delivery_days": null,
-                    "quantity_available": null
                 }
             },
             "mix_match": false
@@ -194,7 +260,7 @@
             "UOM": "EA",
             "description": "CCON SCR,24P,F,HARTING 09330242701",
             "quantity": 1,
-            "total_price": 45.63,
+            "total_price": null,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "09330242701",
@@ -243,15 +309,6 @@
                     "quantity_available": 307,
                     "unit_price": 45.63,
                     "quantity_by_supplier": 1
-                },
-                "b2b.harting.com": {
-                    "mfg_pn": "09 33 024 2701",
-                    "description": "Han E 24 Pos. F Insert Screw",
-                    "url": "https://b2b.harting.com/ebusiness/en/Han-E-24-Pos-F-Insert-Screw/09330242701",
-                    "pricing_table": null,
-                    "selling_length": null,
-                    "delivery_days": null,
-                    "quantity_available": null
                 }
             },
             "mix_match": false
@@ -274,7 +331,7 @@
             "UOM": "M",
             "description": "CABLE DUCT 80Wx100H 3240264 Phoenix Contact",
             "quantity": 2,
-            "total_price": 27.12,
+            "total_price": null,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "3240264",
@@ -349,7 +406,38 @@
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "EL8076-000",
-            "supplier": {},
+            "supplier": {
+                "mouser.sg": {
+                    "mfg_pn": "EL8076-000",
+                    "description": "Heat Shrink Tubing and Sleeves HT-CT-50M-3/4-OUT-4 PRICE PER METER",
+                    "selling_length": 1.0,
+                    "url": "https://www.mouser.sg/ProductDetail/TE-Connectivity/EL8076-000?qs=sPbYRqrBIVl5%2FQnAcdDLrA%3D%3D",
+                    "pricing_table": [
+                        {
+                            "min_quantity": 50,
+                            "max_quantity": 99,
+                            "unit_price": 56.15
+                        },
+                        {
+                            "min_quantity": 100,
+                            "max_quantity": 249,
+                            "unit_price": 50.25
+                        },
+                        {
+                            "min_quantity": 250,
+                            "max_quantity": 999999,
+                            "unit_price": 47.29
+                        }
+                    ],
+                    "delivery_days": {
+                        "min": 2,
+                        "max": 4
+                    },
+                    "quantity_available": 100,
+                    "unit_price": null,
+                    "quantity_by_supplier": null
+                }
+            },
             "mix_match": false
         },
         {
@@ -358,7 +446,7 @@
             "UOM": "EA",
             "description": "TERM END PLATE 2002~1492, 4 CONN WAGO",
             "quantity": 1,
-            "total_price": 2.66,
+            "total_price": null,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "2002-1492",
@@ -423,14 +511,45 @@
                     "unit_price": 2.66,
                     "quantity_by_supplier": 1
                 },
-                "sg.misumi-ec.com": {
+                "sg.rs-online.com": {
                     "mfg_pn": "2002-1492",
-                    "description": "End Plate for Terminal Block for Relaying (2002-1492)",
-                    "url": "https://sg.misumi-ec.com/vona2/detail/222005690062/?HissuCode=2002-1492",
-                    "pricing_table": null,
+                    "description": "Wago 2002 End & Intermediate Plate for Terminal Block",
+                    "url": "https://sg.rs-online.com/web/p/din-rail-terminal-accessories/7581701",
+                    "pricing_table": [
+                        {
+                            "min_quantity": 10,
+                            "max_quantity": 1000000,
+                            "unit_price": 1.322
+                        }
+                    ],
                     "selling_length": null,
-                    "delivery_days": null,
-                    "quantity_available": null
+                    "delivery_days": {
+                        "min": 2,
+                        "max": 4
+                    },
+                    "quantity_available": 140,
+                    "unit_price": null,
+                    "quantity_by_supplier": null
+                },
+                "sg.element14.com": {
+                    "mfg_pn": "2002-1492",
+                    "description": "2001-1401 and 2002-1401 Terminal Blocks, End & Intermediate Plate",
+                    "selling_length": null,
+                    "url": "https://sg.element14.com/wago/2002-1492/end-plate-topjob-s-terminal-block/dp/4719256",
+                    "pricing_table": [
+                        {
+                            "min_quantity": 10,
+                            "max_quantity": 999999,
+                            "unit_price": 1.33
+                        }
+                    ],
+                    "delivery_days": {
+                        "min": 2,
+                        "max": 4
+                    },
+                    "quantity_available": 5220,
+                    "unit_price": null,
+                    "quantity_by_supplier": null
                 }
             },
             "mix_match": false

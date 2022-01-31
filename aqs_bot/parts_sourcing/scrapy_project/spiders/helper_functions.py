@@ -12,22 +12,9 @@ def string_cleaning(str):
 
 
 def get_part_requirements(parts, raw_mfg_pn):
-    print("Current raw_mfg_pn", raw_mfg_pn)
     mfg_pn = string_cleaning(raw_mfg_pn.lower())
-    print("Current mfg_pn", mfg_pn)
     for part in parts["quotation_component"]:
-        print("this is part from file", part)
-        print(
-            "for parts and raw_mfg_pn",
-            string_cleaning(part["mfg_pn"].lower()),
-            mfg_pn,
-        )
         if string_cleaning(part["mfg_pn"].lower()) == mfg_pn:
-            print(
-                "If parts and raw_mfg_pn",
-                string_cleaning(part["mfg_pn"].lower()),
-                mfg_pn,
-            )
             return part
 
 
