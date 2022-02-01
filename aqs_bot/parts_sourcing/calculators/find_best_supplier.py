@@ -8,7 +8,7 @@ def find_best_supplier(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../../output",
+            "../output",
             f"{file_title}_unit_price_quantity_result.json",
         )
     ) as parts_raw:
@@ -142,7 +142,7 @@ def find_best_supplier(file_title):
                             quantity_remaining = 0
                 part["total_price"] = total_price
                 part["supplier"] = best_supplier_list
-    with open(f"../../output/{file_title}_best_supplier_result.json", "w") as fp:
+    with open(f"./output/{file_title}_best_supplier_result.json", "w") as fp:
         json.dump(parts, fp)
 
 

@@ -20,7 +20,7 @@ class MouserSpider(scrapy.Spider):
     name = "mouser"
 
     custom_settings = {
-        "FEED_URI": "../../output/%(file_title)s_mouser_scrapped_data.json",
+        "FEED_URI": "./output/%(file_title)s_mouser_scrapped_data.json",
         "FEED_FORMAT": "json",
         "FEED_EXPORTERS": {
             "json": "scrapy.exporters.JsonItemExporter",

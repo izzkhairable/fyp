@@ -13,7 +13,7 @@ class MisumiSpider(scrapy.Spider):
     name = "misumi"
 
     custom_settings = {
-        "FEED_URI": "../../output/%(file_title)s_misumi_scrapped_data.json",
+        "FEED_URI": "./output/%(file_title)s_misumi_scrapped_data.json",
         "FEED_FORMAT": "json",
         "FEED_EXPORTERS": {
             "json": "scrapy.exporters.JsonItemExporter",

@@ -19,7 +19,7 @@ class Element14Spider(scrapy.Spider):
     name = "element14"
 
     custom_settings = {
-        "FEED_URI": "../../output/%(file_title)s_element14_scrapped_data.json",
+        "FEED_URI": "./output/%(file_title)s_element14_scrapped_data.json",
         "FEED_FORMAT": "json",
         "FEED_EXPORTERS": {
             "json": "scrapy.exporters.JsonItemExporter",

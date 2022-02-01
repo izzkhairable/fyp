@@ -8,7 +8,7 @@ def find_unit_price_quantity(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../../output",
+            "../output",
             f"{file_title}_combined_result.json",
         )
     ) as parts_raw:
@@ -91,7 +91,7 @@ def find_unit_price_quantity(file_title):
             else:
                 part["mix_match"] = False
 
-    with open(f"../../output/{file_title}_unit_price_quantity_result.json", "w") as fp:
+    with open(f"./output/{file_title}_unit_price_quantity_result.json", "w") as fp:
         json.dump(parts, fp)
 
 

@@ -13,7 +13,7 @@ class SchneiderSpider(scrapy.Spider):
     name = "schneider"
 
     custom_settings = {
-        "FEED_URI": "../../output/%(file_title)s_schneider_scrapped_data.json",
+        "FEED_URI": "./output/%(file_title)s_schneider_scrapped_data.json",
         "FEED_FORMAT": "json",
         "FEED_EXPORTERS": {
             "json": "scrapy.exporters.JsonItemExporter",

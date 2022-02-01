@@ -12,7 +12,7 @@ def combine_results(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../../output",
+            "../output",
             f"{file_title}_best_supplier_result.json",
         )
     ) as parts_raw:
@@ -21,7 +21,7 @@ def combine_results(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../../output",
+            "../output",
             f"{file_title}_misumi_scrapped_data.json",
         )
     ) as misumi_raw:
@@ -33,7 +33,7 @@ def combine_results(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../../output",
+            "../output",
             f"{file_title}_harting_scrapped_data.json",
         )
     ) as harting_raw:
@@ -45,7 +45,7 @@ def combine_results(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../../output",
+            "../output",
             f"{file_title}_schneider_scrapped_data.json",
         )
     ) as schneider_raw:
@@ -73,7 +73,7 @@ def combine_results(file_title):
                     "b2b.harting.com": scrapped_data,
                 }
 
-    with open(f"../../output/{file_title}_combined_final_result.json", "w") as fp:
+    with open(f"./output/{file_title}_combined_final_result.json", "w") as fp:
         json.dump(parts, fp)
 
 

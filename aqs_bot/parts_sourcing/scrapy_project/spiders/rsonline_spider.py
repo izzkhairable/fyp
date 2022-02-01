@@ -19,7 +19,7 @@ class RsonlineSpider(scrapy.Spider):
     name = "rsonline"
 
     custom_settings = {
-        "FEED_URI": "../../output/%(file_title)s_rsonline_scrapped_data.json",
+        "FEED_URI": "./output/%(file_title)s_rsonline_scrapped_data.json",
         "FEED_FORMAT": "json",
         "FEED_EXPORTERS": {
             "json": "scrapy.exporters.JsonItemExporter",

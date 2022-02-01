@@ -12,7 +12,7 @@ class GoogleSpider(scrapy.Spider):
     name = "google"
 
     custom_settings = {
-        "FEED_URI": "../../output/%(file_title)s_google_result.json",
+        "FEED_URI": "./output/%(file_title)s_google_result.json",
         "FEED_FORMAT": "json",
         "FEED_EXPORTERS": {
             "json": "scrapy.exporters.JsonItemExporter",
