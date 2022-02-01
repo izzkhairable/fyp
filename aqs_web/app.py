@@ -265,25 +265,45 @@ class LoginForm(FlaskForm):
     #submit button with the word "Login"
     submit = SubmitField("Login")
 
-@app.route("/login/<string:email><string:password>", methods = ['POST', 'GET'])
-def login(email, password):
+# class keyed_email:
+#     pass
+
+# class keyed_password:
+#     pass
+
+# def email_class(keyed_password):
+#     return getattr(sys.modules[__name__], keyed_password)
+
+# def password_class(keyed_email):
+#     return getattr(sys.modules[__name__], keyed_email)
+
+
+@app.route("/login", methods = ['GET'])
+def login():
+    keyed_email = eval(request.args.get('email', None))
+    keyed_password = eval(request.args.get('password', None))
+    
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Server=DESKTOP-KNDFRSA;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
-    cursor = conn.cursor()
-    cursor.execute('''SELECT first_name FROM dbo.staff WHERE staff_email = ?''', email)
-    # role = cursor.execute("SELECT role from dbo.staff WHERE first_name =  %s", password) 
+
+    user = Staff.query.filter_by(staff_email=keyed_email).first()
+    if user:
+        hashed_password = hashlib.sha256(keyed_password.encode('utf-8')).hexdigest()
+        if user.password == hashed_password:
+            login_user(user.role)
+            return redirect(url_for('test'))
+    return render_template('login.html')
+    #cursor = conn.cursor()
+    # db_password = cursor.execute('''SELECT password FROM dbo.staff WHERE staff_email = ?''', email)
+    # role = cursor.execute('''SELECT role from dbo.staff WHERE first_name =  %s''', email)
     
-    columns = [column[0] for column in cursor.description]
-    results = {}
-    i = 0
-    for row in cursor:
-        results[i] = dict(zip(columns, row))
-        i += 1
-    cursor.close()
-    return results
+    # hashed_pw = hashlib.sha256(keyed_password.encode().hexdigest())
+    # if hashed_pw == keyed_password:
+    #     login_user(role)
+    # return redirect(url_for('test'))
 
     # form = LoginForm()
     # if form.validate_on_submit():
