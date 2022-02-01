@@ -40,10 +40,21 @@ def find_best_supplier(file_title):
                     part["supplier"] = {
                         best_supplier: {**part["supplier"][best_supplier]}
                     }
-                    part["total_price"] = (
-                        best_unit_price
-                        * part["supplier"][best_supplier]["quantity_by_supplier"]
-                    )
+                    if part["UOM"] == "EA":
+                        part["total_price"] = (
+                            best_unit_price
+                            * part["supplier"][best_supplier]["quantity_by_supplier"]
+                        )
+                    elif part["UOM"] == "M":
+                        part["total_price"] = (
+                            best_unit_price
+                            * part["supplier"][best_supplier]["selling_length"]
+                            * part["supplier"][best_supplier]["quantity_by_supplier"]
+                        )
+                        part["supplier"][best_supplier]["unit_price"] = (
+                            best_unit_price
+                            * part["supplier"][best_supplier]["selling_length"]
+                        )
                 else:
                     part["supplier"] = {}
             else:
@@ -105,20 +116,29 @@ def find_best_supplier(file_title):
                             total_price += (
                                 quantity_available
                                 * part["supplier"][supplier_name]["unit_price"]
+                                * selling_length
                             )
                             quantity_remaining = quantity_remaining - (
                                 quantity_available * selling_length
+                            )
+                            part["supplier"][supplier_name]["unit_price"] = (
+                                part["supplier"][supplier_name]["unit_price"]
+                                * selling_length
                             )
                             # 5                     10
                         elif quantity_remaining < quantity_available * selling_length:
                             total_price += (
                                 math.ceil(quantity_remaining / selling_length)
                                 * part["supplier"][supplier_name]["unit_price"]
+                                * selling_length
                             )
                             part["supplier"][supplier_name][
                                 "quantity_by_supplier"
                             ] = math.ceil(quantity_remaining / selling_length)
-
+                            part["supplier"][supplier_name]["unit_price"] = (
+                                part["supplier"][supplier_name]["unit_price"]
+                                * selling_length
+                            )
                             quantity_remaining = 0
                 part["total_price"] = total_price
                 part["supplier"] = best_supplier_list
