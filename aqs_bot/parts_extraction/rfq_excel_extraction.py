@@ -69,7 +69,7 @@ def processExcel(filepath):
     uom_col_list = v['rfq_to_db_mapping']['uom'].split(',')
     uom_col_list = [selected_column.lower().strip() for selected_column in uom_col_list] 
 
-    all_col_list = part_no_col_list + description_col_list + qty_list + uom_col_list
+    all_col_list = level_col_list + part_no_col_list + description_col_list + qty_list + uom_col_list
 
     start_row_list = []
     current_row_no = 1
@@ -151,6 +151,7 @@ def processExcel(filepath):
                         ## INITIAL INSERT
                         cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                                             row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, None)
+                        conn.commit()
                     else:
                         ## AFTER THAT, WE KEEP TRACKING BACK AND COMPARE THE CURRENT LEVEL TO ALL THE PREVIOUS LEVEL. THE NEAREST PREVIOUS LEVEL WITH A LEVEL LOWER THAN CURRENT LEVEL IS OUR SET! < ONLY APPLIES TO NON LEVEL 1
                         if next_level != None:
