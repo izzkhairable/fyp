@@ -57,26 +57,21 @@
       </div>
 
       <h4 class="mb-3 text-center">TSH Quotation Management<br>Portal Login</h4>
-      
-      <form>
+
+      <form action = "{{url_for('login')}}" method="GET">
       <div class="d-flex flex-column bd-highlight mb-3 align-items-center">
         <div class="mb-3">
-          <input type="email" id="email">
+          <label for="email" class="form-label" value={{request.form.username}} >Email</label>
+          <input type="email" class="form-control" id="email" name='email'>
         </div>
         <div class="mb-3">
-          <input type="password" id="password">
+          <label for="password" class="form-label" value={{request.form.username}}>Password</label>
+          <input type="password" class="form-control" id="password" name='password'>
         </div>
         
-        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px" onclick=login()>Submit</button>
+        <button type="button" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px" onclick=login()>Submit</button>
       </div>
       </form>
-
-      <!-- <div class="d-flex flex-column bd-highlight mb-3 align-items-center">
-        <div class="p-2 bd-highlight"><button type="button" class="mb-3 btn btn-light">Salesperson</button></div>
-        <div class="p-2 bd-highlight"><button type="button" class="mb-3 btn btn-light">Purchaser</button></div>
-        <div class="p-2 bd-highlight"><button type="button" class="btn btn-light">Manager</button></div>
-      </div> -->
-
     </div>
 
 

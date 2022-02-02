@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask import session
+from passlib.hash import sha256_crypt
 import hashlib
 import urllib
 import pyodbc
@@ -265,25 +266,44 @@ class LoginForm(FlaskForm):
     #submit button with the word "Login"
     submit = SubmitField("Login")
 
-@app.route("/login/<string:email><string:password>", methods = ['POST', 'GET'])
-def login(email, password):
+
+@app.route("/login", methods = ['GET'])
+def login():
+    keyed_email = request.args.get('email')
+    keyed_password = request.args.get('password')
+
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
+                      'Server=DESKTOP-KNDFRSA;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
     cursor = conn.cursor()
-    cursor.execute('''SELECT first_name FROM dbo.staff WHERE staff_email = ?''', email)
-    # role = cursor.execute("SELECT role from dbo.staff WHERE first_name =  %s", password) 
+    result = cursor.execute('''SELECT * FROM dbo.staff WHERE staff_email = ?''', keyed_email)
+
+    if result > 0:
+        data = cursor.fetchone()
+        actual_password = data['password']
+        role = data['role']
+
+    if sha256_crypt.verify(keyed_password, actual_password):
+        session['logged_in'] = True
+        session['role'] = role
+
+        return render_template(url_for('test'))
     
-    columns = [column[0] for column in cursor.description]
-    results = {}
-    i = 0
-    for row in cursor:
-        results[i] = dict(zip(columns, row))
-        i += 1
     cursor.close()
-    return results
+        
+
+
+    # user = Staff.query.filter_by(staff_email=keyed_email).first()
+    # if user:
+    #     hashed_password = hashlib.sha256(keyed_password.encode('utf-8')).hexdigest()
+    #     if user.password == hashed_password:
+    #         login_user(user.role)
+    #         return redirect(url_for('test'))
+    # return render_template('login.html')
+
+
 
     # form = LoginForm()
     # if form.validate_on_submit():
@@ -330,8 +350,8 @@ def login(email, password):
 @app.route('/test', methods = ['GET', 'POST'])
 @login_required
 def test():
-    print(current_user.role)
-    return render_template("test.html", data = current_user.role)
+    print(session.role)
+    return render_template("test.html", data = session.role)
 
 #logout, clear session
 @app.route('/logout', methods = ['GET', 'POST'])
