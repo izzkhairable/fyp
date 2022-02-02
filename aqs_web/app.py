@@ -269,40 +269,32 @@ class LoginForm(FlaskForm):
 
 @app.route("/login", methods = ['GET'])
 def login():
+    #get keyed email and password as objects and not strings
     keyed_email = request.args.get('email')
     keyed_password = request.args.get('password')
-
+    
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server=DESKTOP-KNDFRSA;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
 
     cursor = conn.cursor()
-    result = cursor.execute('''SELECT * FROM dbo.staff WHERE staff_email = ?''', keyed_email)
-
-    if result > 0:
-        data = cursor.fetchone()
-        actual_password = data['password']
-        role = data['role']
-
-    if sha256_crypt.verify(keyed_password, actual_password):
-        session['logged_in'] = True
-        session['role'] = role
-
-        return render_template(url_for('test'))
-    
+    keyed_user = Staff.query.filter_by(staff_email = keyed_email).first()
+    if keyed_user:
+              #get hashed password
+        hashed_pw = hashlib.sha256(keyed_password.encode('utf-8')).hexdigest().upper()
+        #check if passwords match
+        if hashed_pw == keyed_user.password:
+            login_user(keyed_user)
+            data = current_user.role
+            return redirect(url_for('test'))
     cursor.close()
-        
+    return render_template('login.html')
 
-
-    # user = Staff.query.filter_by(staff_email=keyed_email).first()
-    # if user:
-    #     hashed_password = hashlib.sha256(keyed_password.encode('utf-8')).hexdigest()
-    #     if user.password == hashed_password:
-    #         login_user(user.role)
-    #         return redirect(url_for('test'))
-    # return render_template('login.html')
-
+#2/2/2022: TO DO: map out
+# 1. which link to redirect to once you login
+# 2. which api route is open to which roles
+# 3. ensure logout function is working -> which link to redirect to after logout?
 
 
     # form = LoginForm()
@@ -345,13 +337,13 @@ def login():
     #     #use a redirecting URL // module import
     #     return render_template("test.html")
 
-#get the current user role logged in and display: TO DO
-#issue now is to make sure the roles are all displayed on the page properly
+#get the current user role logged in and display: FIXED
+#able to get the role according to the login inputs :) YAY!!!
 @app.route('/test', methods = ['GET', 'POST'])
 @login_required
 def test():
-    print(session.role)
-    return render_template("test.html", data = session.role)
+    print(current_user.role)
+    return render_template("test.html", data = current_user.role)
 
 #logout, clear session
 @app.route('/logout', methods = ['GET', 'POST'])
