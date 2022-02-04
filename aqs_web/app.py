@@ -160,7 +160,7 @@ def get_supervisor_salesperson_quotations(supervisor_id):
 @app.route("/quotations")
 def get_quotations():
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
@@ -183,7 +183,7 @@ def get_quotations():
 @app.route("/quotationParts/<string:quotation_no>")
 def get_quotation_parts(quotation_no):
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
@@ -205,7 +205,7 @@ def get_quotation_parts(quotation_no):
 @app.route("/quotationInfo/<string:quotation_no>")
 def get_quotation_info(quotation_no):
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
@@ -229,7 +229,7 @@ def get_quotation_info(quotation_no):
 @app.route("/partinfo/<string:component_no>")
 def get_partinfo(component_no):
     conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-7REM3J1\SQLEXPRESS;'
+                      'Server=DESKTOP-1QKIK6R\SQLEXPRESS;'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
