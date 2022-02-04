@@ -57,7 +57,7 @@ function getSalespersonTotalQuotes() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var getSalespersonTotalQuotes = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
+        var getSalespersonTotalQuotes = "http://localhost:5000/supervisorQuotationNumbers/" + supervisor_id;
         document.getElementById("approved").innerHTML = "";
         document.getElementById("draft").innerHTML = "";
         document.getElementById("sent").innerHTML = "";
@@ -83,7 +83,7 @@ function getSalespersonTotalQuotes() {
                     } else if (result[status].status == 'draft') {
                         document.getElementById("draft").innerHTML = result[status].num;
                         var draft = result[status].num;
-                    } else {
+                    } else if (result[status].status == 'rejected') {
                         document.getElementById("rejected").innerHTML = result[status].num;
                         var rejected = result[status].num
                     }
@@ -134,7 +134,7 @@ function getQuotesThatRequireAttention() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var getQuotesThatRequireAttention = "http://localhost:5000/supervisor_quotations_attention/" + supervisor_id;
+        var getQuotesThatRequireAttention = "http://localhost:5000/supervisorQuotationAttention/" + supervisor_id;
         document.getElementById("quotations-for-review").innerHTML = "";
         try {
             const response =
@@ -150,7 +150,7 @@ function getQuotesThatRequireAttention() {
                 for (var quotation in result) {
                     document.getElementById("quotations-for-review").innerHTML += `
                     <div class="container rounded" style="background-color:rgb(0, 191, 255, 0.2);">
-                        <span class="text-primary"><a href="#"><u>${result[quotation].quotation_no}</u></a></span><br>
+                        <span class="text-primary"><a href="supervisor_quotation_decision#${result[quotation].quotation_no}"><u>${result[quotation].quotation_no}</u></a></span><br>
                         ${result[quotation].company_name}<br>
                         ${result[quotation].rfq_date}<br>
                         Assigned to: ${result[quotation].first_name} ${result[quotation].last_name}
