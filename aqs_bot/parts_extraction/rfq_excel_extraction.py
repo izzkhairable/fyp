@@ -93,26 +93,31 @@ def processExcel(filepath):
             for level_col in level_col_list:
                 try:
                     level_col_index = all_column_headers_in_excel.index(level_col)
+                    break
                 except ValueError as e:
                     pass               
             for part_no_col in part_no_col_list:
                 try:
                     part_no_col_index = all_column_headers_in_excel.index(part_no_col)
+                    break
                 except ValueError as e:
                     pass
             for description_col in description_col_list:
                 try:
                     description_col_index = all_column_headers_in_excel.index(description_col)
+                    break
                 except ValueError as e:
                     pass
             for qty_col in qty_list:
                 try:
                     qty_col_index = all_column_headers_in_excel.index(qty_col)
+                    break
                 except ValueError as e:
                     pass
             for uom_col in uom_col_list:
                 try:
                     uom_col_index = all_column_headers_in_excel.index(uom_col)
+                    break
                 except ValueError as e:
                     pass
             
