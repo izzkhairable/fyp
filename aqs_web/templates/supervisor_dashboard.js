@@ -1,4 +1,93 @@
-document.addEventListener('DOMContentLoaded', () => {
+function start() {
+    getTopSalesperson();
+    getSalespersonTotalQuotes();
+    document.addEventListener('DOMContentLoaded', generateGraphs());
+}
+
+function getSalespersonTotalQuotes() {
+    var supervisor_id = "1";
+    $(async () => {
+        // Change serviceURL to your own
+        var getSalespersonTotalQuotes = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
+        document.getElementById("approved").innerHTML = "";
+        document.getElementById("sent").innerHTML = "";
+        document.getElementById("rejected").innerHTML = "";
+        try {
+            const response =
+                await fetch(
+                    getSalespersonTotalQuotes, {
+                        method: 'GET'
+                    }
+                );
+            const result = await response.json();
+            if (response.status === 200) {
+                // success case
+                console.log(result)
+                for (var status in result) {
+                    if (result[status].status == 'approved') {
+                        document.getElementById("approved").innerHTML = result[status].num;
+                    } else if (result[status].status == 'sent') {
+                        document.getElementById("sent").innerHTML = result[status].num;
+                    } else {
+                        document.getElementById("rejected").innerHTML = result[status].num;
+                    }
+                }
+            } else if (response.status == 404) {
+                // No Rows
+                console.log(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+        } // error
+    });
+}
+
+function getTopSalesperson() {
+    var supervisor_id = "1";
+    $(async () => {
+        // Change serviceURL to your own
+        var getTopSalesperson = "http://localhost:5000/supervisor_top_salesperson/" + supervisor_id;
+        try {
+            const response =
+                await fetch(
+                    getTopSalesperson, {
+                        method: 'GET'
+                    }
+                );
+            const result = await response.json();
+            if (response.status === 200) {
+                // success case
+                for (var salesperson in result) {
+                    document.getElementById("salesperson").innerHTML += `<tr>
+                  <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="30"
+                    height="30" class="rounded-circle"></th>
+                  <td class="fw-bold text-primary"><a href="#"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
+                  <td class="fw-bold text-success text-center"><a href="#"><u>${result[salesperson].win}</u></a></td>
+                  <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].loss}</u></a></td>
+                </tr>`
+                }
+                
+            } else if (response.status == 404) {
+                // No Rows
+                console.log(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+        } // error
+    });
+}
+
+function generateGraphs() {
     // top left chart
     Highcharts.chart('job-profit-chart', 
     {
@@ -12,6 +101,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
 
         // things that might change due to filter
+        yAxis: {
+            title: {
+                text: ''
+            },
+            labels: {
+                format: '${value}',
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: ( // theme
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                    ) || 'gray'
+                }
+            }
+        },
         plotOptions: {
             series: {
                 pointStart: 2010
@@ -44,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         credits: {
             enabled: false
         },
-        
+
         colors: ['red','green'],
 
         legend: {
@@ -161,102 +268,5 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Late',
             data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5]
         }]
-    });
-});
-
-function start() {
-    // getTopSalesperson();
-    // getSalespersonTotalQuotes();
-}
-
-// function getTopSalesperson() {
-//     var supervisor_id = "1";
-//     $(async () => {
-//         // Change serviceURL to your own
-//         var getSalesperson = "http://localhost:5000/top_salesperson/" + supervisor_id;
-//         document.getElementById("salesperson").innerHTML = "";
-//         try {
-//             const response =
-//                 await fetch(
-//                     getSalesperson, {
-//                         method: 'GET'
-//                     }
-//                 );
-//             const result = await response.json();
-//             if (response.status === 200) {
-//                 // success case
-//                 console.log(result)
-//                 for (var salesperson in result) {
-//                     document.getElementById("salesperson").innerHTML += `<tr>
-//                   <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="30"
-//                     height="30" class="rounded-circle"></th>
-//                   <td class="fw-bold text-primary"><a href="#"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
-//                   <td>${result[salesperson].staff_email}</td>
-//                   <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].rejected}</u></a></td>
-//                   <td class="fw-bold text-primary text-center"><a href="#"><u>${result[salesperson].sent}</u></a></td>
-//                   <td class="fw-bold text-success text-center"><a href="#"><u>${result[salesperson].approved}</u></a></td>
-//                 </tr>`
-//                 }
-//             } else if (response.status == 404) {
-//                 // No Rows
-//                 document.getElementById("salesperson").innerHTML += `<tr>
-//                   <th scope="row" class="fw-bold">Nothing to see here...</th>
-//                 </tr>`
-//                 console.log(result.message);
-//             } else {
-//                 // unexpected outcome, throw the error
-//                 document.getElementById("salesperson").innerHTML += `<tr>
-//                   <th scope="row" class="fw-bold">Nothing to see here...</th>
-//                 </tr>`
-//                 throw response.status;
-//             }
-//         } catch (error) {
-//             // Errors when calling the service; such as network error, 
-//             // service offline, etc
-//             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
-//         } // error
-//     });
-// }
-
-function getSalespersonTotalQuotes() {
-    var supervisor_id = "1";
-    $(async () => {
-        // Change serviceURL to your own
-        var getSalespersonTotalQuotes = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
-        document.getElementById("approved").innerHTML = "";
-        document.getElementById("sent").innerHTML = "";
-        document.getElementById("rejected").innerHTML = "";
-        try {
-            const response =
-                await fetch(
-                    getSalespersonTotalQuotes, {
-                        method: 'GET'
-                    }
-                );
-            const result = await response.json();
-            if (response.status === 200) {
-                // success case
-                console.log(result)
-                for (var status in result) {
-                    if (result[status].status == 'approved') {
-                        document.getElementById("approved").innerHTML = result[status].num;
-                    } else if (result[status].status == 'sent') {
-                        document.getElementById("sent").innerHTML = result[status].num;
-                    } else {
-                        document.getElementById("rejected").innerHTML = result[status].num;
-                    }
-                }
-            } else if (response.status == 404) {
-                // No Rows
-                console.log(result.message);
-            } else {
-                // unexpected outcome, throw the error
-                throw response.status;
-            }
-        } catch (error) {
-            // Errors when calling the service; such as network error, 
-            // service offline, etc
-            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
-        } // error
     });
 }

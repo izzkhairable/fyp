@@ -59,6 +59,31 @@ def update_component():
 
 # SUPERVISOR FUNCTIONS
 
+# Display top 4 salesperson under supervisor (judging by win/lose)
+@app.route("/supervisor_top_salesperson/<int:supervisor_id>")
+def get_supervisor_top_salesperson(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server='+forSQLServerName+';'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT top 4 first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win,
+                    SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) as loss
+                    FROM dbo.quotation as QT
+                    JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
+                    WHERE ST.supervisor = ?
+                    GROUP BY first_name, last_name, staff_email
+                    ORDER BY win desc;''', supervisor_id)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
 # Display all the salesperson + their quotation analytics
 @app.route("/salesperson/<int:supervisor_id>")
 def get_salespersons_under_supervisor(supervisor_id):
@@ -115,7 +140,7 @@ def get_supervisor_salesperson_pending_quotations(supervisor_id):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, ST.first_name, ST.last_name
+    cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, QT.assigned_staff, ST.first_name, ST.last_name
                     FROM quotation as QT, staff as ST, customer as C
                     WHERE ST.id = QT.assigned_staff and C.company_email = QT.customer_email and status = 'sent' and ST.supervisor=?''', supervisor_id)
     
@@ -136,7 +161,7 @@ def get_supervisor_salesperson_quotations(supervisor_id):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.rfq_date, status
+    cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.assigned_staff, QT.rfq_date, status
                    FROM staff as ST, quotation as QT, customer as C
                    WHERE ST.id = QT.assigned_staff AND C.company_email = QT.customer_email AND ST.supervisor = ?''', supervisor_id)
     
