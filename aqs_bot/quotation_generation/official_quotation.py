@@ -20,7 +20,7 @@ if res.markup_pct != None:
 
 
 row_level = cursor.execute(
-    "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no from dbo.quotation_component where quotation_no=? and bom_no IS NULL", 'quotation_one')
+    "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no from dbo.quotation_component where quotation_no=? and bom_no IS NULL ORDER BY row ASC", 'quotation_one')
 result = row_level.fetchall()
 
 bom_list = []
@@ -40,16 +40,16 @@ for bom in bom_list:
     try: 
         next_bom_row = bom_list[curr_ind+1]['row']
         row_level = cursor.execute(
-        "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no from dbo.quotation_component where quotation_no=? and (row >= ? and row < ?)", 'quotation_one', curr_bom_row, next_bom_row)
+        "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no, is_bom from dbo.quotation_component where quotation_no=? and (row >= ? and row < ?) ORDER BY row ASC", 'quotation_one', curr_bom_row, next_bom_row)
     except:
          row_level = cursor.execute(
-        "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no from dbo.quotation_component where quotation_no=? and row >= ?", 'quotation_one', curr_bom_row)
+        "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no, is_bom from dbo.quotation_component where quotation_no=? and row >= ? ORDER BY row ASC", 'quotation_one', curr_bom_row)
        
     result = row_level.fetchall()
     for res in result:
         # print(res.row)
         
-        if res.bom_no in bom_items:
+        if res.bom_no in bom_items or (res.bom_no == None and res.is_bom == 0): #if is a loose item  not belonging to any set..
             multiple_supplier = False
 
             bom_items.append(res.component_no)
@@ -64,7 +64,7 @@ for bom in bom_list:
             if multiple_supplier == False:
                 total_price+= ((res.unit_price * markup_pct) + res.unit_price) * res.quantity
 
-    all_bom.append({'part_no': bom['bom'], 'qty': bom['qty'], 'uom': bom['uom'], 'unit_price': total_price, 'total_price': total_price/bom['qty']})
+    all_bom.append({'part_no': bom['bom'], 'qty': bom['qty'], 'uom': bom['uom'], 'unit_price': total_price/bom['qty'], 'total_price': total_price})
     curr_ind+=1
 
 
