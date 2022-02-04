@@ -27,6 +27,7 @@
 </head>
 
 <body onload="start()">
+    {% if data == 'manager' %}
     <div class="wrapper">
         <!-- Sidebar  -->
         <nav id="sidebar" class="bg-light shadow">
@@ -201,6 +202,11 @@
                 });
             </script>
             <script src="supervisor_home.js?v=1"></script>
+
+    {% else %}
+    <p>You are not Authorised to view this page</p>
+
+    {% endif %}
 </body>
 
 </html>

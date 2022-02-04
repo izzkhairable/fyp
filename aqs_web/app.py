@@ -10,10 +10,12 @@ from wtforms import StringField, PasswordField, SubmitField
 import hashlib
 import urllib
 from urllib.parse import unquote
+import html
+
 import pyodbc
 
 app = Flask(__name__)
-params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-1QKIK6R\SQLEXPRESS;DATABASE=myerp101;Trusted_Connection=yes;')
+params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-KNDFRSA;DATABASE=myerp101;Trusted_Connection=yes;')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -27,7 +29,7 @@ CORS(app)
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
-forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
+forSQLServerName = 'DESKTOP-KNDFRSA';
 
 # SALESPERSON FUNCTIONS
 
@@ -297,7 +299,8 @@ class LoginForm(FlaskForm):
 def login():
     #get keyed email and password as objects and not strings
     
-    #issue, you gotta use unquote(email) for the @ to appear but @ breaks your login code because its using the route, meaning it will instantly run unquote
+    #ISSUE: Email decoding issue when parsing into route 
+    # you gotta use unquote(email) for the @ to appear but @ breaks your login code because its using the route, meaning it will instantly run unquote
     keyed_email = request.args.get('email')
     keyed_password = request.args.get('password')
     
@@ -318,9 +321,12 @@ def login():
             data = current_user.role
             #idk how this redirect(url_for) works so you gotta figure it out
             if data == "manager":
-                return redirect(url_for('supervisor_home.html'))
+                return redirect('supervisor_home')
             elif data == "salesperson":
-                return redirect(url_for('salesperson_home.html'))
+                return redirect(url_for('salesperson_home'))
+            else:
+                #should return something else to prevent error. MUST hve else statement
+                return redirect(url_for('salesperson_home'))
     cursor.close()
     return render_template('login.html')
 
@@ -377,6 +383,12 @@ def login():
 def test():
     print(current_user.role)
     return render_template("test.html", data = current_user.role)
+
+#ISSUE: supervisor home not loading, current user.role has error when loaded.
+@app.route('/supervisor_home')
+@login_required
+def supervisor_home():
+    return render_template("supervisor_home.html", data = current_user.role)
 
 #logout, clear session
 @app.route('/logout', methods = ['GET', 'POST'])
