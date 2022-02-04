@@ -6,7 +6,7 @@ function getAllQuotations() {
     $(async () => {
         // Change serviceURL to your own
         var supervisor_id = 1;
-        var serviceURL = "http://localhost:5000/supervisor_all_quotations/" + supervisor_id;
+        var serviceURL = "http://localhost:5000/supervisorAllQuotations/" + supervisor_id;
         document.getElementById("quotations").innerHTML = "";
         try {
             const response =
@@ -23,7 +23,7 @@ function getAllQuotations() {
                     document.getElementById("quotations").innerHTML += `<tr>`;
                     document.getElementById("quotations").innerHTML += `
                   <th scope="row"><input type="checkbox"></th>
-                  <td><a href="edit.html#${result[quotation].quotation_no}" class="link-primary"><u>${result[quotation].quotation_no}</u></a></td>
+                  <td><a href="supervisor_quotation_decision#${result[quotation].quotation_no}" class="link-primary"><u>${result[quotation].quotation_no}</u></a></td>
                   <td>${result[quotation].company_name}</td>
                   <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
                   <td>${result[quotation].rfq_date}</td>
@@ -40,9 +40,18 @@ function getAllQuotations() {
                     else if (result[quotation].status == "sent") {
                         document.getElementById("status_"+result[quotation].quotation_no).className = "text-primary";
                         document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Pending Approval";
-                    } else {
+                    }
+                    else if (result[quotation].status == "draft") {
                         document.getElementById("status_"+result[quotation].quotation_no).className = "text-secondary";
                         document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Draft";
+                    }
+                    else if (result[quotation].status == "win") {
+                        document.getElementById("status_"+result[quotation].quotation_no).className = "text-success fw-bold";
+                        document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Win";
+                    }
+                    else {
+                        document.getElementById("status_"+result[quotation].quotation_no).className = "text-danger fw-bold";
+                        document.getElementById("status_"+result[quotation].quotation_no).innerHTML = "Loss";
                     }
                 }
             } else if (response.status == 404) {
