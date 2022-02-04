@@ -102,7 +102,7 @@
                         <div class="row text-center" id="dashboard-chart">
                         </div>
                     </div>
-                    <!-- TO DO -->
+                    <!-- Overall Salesperson Stats -->
                     <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Need
                         Amendment
                         <hr>
@@ -129,7 +129,7 @@
             </div>
 
             <!-- Salesperson & Reviews -->
-            <div id="salesperson-quotation">
+            <div>
                 <div class="pt-3 d-flex flex-row bd-highlight mb-3">
                     <!-- Salesperson Table -->
                     <div class="shadow align-self-start col-8 bg-white">
@@ -139,14 +139,14 @@
                                 <thead>
                                     <tr class="fw-bold">
                                         <th scope="colgroup" colspan="3">Your Salespersons</th>
-                                        <th scope="col"><button class="btn btn-danger" disabled>Needs Amendment</button>
+                                        <th scope="col"><button class="btn btn-danger btn-sm" disabled>Needs Amendment</button>
                                         </th>
-                                        <th scope="col"><button class="btn btn-primary" disabled>Pending
+                                        <th scope="col"><button class="btn btn-primary btn-sm" disabled>Pending
                                                 Approval</button></th>
-                                        <th scope="col"><button class="btn btn-success" disabled>Sent To
+                                        <th scope="col"><button class="btn btn-success btn-sm" disabled>Sent To
                                                 Customer</button></th>
                                     </tr>
-
+                                    
                                 </thead>
                                 <tbody id="salesperson">
 
@@ -154,7 +154,7 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Quotation (TO DOOOO)-->
+                    <!-- Quotation -->
                     <div class="shadow p-2 ms-3 flex-fill bd-highlight bg-white fw-bold">Requires Your Review
                         <hr>
                         <div class="p-2">
@@ -187,6 +187,7 @@
                 src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js">
             </script>
             <script type="text/javascript">
+                // Side bar
                 $(document).ready(function () {
                     $("#sidebar").mCustomScrollbar({
                         theme: "minimal"
