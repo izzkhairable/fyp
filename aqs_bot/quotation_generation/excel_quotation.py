@@ -61,6 +61,9 @@ for each_row in result:
         crawl_info = json.loads(each_row.crawl_info)
         if len(crawl_info) > 1:
             for ea_supplier in crawl_info:
+                qty_location = get_column_letter(4) + str(row_no)
+                unit_price_location = get_column_letter(6) + str(row_no)
+
                 row_values = [
                 index_no, 
                 each_row.component_no, 
