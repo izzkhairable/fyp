@@ -60,7 +60,7 @@ def update_component():
 # SUPERVISOR FUNCTIONS
 
 # Display top 4 salesperson under supervisor (judging by win/lose)
-@app.route("/supervisor_top_salesperson/<int:supervisor_id>")
+@app.route("/supervisorTopSalesperson/<int:supervisor_id>")
 def get_supervisor_top_salesperson(supervisor_id):
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+forSQLServerName+';'
@@ -111,7 +111,7 @@ def get_salespersons_under_supervisor(supervisor_id):
     return results
 
 # Display total quotation numbers of all salesperson under supervisor
-@app.route("/supervisor_quotations_numbers/<int:supervisor_id>")
+@app.route("/supervisorQuotationNumbers/<int:supervisor_id>")
 def get_quotations_numbers_supervisor(supervisor_id):
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+forSQLServerName+';'
@@ -133,7 +133,7 @@ def get_quotations_numbers_supervisor(supervisor_id):
     return results
 
 # Display quotations from salespersons that needs approval
-@app.route("/supervisor_quotations_attention/<int:supervisor_id>")
+@app.route("/supervisorQuotationAttention/<int:supervisor_id>")
 def get_supervisor_salesperson_pending_quotations(supervisor_id):
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+forSQLServerName+';'
@@ -154,7 +154,7 @@ def get_supervisor_salesperson_pending_quotations(supervisor_id):
     return results
 
 # Displays all quotations from salesperson under supervisor
-@app.route("/supervisor_all_quotations/<int:supervisor_id>")
+@app.route("/supervisorAllQuotations/<int:supervisor_id>")
 def get_supervisor_salesperson_quotations(supervisor_id):
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+forSQLServerName+';'
@@ -229,7 +229,7 @@ def get_quotation_info(quotation_no):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT comment, status, first_name, last_name, company_name
+    cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email
     FROM dbo.quotation as QT
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
@@ -255,6 +255,27 @@ def get_partinfo(component_no):
     cursor = conn.cursor()
     cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE component_no = ?''', component_no)
 
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
+# Get supervisor name
+@app.route("/supervisorInfo/<int:supervisor_id>")
+def get_supervisor_info(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server='+forSQLServerName+';'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT *
+                    FROM staff
+                    WHERE id = ?;''', supervisor_id)
+    
     columns = [column[0] for column in cursor.description]
     results = {}
     i = 0

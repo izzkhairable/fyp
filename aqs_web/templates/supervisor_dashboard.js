@@ -8,7 +8,7 @@ function getSalespersonTotalQuotes() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var getSalespersonTotalQuotes = "http://localhost:5000/supervisor_quotations_numbers/" + supervisor_id;
+        var getSalespersonTotalQuotes = "http://localhost:5000/supervisorQuotationNumbers/" + supervisor_id;
         document.getElementById("approved").innerHTML = "";
         document.getElementById("sent").innerHTML = "";
         document.getElementById("rejected").innerHTML = "";
@@ -51,7 +51,7 @@ function getTopSalesperson() {
     var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
-        var getTopSalesperson = "http://localhost:5000/supervisor_top_salesperson/" + supervisor_id;
+        var getTopSalesperson = "http://localhost:5000/supervisorTopSalesperson/" + supervisor_id;
         try {
             const response =
                 await fetch(
