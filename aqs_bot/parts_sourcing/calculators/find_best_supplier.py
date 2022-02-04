@@ -8,7 +8,7 @@ def find_best_supplier(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../output",
+            "..\output",
             f"{file_title}_unit_price_quantity_result.json",
         )
     ) as parts_raw:

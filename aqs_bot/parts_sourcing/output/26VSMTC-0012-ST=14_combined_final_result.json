@@ -23,7 +23,7 @@
             "UOM": "M",
             "description": "CABLE DUCT 40Wx100H 3240294 Phoenix Contact",
             "quantity": 2.1,
-            "total_price": 89.32,
+            "total_price": 88.66,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "3240294",
@@ -37,32 +37,32 @@
                         {
                             "min_quantity": 1,
                             "max_quantity": 9,
-                            "unit_price": 44.66
+                            "unit_price": 44.33
                         },
                         {
                             "min_quantity": 10,
                             "max_quantity": 49,
-                            "unit_price": 41.738
+                            "unit_price": 41.432
                         },
                         {
                             "min_quantity": 50,
                             "max_quantity": 99,
-                            "unit_price": 38.3994
+                            "unit_price": 38.117
                         },
                         {
                             "min_quantity": 100,
                             "max_quantity": 249,
-                            "unit_price": 35.4775
+                            "unit_price": 35.2166
                         },
                         {
                             "min_quantity": 250,
                             "max_quantity": 499,
-                            "unit_price": 33.80816
+                            "unit_price": 33.55956
                         },
                         {
                             "min_quantity": 500,
                             "max_quantity": 999999,
-                            "unit_price": 31.72146
+                            "unit_price": 31.4882
                         }
                     ],
                     "delivery_days": {
@@ -70,7 +70,7 @@
                         "max": 4
                     },
                     "quantity_available": 470,
-                    "unit_price": 44.66,
+                    "unit_price": 44.33,
                     "quantity_by_supplier": 2
                 }
             },
@@ -172,7 +172,7 @@
                         "min": 2,
                         "max": 4
                     },
-                    "quantity_available": 24,
+                    "quantity_available": 22,
                     "unit_price": 176.01,
                     "quantity_by_supplier": 1
                 },
@@ -358,61 +358,61 @@
             "UOM": "EA",
             "description": "TERM END PLATE 2002~1492, 4 CONN WAGO",
             "quantity": 1,
-            "total_price": 2.66,
+            "total_price": 2.64,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "2002-1492",
             "supplier": {
                 "digikey.sg": {
                     "mfg_pn": "2002-1492",
-                    "description": "Connector End Plate For TOPJOB\u00aeS Series",
+                    "description": "Connector End Plate For TOPJOB\u00c2\u00aeS Series",
                     "selling_length": null,
                     "url": "https://www.digikey.sg/en/products/detail/wago-corporation/2002-1492/13549469",
                     "pricing_table": [
                         {
                             "min_quantity": 1,
                             "max_quantity": 9,
-                            "unit_price": 2.66
+                            "unit_price": 2.64
                         },
                         {
                             "min_quantity": 10,
                             "max_quantity": 24,
-                            "unit_price": 2.322
+                            "unit_price": 2.305
                         },
                         {
                             "min_quantity": 25,
                             "max_quantity": 49,
-                            "unit_price": 2.2236
+                            "unit_price": 2.2072
                         },
                         {
                             "min_quantity": 50,
                             "max_quantity": 99,
-                            "unit_price": 2.174
+                            "unit_price": 2.158
                         },
                         {
                             "min_quantity": 100,
                             "max_quantity": 249,
-                            "unit_price": 2.0751
+                            "unit_price": 2.0598
                         },
                         {
                             "min_quantity": 250,
                             "max_quantity": 499,
-                            "unit_price": 1.87752
+                            "unit_price": 1.86372
                         },
                         {
                             "min_quantity": 500,
                             "max_quantity": 999,
-                            "unit_price": 1.72928
+                            "unit_price": 1.71658
                         },
                         {
                             "min_quantity": 1000,
                             "max_quantity": 2499,
-                            "unit_price": 1.48225
+                            "unit_price": 1.47135
                         },
                         {
                             "min_quantity": 2500,
                             "max_quantity": 999999,
-                            "unit_price": 1.38344
+                            "unit_price": 1.37326
                         }
                     ],
                     "delivery_days": {
@@ -420,7 +420,7 @@
                         "max": 4
                     },
                     "quantity_available": 1228,
-                    "unit_price": 2.66,
+                    "unit_price": 2.64,
                     "quantity_by_supplier": 1
                 },
                 "sg.misumi-ec.com": {

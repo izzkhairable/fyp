@@ -1,4 +1,3 @@
-from curses import raw
 import scrapy
 from scrapy.utils.log import configure_logging
 from scrapy.crawler import CrawlerRunner

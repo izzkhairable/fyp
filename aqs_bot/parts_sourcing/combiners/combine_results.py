@@ -13,7 +13,7 @@ def combine_results(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../input",
+            "..\input",
             f"{file_title}.json",
         )
     ) as parts_raw:
@@ -36,7 +36,7 @@ def combine_results(file_title):
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "../output",
+            "..\output",
             f"{file_title}_mouser_scrapped_data.json",
         )
     ) as mouser_raw:

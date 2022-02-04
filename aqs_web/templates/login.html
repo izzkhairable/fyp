@@ -58,6 +58,7 @@
 
       <h4 class="mb-3 text-center">TSH Quotation Management<br>Portal Login</h4>
 
+      <!-- sends form details to the api route under request.get -->
       <form action = "{{url_for('login')}}" method="GET">
       <div class="d-flex flex-column bd-highlight mb-3 align-items-center">
         <div class="mb-3">
@@ -69,7 +70,7 @@
           <input type="password" class="form-control" id="password" name='password'>
         </div>
         
-        <button type="button" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px" onclick=login()>Submit</button>
+        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Submit</button>
       </div>
       </form>
     </div>
