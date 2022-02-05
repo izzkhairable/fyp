@@ -1,7 +1,7 @@
 function start() {
     if (window.location.href.split("#")[1] == null) {
         alert("You can't access this page without any quotation.")
-        location.href = "supervisor_home.html";
+        location.href = "supervisor_home";
     }
     getQuotationParts();
     getQuotationInfo();
@@ -71,7 +71,7 @@ function getQuotationInfo() {
                 // No Rows
                 console.log(result.message);
                 alert("No such quotation exist.")
-                location.href = "supervisor_home.html";
+                location.href = "supervisor_home";
             } else {
                 // unexpected outcome, throw the error
                 throw response.status;
@@ -81,7 +81,7 @@ function getQuotationInfo() {
             // service offline, etc
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
             alert("The server is current down, please try again later.")
-            location.href = "supervisor_home.html";
+            location.href = "supervisor_home";
         } // error
     });
 }

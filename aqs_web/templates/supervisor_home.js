@@ -25,11 +25,11 @@ function getSalesperson() {
                     document.getElementById("salesperson").innerHTML += `<tr>
                   <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="30"
                     height="30" class="rounded-circle"></th>
-                  <td class="fw-bold text-primary"><a href="#"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
+                  <td class="fw-bold text-primary"><a href="salesperson_home#id=${result[salesperson].id}"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
                   <td>${result[salesperson].staff_email}</td>
-                  <td class="fw-bold text-danger text-center"><a href="#"><u>${result[salesperson].rejected}</u></a></td>
-                  <td class="fw-bold text-primary text-center"><a href="#"><u>${result[salesperson].sent}</u></a></td>
-                  <td class="fw-bold text-success text-center"><a href="#"><u>${result[salesperson].approved}</u></a></td>
+                  <td class="fw-bold text-danger text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Need Amendment"><u>${result[salesperson].rejected}</u></a></td>
+                  <td class="fw-bold text-primary text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Pending Approval"><u>${result[salesperson].sent}</u></a></td>
+                  <td class="fw-bold text-success text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Sent to Customer"><u>${result[salesperson].approved}</u></a></td>
                 </tr>`
                 }
             } else if (response.status == 404) {

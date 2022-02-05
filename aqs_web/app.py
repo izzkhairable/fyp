@@ -71,12 +71,12 @@ def get_supervisor_top_salesperson(supervisor_id):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT top 4 first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win,
+    cursor.execute('''SELECT top 4 id, first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win,
                     SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) as loss
                     FROM dbo.quotation as QT
                     JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
                     WHERE ST.supervisor = ?
-                    GROUP BY first_name, last_name, staff_email
+                    GROUP BY id, first_name, last_name, staff_email
                     ORDER BY win desc;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
@@ -96,14 +96,14 @@ def get_salespersons_under_supervisor(supervisor_id):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
+    cursor.execute('''SELECT id, first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
     SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
     SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) as pending,
     SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) as rejected
     FROM dbo.quotation as QT
     JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
     WHERE ST.supervisor = ?
-    GROUP BY first_name, last_name, staff_email;''', supervisor_id)
+    GROUP BY id, first_name, last_name, staff_email;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -167,7 +167,8 @@ def get_supervisor_salesperson_quotations(supervisor_id):
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.assigned_staff, QT.rfq_date, status
                    FROM staff as ST, quotation as QT, customer as C
-                   WHERE ST.id = QT.assigned_staff AND C.company_email = QT.customer_email AND ST.supervisor = ?''', supervisor_id)
+                   WHERE ST.id = QT.assigned_staff AND C.company_email = QT.customer_email AND ST.supervisor = ?
+                   ORDER BY QT.rfq_date desc''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
