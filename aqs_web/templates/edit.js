@@ -1,9 +1,4 @@
-function saveChanges(){
-  location.href = "salesperson_home.html";
-}
-
 function start(){
-  getQuotationParts();
   getQuotationInfo();
 }
 
@@ -21,10 +16,24 @@ function getQuotationParts(){
         const result = await response.json();
         if (response.status === 200) {
             // success case
-            console.log(result)
+            var markup = document.getElementById("markup").value/100 + 1;
             for (var part in result) {
               if (result[part].is_bom == 1){
-                document.getElementById("parts").innerHTML += `<th style="background-color:#F9E79F;" colspan="9">${result[part].description}</th>`
+                document.getElementById("parts").innerHTML += `<tr style="background-color:#F9E79F;" colspan="9">
+                  <th></th>
+                  <th>${result[part].component_no}</th>
+                  <th>${result[part].uom}</th>
+                  <th>${result[part].description}</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th>${result[part].remark}</th>
+                  <th>
+                    <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
+                  </th>
+                </tr>`
               }
               else if (result[part].is_bom == 0 && result[part].level == "0.1") {
                 document.getElementById("parts").innerHTML += `<tr style="background-color:#5DADE2;">
@@ -33,8 +42,8 @@ function getQuotationParts(){
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
-                <td>$${result[part].total_price/result[part].quantity}</td>
-                <td>$${result[part].total_price}</td>
+                <td>$${result[part].unit_price * markup}</td>
+                <td>$${result[part].total_price * markup}</td>
                 <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
@@ -50,8 +59,8 @@ function getQuotationParts(){
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
-                <td>$${result[part].total_price/result[part].quantity}</td>
-                <td>$${result[part].total_price}</td>
+                <td>$${result[part].unit_price * markup}</td>
+                <td>$${result[part].total_price * markup}</td>
                 <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
@@ -90,9 +99,14 @@ function getQuotationInfo(){
         const result = await response.json();
         if (response.status === 200) {
             // success case
+            getQuotationParts();
+            document.getElementById("quotation-no-for-cost-update").value = quotation_no;
             document.getElementById("quotation-name").innerHTML = quotation_no + " - " + result[0].company_name;
             document.getElementById("comments").innerHTML = result[0].comment;
             document.getElementById("point-of-contact").innerHTML = result[0].first_name + " " + result[0].last_name;
+            document.getElementById("labour").value = result[0].labour_cost;
+            document.getElementById("markup").value = result[0].markup_pct;
+            document.getElementById("labour-remarks").value = result[0].labour_cost_description;
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -106,6 +120,45 @@ function getQuotationInfo(){
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
                 } // error
     });
+}
+
+function updateAdditionalCosts(){
+  var quotation_no = document.getElementById("quotation-no-for-cost-update").value;
+  var labour_cost = document.getElementById("labour").value;
+  var markup = document.getElementById("markup").value;
+  var labour_remarks = document.getElementById("labour-remarks").value;
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/updateLabourCost";
+    const data = {
+      quotation_no: quotation_no,
+      labour_cost: labour_cost,
+      markup: markup,
+      labour_remarks: labour_remarks
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error saving changes.")
+            }
+            else {
+              location.reload();
+                alert("Successfully saved changes!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+
 }
 
 function editParts(component_no, remark){
@@ -215,7 +268,8 @@ function saveEdits(){
     const data = {
         component_no: component_no,
         edited_crawl_info: JSON.stringify(edited_crawl_info),
-        unit_price: unit_price
+        unit_price: unit_price,
+        qty: qty
     };
 
     try {

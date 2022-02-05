@@ -31,7 +31,7 @@ CORS(app)
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
-forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
+forSQLServerName = 'DESKTOP-7REM3J1\SQLEXPRESS';
 
 # SALESPERSON FUNCTIONS
 
@@ -39,7 +39,7 @@ forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
 @app.route("/updateComponent", methods=['POST'])
 def update_component():
     data = request.get_json()
-    print(data)
+    unit_price = round(data["unit_price"], 4)
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+forSQLServerName+';'
                       'Database=myerp101;'
@@ -47,9 +47,34 @@ def update_component():
     cursor = conn.cursor()
     cursor.execute('''
                 UPDATE dbo.quotation_component
-                SET crawl_info = ?, unit_price = ?
+                SET crawl_info = ?, unit_price = ?, quantity = ?
                 WHERE component_no = ?
-                ''', data["edited_crawl_info"], data["unit_price"], data["component_no"])
+                ''', data["edited_crawl_info"], unit_price, data["qty"], data["component_no"])
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
+# Updates labour cost information for a specific quotation
+@app.route("/updateLabourCost", methods=['POST'])
+def update_labour_cost():
+    data = request.get_json()
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server='+forSQLServerName+';'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.quotation
+                SET labour_cost = ?, markup_pct = ?, labour_cost_description = ?
+                WHERE quotation_no = ?
+                ''', data["labour_cost"], data["markup"], data["labour_remarks"], data["quotation_no"])
     try:
         conn.commit()
         cursor.close()
@@ -218,7 +243,7 @@ def get_quotations():
     cursor.execute('''SELECT CT.company_name as company, ST.first_name, ST.last_name, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    INNER JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
+    LEFT JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
     GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status''')
 
     columns = [column[0] for column in cursor.description]
@@ -238,7 +263,7 @@ def get_quotation_parts(quotation_no):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT component_no, uom, description, quantity, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
+    cursor.execute('''SELECT component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
     FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?;''', quotation_no)
 
@@ -260,7 +285,7 @@ def get_quotation_info(quotation_no):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email
+    cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_cost_description
     FROM dbo.quotation as QT
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
