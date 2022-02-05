@@ -47,10 +47,10 @@
                     </div>
                 </li>
                 <li>
-                    <a href="supervisor_view_quotes.html"><i class="bi bi-person"></i> Quotations</a>
+                    <a href="supervisor_view_quotes"><i class="bi bi-person"></i> Quotations</a>
                 </li>
                 <li>
-                    <a href="supervisor_dashboard.html"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
+                    <a href="supervisor_dashboard"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
                 </li>
                 <li>
                     <a href="https://youtu.be/47dtFZ8CFo8?t=51"><i class="bi bi-three-dots"></i> Settings</a>
@@ -64,7 +64,7 @@
             <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
                 <div class="container-fluid">
                     <div style="width: 262px">
-                        <a class="fw-bold text-primary fs-6" href="supervisor_home.html">TSH Quotation Management</a>
+                        <a class="fw-bold text-primary fs-6" href="supervisor_home">TSH Quotation Management</a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
@@ -93,38 +93,50 @@
             </nav>
 
             <!-- Search -->
-            <div class= "shadow bg-white">
+            <div class="shadow bg-white">
                 <nav class="navbar navbar-expand-lg navbar-light">
-                  <div class="container-fluid">
-                      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <form class="d-flex">
-                          <div class="input-group">
-                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search Quote" aria-label="search" aria-describedby="search">
+                    <div class="container-fluid">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <form class="d-flex">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" placeholder="Search Quote Using"
+                                        aria-label="search" aria-describedby="search" id="myInput" onkeyup="filter()">
+                                    <select class="form-control custom-select" id="filter_condition">
+                                        <option value="0" selected>Quotation Number</option>
+                                        <option value="1">Customer</option>
+                                        <option value="2">Assigned To</option>
+                                        <option value="3">Received Date</option>
+                                        <option value="4">Status</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </ul>
+                        <div class="form-check form-switch">
+                            <label class="form-check-label" for="flexSwitchCheckChecked">Only show pending quotations</label>
+                            <input class="form-check-input" type="checkbox" id="pending-only-check" onchange="showPendingOnly()">
                           </div>
-                        </form>                
-                      </ul>   
-                  </div>
+                    </div>
                 </nav>
                 <!-- Quotation Table -->
                 <div>
                     <div class="mx-3">
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th scope="col"><i class="bi bi-app"></i></th>
-                              <th scope="col">Quotation Number</th>
-                              <th scope="col">Customer</th>
-                              <th scope="col">Assigned To</th>
-                              <th scope="col">Received Date</th>
-                              <th scope="col">Status</th>
-                            </tr>
-                          </thead>
-                          <tbody id="quotations">
-                            
-                          </tbody>
+                        <table class="table" id="myTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><i class="bi bi-app"></i></th>
+                                    <th scope="col">Quotation Number</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Assigned To</th>
+                                    <th scope="col">Received Date</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quotations">
+
+                            </tbody>
                         </table>
-                      </div>
+                    </div>
                 </div>
             </div>
         </div>

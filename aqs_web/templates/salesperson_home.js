@@ -19,8 +19,8 @@ function get_quotations() {
           console.log(result);
           for (var quotation in result) {
               var button = `<td><button type="button" class="btn btn-warning btn-sm">Pending</button></td>`;
-              if (result[quotation].status == 'approved'){
-                  button = `<td><button type="button" class="btn btn-success btn-sm">Approved</button></td>`
+              if (result[quotation].status == 'sent'){
+                  button = `<td><button type="button" class="btn btn-success btn-sm">Sent</button></td>`
               }
               if (result[quotation].status == 'requires_editing') {
                 button = `<td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>`

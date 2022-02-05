@@ -100,37 +100,34 @@
                 <button data-bs-toggle="modal" data-bs-target="#edit-quote" type="button" class="btn btn-outline-secondary float-end"><i class="bi bi-pencil"></i></button>
                 <hr>
                 <div class="d-flex my-2">
-                  <div class="col-2">
+                  <div class="col-3">
                     <b>CAD/CAM Diagram:</b>
                   </div>
-                  <div class="col-10">
+                  <div class="col-9">
                     <a href="#" class="link-primary" id="quotation_no"><i class="bi bi-box-arrow-in-up-right"></i></a>
                   </div>
                 </div>
                 <div class="d-flex my-2">
-                  <div class="col-2">
+                  <div class="col-3">
                     <b>Point of contact:</b>
                   </div>
-                  <div class="col-10" id="point-of-contact">
+                  <div class="col-9" id="point-of-contact">
                     
                   </div>
                 </div>
                 <div class="d-flex my-2">
-                  <div class="col-2">
+                  <div class="col-3">
                     <b>Reviewed By: </b>
                   </div>
-                  <div class="col-10">
+                  <div class="col-9">
                     Desmond
                   </div>
                 </div>
                 <div class="d-flex my-2">
-                  <div class="col-2">
+                  <div class="col-3">
                     <b>Comments:</b>
                   </div>
-                  <div class="col-10" id="comments">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed posuere quam nulla, quis faucibus dolor vulputate fringilla. Praesent ut blandit dui, id tempor dolor. Praesent turpis elit, ultricies sed gravida quis, feugiat vestibulum enim. Curabitur lacinia condimentum ipsum, vel facilisis nisl accumsan vitae. Sed vehicula nisl a consectetur tempor. Donec placerat pretium mauris, tristique sagittis nisi maximus sed. Sed scelerisque lacus a felis tincidunt convallis.
-
-                  Nullam ut sagittis magna, et dapibus lorem. Etiam non porta mauris, vestibulum scelerisque leo. Maecenas id arcu lectus. Donec quis lobortis elit. Curabitur nec rhoncus nisl. Quisque sem diam, auctor in sodales at, sollicitudin faucibus.
+                  <div class="col-9" id="comments">
                   </div>
                 </div>
               </div>
@@ -185,6 +182,27 @@
                 <tbody id="parts">
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- Markup -->
+          <div class="shadow bg-white col-6 p-3">
+            <h5>Additional Costs</h5>
+            <div class="mx-3 p-3 d-flex">
+              <div class="col-2">
+                <label for="labour">Labour Cost: </label><br><br>
+                <label for="markup">Markup (in %): </label><br><br>
+                <label for="labour-remarks">Remarks: </label><br><br>
+              </div>
+              <div class="col-10">
+                <input id="labour" name="labour" type="number"></input><br><br>
+                <input id="markup" name="markup" type="number"></input><br><br>
+                <textarea id="labour-remarks" cols="50" rows="5" name="labour-remarks" type="text"></textarea>
+              </div>
+            </div>
+            <div class="p-3">
+              <input type="hidden" id="quotation-no-for-cost-update" name="quotation-no-for-cost-update">
+              <button type="button" onclick="updateAdditionalCosts()" class="btn btn-primary text-light shadow-sm">Update Additional Costs</button>
             </div>
           </div>
 
