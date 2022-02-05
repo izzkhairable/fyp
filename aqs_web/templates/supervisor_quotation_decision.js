@@ -53,6 +53,8 @@ function getQuotationInfo() {
                     quotation_status.innerHTML = "Pending Approval";
                     document.getElementById("approve_button").disabled = false;
                     document.getElementById("reject_button").disabled = false;
+                    document.getElementById("approve_click").setAttribute("onclick", "quotationDecision('approved')");
+                    document.getElementById("reject_click").setAttribute("onclick", "quotationDecision('rejected')");
                 } else if (result[0].status == "rejected") {
                     quotation_status.className = "btn btn-danger float-right";
                     quotation_status.innerHTML = "Rejected";
@@ -68,7 +70,7 @@ function getQuotationInfo() {
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
-                alert("You can't access this page without a valid quotation.")
+                alert("No such quotation exist.")
                 location.href = "supervisor_home.html";
             } else {
                 // unexpected outcome, throw the error
@@ -78,7 +80,7 @@ function getQuotationInfo() {
             // Errors when calling the service; such as network error, 
             // service offline, etc
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
-            alert("You can't access this page without a valid quotation.")
+            alert("The server is current down, please try again later.")
             location.href = "supervisor_home.html";
         } // error
     });
@@ -132,7 +134,9 @@ function getQuotationParts() {
             if (response.status === 200) {
                 // success case
                 console.log(result)
+                var total_quotation_price = 0;
                 for (var part in result) {
+                    total_quotation_price += parseFloat(result[part].total_price);
                     if (result[part].is_bom == 1) {
                         document.getElementById("parts").innerHTML += `<th style="background-color:#F9E79F;" colspan="9">${result[part].description}</th>`
                     } else if (result[part].is_bom == 0 && result[part].level == "0.1") {
@@ -168,6 +172,18 @@ function getQuotationParts() {
                     `
                     }
                 }
+                document.getElementById("parts").innerHTML += `
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td colspan="3">
+                        Total: <b>$${total_quotation_price}</b>
+                    </td>
+                </tr>`
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -190,7 +206,7 @@ function viewParts(component_no, remark) {
     <tr>
         <th scope="col">Unit Price</th>
         <th scope="col">Supplier</th>
-        <th scope="col">Link</th>
+        <th scope="col">Link</th>   
         <th scope="col">Quantity</th>
     </tr>`
     $(async () => {
@@ -242,10 +258,47 @@ function viewParts(component_no, remark) {
     });
 }
 
-function approveQuotation() {
-    
-}
+function quotationDecision(decision) {
+    var rejection_reason = document.getElementById("rejectionReason").value;
+    if (decision == "approved") {
+        rejected_reason = null;
+    } else if (decision == "rejected") {
+        if (rejected_reason == "") {
+            rejection_reason = null;
+        }
+    }
+    var quotation_no = window.location.href.split("#")[1];
+    $(async () => {
+        var serviceURL = "http://localhost:5000/supervisorQuotationDecision";
+        const data = {
+            status: decision,
+            comment: rejection_reason,
+            quotation_no: quotation_no
+        };
 
-function rejectQuotation() {
-    
+        try {
+            const response =
+                await fetch(
+                    serviceURL, {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                );
+            const result = await response.json();
+            if (response.status === 500) {
+                alert("There is an error submitting. Please try again.")
+            } else {
+                location.reload();
+                alert("Quotation successfully " + decision + "!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+        } // error
+    });
 }

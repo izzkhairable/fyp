@@ -178,6 +178,32 @@ def get_supervisor_salesperson_quotations(supervisor_id):
     cursor.close()
     return results
 
+# Supervisor decision on quotation
+@app.route("/supervisorQuotationDecision", methods=['POST'])
+def supervisor_quotation_decision():
+    data = request.get_json()
+    print(data)
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server='+forSQLServerName+';'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE quotation
+                SET status = ?, comment = ?
+                WHERE quotation_no = ?
+                ''', data["status"], data["comment"], data["quotation_no"])
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
 # GENERAL FUNCTIONS
 
 # Display all quotations
