@@ -1,4 +1,5 @@
 from sqlite3 import Cursor
+from jinja2 import *
 from flask import Flask, request, jsonify, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -15,7 +16,8 @@ import html
 import pyodbc
 
 app = Flask(__name__)
-params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-KNDFRSA;DATABASE=myerp101;Trusted_Connection=yes;')
+app.static_folder = 'static'
+params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-1QKIK6R\SQLEXPRESS;DATABASE=myerp101;Trusted_Connection=yes;')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -29,7 +31,7 @@ CORS(app)
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
-forSQLServerName = 'DESKTOP-KNDFRSA';
+forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
 
 # SALESPERSON FUNCTIONS
 
