@@ -53,6 +53,11 @@ with open('aqs_bot/win_loss_tracker/config.yaml') as f:
                 print("Lose: " + quotation.quotation_no)
                 cursor.execute("update dbo.quotation set status=? where quotation_no=?", 'lose', quotation.quotation_no)
                 conn.commit()
-                break            
 conn.close()
 
+'''
+CHANGES TO MAKE
+1. SCAN ALL RFQS. STORE IT INTO ARRAY
+
+THEN READ EACH PO ONLY ONCE, CHECK IF ANY OF THE TEXT IN ARRAY IS IN PO
+'''
