@@ -129,7 +129,6 @@ function getSalespersonTotalQuotes() {
     });
 }
 
-// TO DOOOO
 function getQuotesThatRequireAttention() {
     var supervisor_id = "1";
     $(async () => {

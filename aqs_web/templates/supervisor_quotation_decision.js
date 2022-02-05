@@ -151,7 +151,7 @@ function getQuotationParts() {
                             <td>$${result[part].total_price}</td>
                             <td>${result[part].remark}</td>
                             <td>
-                                <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                                <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
                             </td>
                         </tr>
                         `
@@ -166,7 +166,7 @@ function getQuotationParts() {
                         <td>$${result[part].total_price}</td>
                         <td>${result[part].remark}</td>
                         <td>
-                        <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                        <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
                         </td>
                     </tr>
                     `
@@ -261,9 +261,9 @@ function viewParts(component_no, remark) {
 function quotationDecision(decision) {
     var rejection_reason = document.getElementById("rejectionReason").value;
     if (decision == "approved") {
-        rejected_reason = null;
+        rejection_reason = null;
     } else if (decision == "rejected") {
-        if (rejected_reason == "") {
+        if (rejection_reason == "") {
             rejection_reason = null;
         }
     }
