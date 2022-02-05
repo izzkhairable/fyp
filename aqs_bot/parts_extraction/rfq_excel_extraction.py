@@ -82,7 +82,7 @@ def processExcel(filepath):
     if len(start_row_list) != 0:
         check_if_quotation_exist = cursor.execute("select * from dbo.quotation where quotation_no=?", rfq_number)
         if len(check_if_quotation_exist.fetchall()) == 0:
-            cursor.execute("insert into dbo.quotation(quotation_no, customer_email, assigned_staff, rfq_date, status) values (?, ?, ?, ?, ?)", rfq_number, v['customer_email'], 2, datetime.datetime.now(), 'pending')
+            cursor.execute("insert into dbo.quotation(quotation_no, customer_email, assigned_staff, rfq_date, status) values (?, ?, ?, ?, ?)", rfq_number, v['customer_email'], 2, datetime.datetime.now(), 'draft')
             conn.commit()
             start_row = max(set(start_row_list), key = start_row_list.count)    
             
