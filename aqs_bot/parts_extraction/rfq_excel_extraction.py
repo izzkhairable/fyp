@@ -11,6 +11,9 @@ import tabula
 from pathlib import Path
 import shutil
 import sys
+import configparser
+
+
 def processPDF(filepath):
     print("Processing PDF...")
     tabula.convert_into(filepath, v['rfq_folder'] + '/' + rfq_number + ".csv", output_format="csv", pages='all')
@@ -185,11 +188,13 @@ def processExcel(filepath):
     else:
         print("None of the columns you specified are found")
 
+config = configparser.ConfigParser()
+config.read('sql_connect.cfg')
 
-conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-KMU57HS;'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+conn = pyodbc.connect('Driver=' + config['database']['driver'] + ';'
+                      'Server=' + config['database']['server'] + ';'
+                      'Database=' + config['database']['database'] + ';'
+                      'Trusted_Connection=' + config['database']['trusted_connection'] + ';')
 cursor = conn.cursor()
 
 with open('aqs_bot/parts_extraction/config.yaml') as f:
