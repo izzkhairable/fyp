@@ -84,8 +84,22 @@ def processExcel(filepath):
     
     if len(start_row_list) != 0:
         check_if_quotation_exist = cursor.execute("select * from dbo.quotation where quotation_no=?", rfq_number)
-        if len(check_if_quotation_exist.fetchall()) == 0:
-            cursor.execute("insert into dbo.quotation(quotation_no, customer_email, assigned_staff, rfq_date, status) values (?, ?, ?, ?, ?)", rfq_number, v['customer_email'], 2, datetime.datetime.now(), 'draft')
+        result = check_if_quotation_exist.fetchone()
+        if result == None:
+            check_if_staff_exist = cursor.execute("select id from dbo.staff where staff_email=?", v['assigned_staff'])
+            result = check_if_staff_exist.fetchone()
+            staff_id = None
+            if result != None:
+                staff_id = result.id
+            
+            check_if_customer_exist = cursor.execute("select id from dbo.customer where company_email=?", v['customer_email'])
+            result = check_if_customer_exist.fetchone()
+            customer_id = None
+            if result != None:
+                customer_id = result.id
+
+
+            cursor.execute("insert into dbo.quotation(quotation_no, customer, assigned_staff, rfq_date, status) values (?, ?, ?, ?, ?)", rfq_number, customer_id, staff_id, datetime.datetime.now(), 'draft')
             conn.commit()
             start_row = max(set(start_row_list), key = start_row_list.count)    
             
@@ -200,8 +214,9 @@ cursor = conn.cursor()
 with open('aqs_bot/parts_extraction/config.yaml') as f:
     data = yaml.load(f, Loader=yaml.FullLoader)
     for key, v in data.items():
-        customerlist = cursor.execute("select * from dbo.customer where company_email=?", v['customer_email'])
-        if len(customerlist.fetchall()) == 0:
+        customer = cursor.execute("select * from dbo.customer where company_email=?", v['customer_email'])
+        result = customer.fetchone()
+        if result == None:
             cursor.execute("insert into dbo.customer(company_email, company_name, company_website) values (?, ?, ?)", v['customer_email'], v['customer'], v['customer_website'])
             conn.commit()
         ## Scan Makino folder for RFQs and process each of them
