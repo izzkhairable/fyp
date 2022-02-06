@@ -20,39 +20,38 @@ if res.markup_pct != None:
 
 
 row_level = cursor.execute(
-    "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no from dbo.quotation_component where quotation_no=? and bom_no IS NULL ORDER BY row ASC", 'quotation_one')
+    "select id, row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_id from dbo.quotation_component where quotation_no=? and bom_id IS NULL ORDER BY row ASC", 'quotation_one')
 result = row_level.fetchall()
 
 bom_list = []
 current_bom = None
 for each_row in result:
-    bom_list.append({'bom': each_row.component_no, 'row':each_row.row, 'qty':each_row.quantity, 'uom':each_row.uom})
-
+    bom_list.append({'bom_id': each_row.id, 'bom_no': each_row.component_no,'row':each_row.row, 'qty':each_row.quantity, 'uom':each_row.uom})
 
 all_bom = []
 curr_ind = 0
 for bom in bom_list:
     bom_items = []
-    bom_items.append(bom['bom'])
+    bom_items.append(bom['bom_id'])
     row_level = None
     curr_bom_row = bom['row']
     total_price = 0
     try: 
         next_bom_row = bom_list[curr_ind+1]['row']
         row_level = cursor.execute(
-        "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no, is_bom from dbo.quotation_component where quotation_no=? and (row >= ? and row < ?) ORDER BY row ASC", 'quotation_one', curr_bom_row, next_bom_row)
+        "select id, row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_id, is_bom from dbo.quotation_component where quotation_no=? and (row >= ? and row < ?) ORDER BY row ASC", 'quotation_one', curr_bom_row, next_bom_row)
     except:
          row_level = cursor.execute(
-        "select row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_no, is_bom from dbo.quotation_component where quotation_no=? and row >= ? ORDER BY row ASC", 'quotation_one', curr_bom_row)
+        "select id, row, component_no, description, quantity, uom, unit_price, remark, crawl_info, bom_id, is_bom from dbo.quotation_component where quotation_no=? and row >= ? ORDER BY row ASC", 'quotation_one', curr_bom_row)
        
     result = row_level.fetchall()
     for res in result:
         # print(res.row)
         
-        if res.bom_no in bom_items or (res.bom_no == None and res.is_bom == 0): #if is a loose item  not belonging to any set..
+        if res.bom_id in bom_items or (res.bom_id == None and res.is_bom == 0): #if is a loose item  not belonging to any set.. OR it's a item belonging to a set
             multiple_supplier = False
 
-            bom_items.append(res.component_no)
+            bom_items.append(res.id)
 
             if res.crawl_info != None:
                 crawl_info = json.loads(res.crawl_info)
@@ -64,7 +63,7 @@ for bom in bom_list:
             if multiple_supplier == False:
                 total_price+= ((res.unit_price * markup_pct) + res.unit_price) * res.quantity
 
-    all_bom.append({'part_no': bom['bom'], 'qty': bom['qty'], 'uom': bom['uom'], 'unit_price': total_price/bom['qty'], 'total_price': total_price})
+    all_bom.append({'part_no': bom['bom_no'], 'qty': bom['qty'], 'uom': bom['uom'], 'unit_price': total_price/bom['qty'], 'total_price': total_price})
     curr_ind+=1
 
 

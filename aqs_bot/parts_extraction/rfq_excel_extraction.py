@@ -154,7 +154,7 @@ def processExcel(filepath):
                             if next_level > current_level:
                                 is_bom = 1
                         ## INITIAL INSERT
-                        cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                        cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                                             row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, None)
                         conn.commit()
                     else:
@@ -166,18 +166,18 @@ def processExcel(filepath):
                         found = False
                         curr_row = row_unique_key_no-1
                         while curr_row > 0:
-                            row_level = cursor.execute("select lvl, component_no from dbo.quotation_component where row=? and quotation_no=?", curr_row, rfq_number)
+                            row_level = cursor.execute("select id, lvl, component_no from dbo.quotation_component where row=? and quotation_no=?", curr_row, rfq_number)
                             result = row_level.fetchone()
                             if result != None:
                                 if current_level > result.lvl:
-                                    cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-                                            row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, result.component_no)
+                                    cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                                            row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, result.id)
                                     conn.commit()
                                     found = True
                                     break
                             curr_row-=1
                         if found == False:
-                            cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_no) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                            cursor.execute("insert into dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
                                     row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, None)
                             conn.commit()
 
