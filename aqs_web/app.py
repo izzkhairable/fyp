@@ -264,7 +264,7 @@ def get_supervisor_dashboard_data(supervisor_id):
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
     cursor.execute('''SELECT year(rfq_date) as rfq_year, month(rfq_date) as rfq_month, status, COUNT(DISTINCT(QT.quotation_no)) as no_of_quotations, sum(labour_cost) as revenue,
-                        sum(CASE when DATEDIFF(day, rfq_date, generation_date) < 14 THEN 1 ELSE 0 END) as on_time
+                        sum(CASE when DATEDIFF(day, rfq_date, generation_date) < 12 THEN 1 ELSE 0 END) as on_time
                         FROM dbo.quotation as QT 
                         INNER JOIN dbo.customer as CT ON QT.customer = CT.id
                         INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
