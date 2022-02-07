@@ -29,7 +29,7 @@ function getQuotationParts(){
                   <th></th>
                   <th>${result[part].remark}</th>
                   <th>
-                    <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
                   </th>
@@ -42,11 +42,11 @@ function getQuotationParts(){
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
-                <td>$${result[part].unit_price * markup}</td>
-                <td>$${result[part].total_price * markup}</td>
+                <td>$${(result[part].unit_price * markup).toFixed(2)}</td>
+                <td>$${(result[part].total_price * markup).toFixed(2)}</td>
                 <td>${result[part].remark}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
@@ -59,11 +59,11 @@ function getQuotationParts(){
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
-                <td>$${result[part].unit_price * markup}</td>
-                <td>$${result[part].total_price * markup}</td>
+                <td>$${(result[part].unit_price * markup).toFixed(2)}</td>
+                <td>$${(result[part].total_price * markup).toFixed(2)}</td>
                 <td>${result[part].remark}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
@@ -161,8 +161,8 @@ function updateAdditionalCosts(){
 
 }
 
-function editParts(component_no, remark){
-  document.getElementById("editModalLabel").innerHTML = "Edit Part - " + component_no;
+function editParts(id, remark){
+  document.getElementById("editModalLabel").innerHTML = "Edit Part - " + id;
   document.getElementById("remark").placeholder = remark;
   document.getElementById("edit-suppliers").innerHTML = `                    <tr>
   <th scope="col">Unit Price</th>
@@ -172,7 +172,7 @@ function editParts(component_no, remark){
 </tr>`
   $(async() => {           
     // Change serviceURL to your own
-    var serviceURL = "http://localhost:5000/partinfo/" + component_no;
+    var serviceURL = "http://localhost:5000/partinfo/" + id;
     
     try {
         const response =
@@ -243,7 +243,7 @@ function addSupplier(){
 }
 
 function saveEdits(){
-  var component_no = document.getElementById("editModalLabel").innerHTML.split(" - ")[1];
+  var id = document.getElementById("editModalLabel").innerHTML.split(" - ")[1];
   var edited_crawl_info = [];
   var prices = document.getElementsByName("price");
   var suppliers = document.getElementsByName("supplier");
@@ -266,7 +266,7 @@ function saveEdits(){
   $(async() => {           
     var serviceURL = "http://localhost:5000/updateComponent";
     const data = {
-        component_no: component_no,
+        id: id,
         edited_crawl_info: JSON.stringify(edited_crawl_info),
         unit_price: unit_price,
         qty: qty

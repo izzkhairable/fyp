@@ -136,6 +136,9 @@ function getQuotationParts() {
                 console.log(result)
                 var total_quotation_price = 0;
                 for (var part in result) {
+                    if (result[part].remark == null) {
+                        result[part].remark = "No remarks";
+                    }
                     total_quotation_price += parseFloat(result[part].total_price);
                     if (result[part].is_bom == 1) {
                         document.getElementById("parts").innerHTML += `<th style="background-color:#F9E79F;" colspan="9">${result[part].description}</th>`
