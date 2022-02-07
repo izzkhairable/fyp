@@ -2,11 +2,15 @@ from docx import Document
 from docx.shared import Inches
 import pyodbc
 import json
+import configparser
 
-conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-KMU57HS;'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+config = configparser.ConfigParser()
+config.read('sql_connect.cfg')
+
+conn = pyodbc.connect('Driver=' + config['database']['driver'] + ';'
+                      'Server=' + config['database']['server'] + ';'
+                      'Database=' + config['database']['database'] + ';'
+                      'Trusted_Connection=' + config['database']['trusted_connection'] + ';')
 cursor = conn.cursor()
 
 
