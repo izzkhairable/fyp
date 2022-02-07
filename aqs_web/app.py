@@ -31,7 +31,7 @@ CORS(app)
 #desmond: DESKTOP-7REM3J1\SQLEXPRESS
 #calvin: DESKTOP-1QKIK6R\SQLEXPRESS
 #jingwen: DESKTOP-KNDFRSA
-forSQLServerName = 'DESKTOP-7REM3J1\SQLEXPRESS';
+forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
 
 # SALESPERSON FUNCTIONS
 
@@ -96,13 +96,15 @@ def get_supervisor_top_salesperson(supervisor_id):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT top 4 id, first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win,
-                    SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) as loss
+    cursor.execute('''SELECT top 4 id, first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win_no,
+                    SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) as loss_no,
+                    SUM(CASE status WHEN 'win' THEN labour_cost ELSE 0 END) as earned,
+                    SUM(CASE status WHEN 'loss' THEN labour_cost ELSE 0 END) as lost
                     FROM dbo.quotation as QT
                     JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
                     WHERE ST.supervisor = ?
                     GROUP BY id, first_name, last_name, staff_email
-                    ORDER BY win desc;''', supervisor_id)
+                    ORDER BY win_no desc;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -171,7 +173,7 @@ def get_supervisor_salesperson_pending_quotations(supervisor_id):
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, QT.assigned_staff, ST.first_name, ST.last_name
                     FROM quotation as QT, staff as ST, customer as C
-                    WHERE ST.id = QT.assigned_staff and C.company_email = QT.customer_email and status = 'sent' and ST.supervisor=?''', supervisor_id)
+                    WHERE ST.id = QT.assigned_staff and C.id = QT.customer and status = 'sent' and ST.supervisor=?''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -192,7 +194,7 @@ def get_supervisor_salesperson_quotations(supervisor_id):
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.assigned_staff, QT.rfq_date, status
                    FROM staff as ST, quotation as QT, customer as C
-                   WHERE ST.id = QT.assigned_staff AND C.company_email = QT.customer_email AND ST.supervisor = ?
+                   WHERE ST.id = QT.assigned_staff AND C.id = QT.customer AND ST.supervisor = ?
                    ORDER BY QT.rfq_date desc''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
@@ -229,6 +231,55 @@ def supervisor_quotation_decision():
             "code": 404,
             "message": "Unable to commit to database."
         }), 404
+
+# Display Total Win Loss for supervisor
+@app.route("/supervisorWinLossAmount/<int:supervisor_id>")
+def get_supervisor_win_loss(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server='+forSQLServerName+';'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT SUM(labour_cost) as total, status FROM dbo.quotation as QT 
+                        INNER JOIN dbo.customer as CT ON QT.customer = CT.id
+                        INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
+                        WHERE status = 'win' or status = 'loss' and supervisor = ?
+                        GROUP BY status''', supervisor_id)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
+# Display dashboard data for supervisor
+@app.route("/supervisorDashboard/<int:supervisor_id>")
+def get_supervisor_dashboard_data(supervisor_id):
+    conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server='+forSQLServerName+';'
+                      'Database=myerp101;'
+                      'Trusted_Connection=yes;')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT year(rfq_date) as rfq_year, month(rfq_date) as rfq_month, status, COUNT(DISTINCT(QT.quotation_no)) as no_of_quotations, sum(labour_cost) as revenue,
+                        sum(CASE when DATEDIFF(day, rfq_date, generation_date) < 12 THEN 1 ELSE 0 END) as on_time
+                        FROM dbo.quotation as QT 
+                        INNER JOIN dbo.customer as CT ON QT.customer = CT.id
+                        INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
+                        WHERE status = 'win' or status = 'loss' and supervisor = ?
+                        GROUP BY status, rfq_date
+                        ORDER BY rfq_date desc''', supervisor_id)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
 
 # GENERAL FUNCTIONS
 
