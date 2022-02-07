@@ -3,11 +3,11 @@ function start() {
         alert("You can't access this page without any quotation.")
         location.href = "supervisor_home";
     }
-    getQuotationParts();
     getQuotationInfo();
 }
 
 function getQuotationInfo() {
+    var supervisor_id = 1;
     var quotation_no = window.location.href.split("#")[1];
     $(async () => {
         // Change serviceURL to your own
@@ -22,6 +22,7 @@ function getQuotationInfo() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
+                document.getElementById("markup-value").value = result[0].markup_pct;
                 document.getElementById("quotation-name").innerHTML = quotation_no + " - " + result[0].company_name;
                 document.getElementById("quotation_no").innerHTML = quotation_no + `<i class="bi bi-box-arrow-in-up-right"></i>`;
                 document.getElementById("comments").innerHTML = result[0].comment;
@@ -51,10 +52,9 @@ function getQuotationInfo() {
                 } else if (result[0].status == "sent") {
                     quotation_status.className = "btn btn-warning float-right";
                     quotation_status.innerHTML = "Pending Approval";
-                    document.getElementById("approve_button").disabled = false;
-                    document.getElementById("reject_button").disabled = false;
-                    document.getElementById("approve_click").setAttribute("onclick", "quotationDecision('approved')");
-                    document.getElementById("reject_click").setAttribute("onclick", "quotationDecision('rejected')");
+                    
+                    checkQuotationRights(supervisor_id, quotation_no);
+
                 } else if (result[0].status == "rejected") {
                     quotation_status.className = "btn btn-danger float-right";
                     quotation_status.innerHTML = "Rejected";
@@ -67,6 +67,9 @@ function getQuotationInfo() {
                 }
 
                 document.getElementById("quotation_no_modal").innerHTML = quotation_no + " from " + result[0].first_name + " " + result[0].last_name;
+
+                getQuotationParts();
+
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -133,13 +136,14 @@ function getQuotationParts() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                console.log(result)
+                var markup = document.getElementById("markup-value").value/100 + 1;
                 var total_quotation_price = 0;
                 for (var part in result) {
                     if (result[part].remark == null) {
                         result[part].remark = "No remarks";
                     }
-                    total_quotation_price += parseFloat(result[part].total_price);
+                    total_price = parseFloat((result[part].total_price * markup).toFixed(2));
+                    total_quotation_price += total_price
                     if (result[part].is_bom == 1) {
                         document.getElementById("parts").innerHTML += `<th style="background-color:#F9E79F;" colspan="9">${result[part].description}</th>`
                     } else if (result[part].is_bom == 0 && result[part].level == "0.1") {
@@ -150,11 +154,11 @@ function getQuotationParts() {
                             <td>${result[part].uom}</td>
                             <td>${result[part].description}</td>
                             <td>${result[part].quantity}</td>
-                            <td>$${result[part].total_price/result[part].quantity}</td>
-                            <td>$${result[part].total_price}</td>
+                            <td>$${(result[part].unit_price * markup).toFixed(2)}</td>
+                            <td>${total_price}</td>
                             <td>${result[part].remark}</td>
                             <td>
-                                <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                                <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
                             </td>
                         </tr>
                         `
@@ -165,11 +169,11 @@ function getQuotationParts() {
                         <td>${result[part].uom}</td>
                         <td>${result[part].description}</td>
                         <td>${result[part].quantity}</td>
-                        <td>$${result[part].total_price/result[part].quantity}</td>
-                        <td>$${result[part].total_price}</td>
+                        <td>$${(result[part].unit_price * markup).toFixed(2)}</td>
+                        <td>$${(result[part].total_price * markup).toFixed(2)}</td>
                         <td>${result[part].remark}</td>
                         <td>
-                        <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].component_no}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                        <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
                         </td>
                     </tr>
                     `
@@ -184,7 +188,7 @@ function getQuotationParts() {
                     <td></td>
                     <td></td>
                     <td colspan="3">
-                        Total: <b>$${total_quotation_price}</b>
+                        Total: <b>$${total_quotation_price.toFixed(2)}</b>
                     </td>
                 </tr>`
             } else if (response.status == 404) {
@@ -302,6 +306,46 @@ function quotationDecision(decision) {
             // Errors when calling the service; such as network error, 
             // service offline, etc
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+        } // error
+    });
+}
+
+// check if this quotation is meant for this supervisor's approval
+function checkQuotationRights(supervisor_id, quotation_no) {
+    $(async () => {
+        // Change serviceURL to your own
+        var serviceURL = "http://localhost:5000/supervisorCheck/" + supervisor_id + "/" + quotation_no;
+        try {
+            const response =
+                await fetch(
+                    serviceURL, {
+                        method: 'GET'
+                    }
+                );
+            const result = await response.json();
+            if (response.status === 200) {
+                // success case
+                if (Object.keys(result).length == 1) {
+                    document.getElementById("approve_button").disabled = false;
+                    document.getElementById("reject_button").disabled = false;
+                    document.getElementById("approve_click").setAttribute("onclick", "quotationDecision('approved')");
+                    document.getElementById("reject_click").setAttribute("onclick", "quotationDecision('rejected')");
+                } else {
+                    alert("You don't have the rights to approve/reject this quotation.")
+                }
+            } else if (response.status == 404) {
+                // No Rows
+                console.log(result.message);
+            } else {
+                // unexpected outcome, throw the error
+                throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem with the check, please try again later.<br />' + error);
+            alert("The server is current down, please try again later.")
+            location.href = "supervisor_home";
         } // error
     });
 }

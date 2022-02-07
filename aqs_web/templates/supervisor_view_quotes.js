@@ -133,7 +133,6 @@ function checkForFilters() {
             if (td_con1) {
                 txtValue1 = td_con1.textContent || td_con1.innerText;
                 txtValue2 = td_con2.textContent || td_con2.innerText;
-                console.log(txtValue1 + txtValue2);
                 if (txtValue1 + txtValue2 == filter_name + filter_status) {
                     tr[i].style.display = "";
                 } else {

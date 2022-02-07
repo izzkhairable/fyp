@@ -251,8 +251,6 @@ function generateGraphs(data) {
         late_quotations.push(results[key]['job_wins'] - results[key]['quotations_done_on_time']);
     }
 
-    console.log(data)
-
     // top chart
     Highcharts.chart('job-profit-chart', {
         title: {

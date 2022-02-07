@@ -211,6 +211,26 @@ def supervisor_quotation_decision():
             "message": "Unable to commit to database."
         }), 404
 
+# Check if its the right supervisor before decision on quotation
+@app.route("/supervisorCheck/<int:supervisor_id>/<string:quotation_no>")
+def check_supervisor(supervisor_id, quotation_no):
+    print(supervisor_id)
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT * from quotation, staff 
+                   where staff.id = quotation.assigned_staff
+                   and supervisor = ?
+                   and quotation.quotation_no = ?''', supervisor_id, quotation_no)
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
 # Display Total Win Loss for supervisor
 @app.route("/supervisorWinLossAmount/<int:supervisor_id>")
 def get_supervisor_win_loss(supervisor_id):
@@ -320,7 +340,6 @@ def get_quotation_info(quotation_no):
 # Gets information about a specific component for editing purposes
 @app.route("/partinfo/<string:id>")
 def get_partinfo(id):
-    print(id)
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE id = ?''', id)

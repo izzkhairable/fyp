@@ -20,7 +20,6 @@ function getSalesperson() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                console.log(result)
                 for (var salesperson in result) {
                     document.getElementById("salesperson").innerHTML += `<tr>
                   <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="30"
@@ -68,7 +67,6 @@ function getSalespersonTotalQuotes() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                console.log(result)
                 for (var status in result) {
                     if (result[status].status == 'approved') {
                         document.getElementById("approved").innerHTML = result[status].num;
@@ -108,7 +106,6 @@ function getSalespersonTotalQuotes() {
 
                     var chart = new google.visualization.PieChart(document.getElementById('dashboard-chart'));
                     chart.draw(data, options);
-                    console.log("yoyoyo");
                 }
             } else if (response.status == 404) {
                 // No Rows
@@ -141,7 +138,6 @@ function getQuotesThatRequireAttention() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                console.log(result)
                 for (var quotation in result) {
                     document.getElementById("quotations-for-review").innerHTML += `
                     <div class="container rounded" style="background-color:rgb(0, 191, 255, 0.2);">
