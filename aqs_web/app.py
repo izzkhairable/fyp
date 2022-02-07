@@ -48,8 +48,8 @@ def update_component():
     cursor.execute('''
                 UPDATE dbo.quotation_component
                 SET crawl_info = ?, unit_price = ?, quantity = ?
-                WHERE component_no = ?
-                ''', data["edited_crawl_info"], unit_price, data["qty"], data["component_no"])
+                WHERE id = ?
+                ''', data["edited_crawl_info"], unit_price, data["qty"], data["id"])
     try:
         conn.commit()
         cursor.close()
@@ -241,7 +241,7 @@ def get_quotations():
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
     cursor.execute('''SELECT CT.company_name as company, ST.first_name, ST.last_name, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
-    INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
+    INNER JOIN dbo.customer as CT ON QT.customer = CT.id
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     LEFT JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
     GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status''')
@@ -263,9 +263,10 @@ def get_quotation_parts(quotation_no):
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_no, remark, crawl_info, CONVERT(varchar, lvl) as level
+    cursor.execute('''SELECT id, component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_id, remark, crawl_info, CONVERT(varchar, lvl) as level
     FROM dbo.quotation_component as QCT
-    WHERE QCT.quotation_no = ?;''', quotation_no)
+    WHERE QCT.quotation_no = ?
+    ORDER BY row ASC;''', quotation_no)
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -288,7 +289,7 @@ def get_quotation_info(quotation_no):
     cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_cost_description
     FROM dbo.quotation as QT
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    INNER JOIN dbo.customer as CT ON QT.customer_email = CT.company_email
+    INNER JOIN dbo.customer as CT ON QT.customer = CT.id
     WHERE QT.quotation_no = ?;''', quotation_no)
 
     columns = [column[0] for column in cursor.description]
@@ -302,14 +303,15 @@ def get_quotation_info(quotation_no):
     return results
 
 # Gets information about a specific component for editing purposes
-@app.route("/partinfo/<string:component_no>")
-def get_partinfo(component_no):
+@app.route("/partinfo/<string:id>")
+def get_partinfo(id):
+    print(id)
     conn = pyodbc.connect('Driver={SQL Server};'
                       'Server='+forSQLServerName+';'
                       'Database=myerp101;'
                       'Trusted_Connection=yes;')
     cursor = conn.cursor()
-    cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE component_no = ?''', component_no)
+    cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE id = ?''', id)
 
     columns = [column[0] for column in cursor.description]
     results = {}
