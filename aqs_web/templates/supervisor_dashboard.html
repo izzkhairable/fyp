@@ -35,19 +35,18 @@
         <nav id="sidebar" class="bg-light shadow">
             <ul class="list-unstyled components">
                 <li>
-                    <div class="container mb-5">
-                        <div class="row">
-                            <div class="col-sm">
-                                <img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="100"
-                                    height="100" class="rounded-circle">
-                            </div>
-                            <div class="col-sm align-self-center">
-                                <b>Peter Parker</b>
-                                <br>
-                                Avenger
-                            </div>
+                    <a href="supervisor_home">
+                        <div class="row-sm">
+                            <img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="100"
+                                height="100" class="rounded-circle">
                         </div>
-                    </div>
+                        <br>
+                        <div class="row-sm align-self-center">
+                            <b>Avenger</b>
+                            <br>
+                            <u>Calvin Ang</u>
+                        </div>
+                    </a>
                 </li>
                 <li>
                     <a href="supervisor_view_quotes"><i class="bi bi-person"></i> Quotations</a>
@@ -56,7 +55,13 @@
                     <a href="supervisor_dashboard"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
                 </li>
                 <li>
-                    <a href="https://youtu.be/HCq1OcAEAm0?t=82"><i class="bi bi-three-dots"></i> Settings</a>
+                    <a href="login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </li>
+                <li>
+                    <a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+                <li>
+                    <a href="settings"><i class="bi bi-three-dots"></i> Settings</a>
                 </li>
             </ul>
         </nav>
@@ -67,12 +72,12 @@
             <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
                 <div class="container-fluid">
                     <div style="width: 262px">
-                        <a class="fw-bold text-primary fs-6" href="supervisor_home.html">TSH Quotation Management</a>
+                        <a class="fw-bold text-primary fs-6" href="supervisor_home">TSH Quotation Management</a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item active">
-                                <a id="page-name" class="font-weight-bold">Dashboard</a>
+                                <span id="page-name" class="font-weight-bold">Home</span>
                             </li>
                         </ul>
                     </div>
@@ -89,7 +94,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fas fa-align-justify"></i>
                     </button>
-                    <button type="button" id="notifcationAlert" class="btn">
+                    <button type="button" id="notificationAlert" class="btn">
                         <i class="bi bi-bell"></i>
                     </button>
                 </div>
