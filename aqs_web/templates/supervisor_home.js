@@ -25,7 +25,7 @@ function getSalesperson() {
                     document.getElementById("salesperson").innerHTML += `<tr>
                   <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="30"
                     height="30" class="rounded-circle"></th>
-                  <td class="fw-bold text-primary"><a href="salesperson_home#id=${result[salesperson].id}"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
+                  <td class="fw-bold text-primary"><a href="salesperson_profile#id=${result[salesperson].id}"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
                   <td>${result[salesperson].staff_email}</td>
                   <td class="fw-bold text-danger text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Need Amendment"><u>${result[salesperson].rejected}</u></a></td>
                   <td class="fw-bold text-primary text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Pending Approval"><u>${result[salesperson].sent}</u></a></td>
@@ -58,10 +58,6 @@ function getSalespersonTotalQuotes() {
     $(async () => {
         // Change serviceURL to your own
         var getSalespersonTotalQuotes = "http://localhost:5000/supervisorQuotationNumbers/" + supervisor_id;
-        document.getElementById("approved").innerHTML = "";
-        document.getElementById("draft").innerHTML = "";
-        document.getElementById("sent").innerHTML = "";
-        document.getElementById("rejected").innerHTML = "";
         try {
             const response =
                 await fetch(
