@@ -12,12 +12,21 @@ import hashlib
 import urllib
 from urllib.parse import unquote
 import html
+import configparser
 
 import pyodbc
 
+config = configparser.ConfigParser()
+config.read('../sql_connect.cfg')
+
+driver = config['database']['driver']
+server = config['database']['server']
+database = config['database']['database']
+trusted_connection = config['database']['database']
+
 app = Flask(__name__)
 app.static_folder = 'static'
-params = urllib.parse.quote_plus('DRIVER={SQL Server};SERVER=DESKTOP-1QKIK6R\SQLEXPRESS;DATABASE=myerp101;Trusted_Connection=yes;')
+params = urllib.parse.quote_plus('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -27,12 +36,6 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 db = SQLAlchemy(app)
 CORS(app)
 
-#put ur server name here
-#desmond: DESKTOP-7REM3J1\SQLEXPRESS
-#calvin: DESKTOP-1QKIK6R\SQLEXPRESS
-#jingwen: DESKTOP-KNDFRSA
-forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
-
 # SALESPERSON FUNCTIONS
 
 # Updates database with edited information for each component
@@ -40,10 +43,7 @@ forSQLServerName = 'DESKTOP-1QKIK6R\SQLEXPRESS';
 def update_component():
     data = request.get_json()
     unit_price = round(data["unit_price"], 4)
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''
                 UPDATE dbo.quotation_component
@@ -65,10 +65,7 @@ def update_component():
 @app.route("/updateLabourCost", methods=['POST'])
 def update_labour_cost():
     data = request.get_json()
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''
                 UPDATE dbo.quotation
@@ -91,10 +88,7 @@ def update_labour_cost():
 # Display top 4 salesperson under supervisor (judging by win/lose)
 @app.route("/supervisorTopSalesperson/<int:supervisor_id>")
 def get_supervisor_top_salesperson(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT top 4 id, first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win_no,
                     SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) as loss_no,
@@ -118,10 +112,7 @@ def get_supervisor_top_salesperson(supervisor_id):
 # Display all the salesperson + their quotation analytics
 @app.route("/salesperson/<int:supervisor_id>")
 def get_salespersons_under_supervisor(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT id, first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
     SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
@@ -144,10 +135,7 @@ def get_salespersons_under_supervisor(supervisor_id):
 # Display total quotation numbers of all salesperson under supervisor
 @app.route("/supervisorQuotationNumbers/<int:supervisor_id>")
 def get_quotations_numbers_supervisor(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
     FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
@@ -166,10 +154,7 @@ def get_quotations_numbers_supervisor(supervisor_id):
 # Display quotations from salespersons that needs approval
 @app.route("/supervisorQuotationAttention/<int:supervisor_id>")
 def get_supervisor_salesperson_pending_quotations(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, QT.assigned_staff, ST.first_name, ST.last_name
                     FROM quotation as QT, staff as ST, customer as C
@@ -187,10 +172,7 @@ def get_supervisor_salesperson_pending_quotations(supervisor_id):
 # Displays all quotations from salesperson under supervisor
 @app.route("/supervisorAllQuotations/<int:supervisor_id>")
 def get_supervisor_salesperson_quotations(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.assigned_staff, QT.rfq_date, status
                    FROM staff as ST, quotation as QT, customer as C
@@ -211,10 +193,7 @@ def get_supervisor_salesperson_quotations(supervisor_id):
 def supervisor_quotation_decision():
     data = request.get_json()
     print(data)
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''
                 UPDATE quotation
@@ -235,10 +214,7 @@ def supervisor_quotation_decision():
 # Display Total Win Loss for supervisor
 @app.route("/supervisorWinLossAmount/<int:supervisor_id>")
 def get_supervisor_win_loss(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT SUM(labour_cost) as total, status FROM dbo.quotation as QT 
                         INNER JOIN dbo.customer as CT ON QT.customer = CT.id
@@ -258,10 +234,7 @@ def get_supervisor_win_loss(supervisor_id):
 # Display dashboard data for supervisor
 @app.route("/supervisorDashboard/<int:supervisor_id>")
 def get_supervisor_dashboard_data(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT year(rfq_date) as rfq_year, month(rfq_date) as rfq_month, status, COUNT(DISTINCT(QT.quotation_no)) as no_of_quotations, sum(labour_cost) as revenue,
                         sum(CASE when DATEDIFF(day, rfq_date, generation_date) < 12 THEN 1 ELSE 0 END) as on_time
@@ -286,10 +259,7 @@ def get_supervisor_dashboard_data(supervisor_id):
 # Display all quotations
 @app.route("/quotations")
 def get_quotations():
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT CT.company_name as company, ST.first_name, ST.last_name, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
     INNER JOIN dbo.customer as CT ON QT.customer = CT.id
@@ -309,10 +279,7 @@ def get_quotations():
 # Display all components under a specific quotation
 @app.route("/quotationParts/<string:quotation_no>")
 def get_quotation_parts(quotation_no):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_id, remark, crawl_info, CONVERT(varchar, lvl) as level
     FROM dbo.quotation_component as QCT
@@ -331,10 +298,7 @@ def get_quotation_parts(quotation_no):
 # Displays information for a specific quotation
 @app.route("/quotationInfo/<string:quotation_no>")
 def get_quotation_info(quotation_no):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_cost_description
     FROM dbo.quotation as QT
@@ -355,10 +319,7 @@ def get_quotation_info(quotation_no):
 # Gets information about a specific component for editing purposes
 @app.route("/partinfo/<string:component_no>")
 def get_partinfo(component_no):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE component_no = ?''', component_no)
 
@@ -374,10 +335,7 @@ def get_partinfo(component_no):
 # Get supervisor name
 @app.route("/supervisorInfo/<int:supervisor_id>")
 def get_supervisor_info(supervisor_id):
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT *
                     FROM staff
@@ -430,11 +388,7 @@ def login():
     keyed_email = request.args.get('email')
     keyed_password = request.args.get('password')
     
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
-
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     keyed_user = Staff.query.filter_by(staff_email = keyed_email).first()
     if keyed_user:
@@ -529,10 +483,7 @@ def logout():
 @app.route("/insert", methods=['POST'])
 def insert():
     data = request.get_json()
-    conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server='+forSQLServerName+';'
-                      'Database=myerp101;'
-                      'Trusted_Connection=yes;')
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''
                 INSERT INTO dbo.quotation (quotation_id, customer_email, assigned_staff_email, rfq_date, status)
@@ -554,6 +505,8 @@ def insert():
 def home():
     return "test"
 
+
 # to be at the bottom
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
+    
