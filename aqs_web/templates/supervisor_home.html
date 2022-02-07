@@ -140,12 +140,15 @@
                                 <thead>
                                     <tr class="fw-bold">
                                         <th scope="colgroup" colspan="3">Your Salespersons</th>
-                                        <th scope="col"><button class="btn btn-danger btn-sm" disabled>Needs
+                                        <th scope="col" class="text-center"><button class="btn btn-danger btn-sm"
+                                                disabled>Needs
                                                 Amendment</button>
                                         </th>
-                                        <th scope="col"><button class="btn btn-primary btn-sm" disabled>Pending
+                                        <th scope="col" class="text-center"><button class="btn btn-primary btn-sm"
+                                                disabled>Pending
                                                 Approval</button></th>
-                                        <th scope="col"><button class="btn btn-success btn-sm" disabled>Sent To
+                                        <th scope="col" class="text-center"><button class="btn btn-success btn-sm"
+                                                disabled>Sent To
                                                 Customer</button></th>
                                     </tr>
 
@@ -205,10 +208,10 @@
             </script>
             <script src="supervisor_home.js"></script>
 
-    {% else %}
-    <p>You are not Authorised to view this page</p>
+            {% else %}
+            <p>You are not Authorised to view this page</p>
 
-    {% endif %}
+            {% endif %}
 </body>
 
 </html>

@@ -150,9 +150,9 @@ function dashboardData(filter) {
                     start_month = result[0].rfq_month;
                     year = result[0].rfq_year;
                     end_month = start_month - 6;
-                    for (i=end_month;i<start_month;i++) {
+                    for (i = end_month; i < start_month; i++) {
                         if (i < 0) {
-                            return_dict[(year-1) + "-" + (i+13)] = {
+                            return_dict[(year - 1) + "-" + (i + 13)] = {
                                 profit: 0,
                                 job_wins: 0,
                                 job_loss: 0,
@@ -160,7 +160,7 @@ function dashboardData(filter) {
                                 quotations_done_on_time: 0
                             }
                         } else {
-                            return_dict[(year) + "-" + (i+1)] = {
+                            return_dict[(year) + "-" + (i + 1)] = {
                                 profit: 0,
                                 job_wins: 0,
                                 job_loss: 0,
@@ -173,7 +173,7 @@ function dashboardData(filter) {
                     // do for the past 6 years only
                     start_year = result[0].rfq_year;
                     end_year = start_year - 6;
-                    for (i=start_year;i>end_year;i--) {
+                    for (i = start_year; i > end_year; i--) {
                         return_dict[i] = {
                             profit: 0,
                             job_wins: 0,
@@ -186,7 +186,7 @@ function dashboardData(filter) {
                 for (var row in result) {
                     if (filter == "month") {
                         // for month
-                        filter_month = result[row].rfq_year+"-"+result[row].rfq_month;
+                        filter_month = result[row].rfq_year + "-" + result[row].rfq_month;
                         if (filter_month in return_dict) {
                             if (result[row].status == "win") {
                                 return_dict[filter_month]['profit'] += result[row].revenue;
@@ -230,7 +230,7 @@ function dashboardData(filter) {
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
         } // error
     });
-}   
+}
 
 function generateGraphs(data) {
     results = data;
@@ -243,19 +243,18 @@ function generateGraphs(data) {
     late_quotations = [];
     for (key in results) {
         date_range.push(key);
-        profit.push([key,results[key]['profit']]);
-        no_of_quotations.push(key,results[key]['no_of_quotations']);
+        profit.push([key, results[key]['profit']]);
+        no_of_quotations.push(key, results[key]['no_of_quotations']);
         job_loss.push(results[key]['job_loss']);
         job_wins.push(results[key]['job_wins']);
         quotations_done_on_time.push(results[key]['quotations_done_on_time']);
-        late_quotations.push(results[key]['job_wins']-results[key]['quotations_done_on_time']);
+        late_quotations.push(results[key]['job_wins'] - results[key]['quotations_done_on_time']);
     }
-    
+
     console.log(data)
 
     // top chart
-    Highcharts.chart('job-profit-chart', 
-    {
+    Highcharts.chart('job-profit-chart', {
         title: {
             text: ""
         },
@@ -263,7 +262,7 @@ function generateGraphs(data) {
         credits: {
             enabled: false
         },
-        
+
 
         // things that might change due to filter
         yAxis: {
@@ -288,7 +287,7 @@ function generateGraphs(data) {
         xAxis: {
             type: 'category'
         },
-        
+
         series: [{
             name: 'Profit',
             data: profit,
@@ -305,15 +304,15 @@ function generateGraphs(data) {
     }
 
     // for overall win rate
-    win_sum = job_wins.reduce(function(a, b){
+    win_sum = job_wins.reduce(function (a, b) {
         return a + b;
     }, 0);
-    loss_sum = job_loss.reduce(function(a, b){
+    loss_sum = job_loss.reduce(function (a, b) {
         return a + b;
     }, 0);
-    
 
-    win_rate = win_sum/(loss_sum+win_sum)*100;
+
+    win_rate = win_sum / (loss_sum + win_sum) * 100;
     document.getElementById('win-rate').innerHTML = win_rate.toFixed(2);
 
     // bottom left chart
@@ -331,12 +330,12 @@ function generateGraphs(data) {
             y: 0,
             text: filterText
         },
-        
+
         credits: {
             enabled: false
         },
 
-        colors: ['red','green'],
+        colors: ['red', 'green'],
 
         legend: {
             align: 'right',
@@ -344,8 +343,7 @@ function generateGraphs(data) {
             verticalAlign: 'top',
             y: -10,
             floating: true,
-            backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
             borderColor: '#CCC',
             borderWidth: 1,
             shadow: false
@@ -412,7 +410,7 @@ function generateGraphs(data) {
             enabled: false
         },
 
-        colors: ['green','red'],
+        colors: ['green', 'red'],
 
         // things that might change due to dynamic output
         xAxis: {
@@ -439,7 +437,7 @@ function generateGraphs(data) {
         series: [{
             name: 'On Time',
             data: quotations_done_on_time
-    
+
         }, {
             name: 'Late',
             data: late_quotations

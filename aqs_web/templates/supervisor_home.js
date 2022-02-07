@@ -88,9 +88,9 @@ function getSalespersonTotalQuotes() {
                     packages: ["corechart"]
                 });
                 google.charts.setOnLoadCallback(drawChart);
-                
+
                 function drawChart() {
-                    
+
                     var data = google.visualization.arrayToDataTable([
                         ['Status', 'Number'],
                         ['Pending Review', sent],
@@ -98,14 +98,14 @@ function getSalespersonTotalQuotes() {
                         ['Approved', approved],
                         ['Draft', draft]
                     ]);
-                
+
                     var options = {
                         pieHole: 0.9,
                         height: 200,
                         width: 500,
-                        colors: ['blue','red','green','grey']
+                        colors: ['blue', 'red', 'green', 'grey']
                     };
-                
+
                     var chart = new google.visualization.PieChart(document.getElementById('dashboard-chart'));
                     chart.draw(data, options);
                     console.log("yoyoyo");
