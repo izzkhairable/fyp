@@ -29,6 +29,8 @@ for file_title in file_titles:
     os.system(f"python ./calculators/find_best_supplier.py {file_title}")
     print("_____________Running Combine Final Results Function____________")
     os.system(f"python ./combiners/combine_final_results.py {file_title}")
+    print("_____________Running Quotation Uploader Function____________")
+    os.system(f"python ./uploaders/quotation_uploader.py {file_title}")
     print(f"End of {file_title} part sourcing bot process")
 
 
@@ -58,4 +60,6 @@ for file_title in file_titles:
 # os.system(f"python ./calculators/find_best_supplier.py {file_title}")
 # print("_____________Running Combine Final Results Function____________")
 # os.system(f"python ./combiners/combine_final_results.py {file_title}")
+# print("_____________Running Quotation Uploader Function____________")
+# os.system(f"python ./uploaders/quotation_uploader.py {file_title}")
 # print(f"End of {file_title} part sourcing bot process")

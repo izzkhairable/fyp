@@ -79,6 +79,7 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
         quotation[
             "quotation_component_fixed_supplier"
         ] = draft_quotation_item_list_fixed_supplier
+
     return draft_quotation_list
 
 
@@ -97,4 +98,5 @@ def quotation_downloader():
         draft_quotation_list
     )
     file_titles = save_quotation_and_items_to_json(draft_quotation_list_with_item)
+    conn.close()
     return file_titles
