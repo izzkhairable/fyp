@@ -600,11 +600,11 @@ def supervisor_quotation_view_quotes_page():
         return render_template("unauthorised.html")
 
 #routing to edit page
-@app.route('/edit/<string:quotation_no>')
+@app.route('/edit')
 @login_required
-def edit_page(quotation_no):
+def edit_page():
     if current_user.role == 'supervisor' or 'salesperson':
-        return render_template('edit.html', quotation_no = quotation_no)
+        return render_template('edit.html')
     else:
         return render_template("unauthorised.html")
 

@@ -28,7 +28,7 @@ function get_quotations() {
               document.getElementById("quotations").innerHTML +=
               `<tr>
                 <th scope="row"><input type="checkbox"></th>
-                <td><a href="edit/${result[quotation].quotation_no}" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                <td><a href="edit#${result[quotation].quotation_no}" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
                 <td>${result[quotation].company}</td>
                 <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
                 ${button}
