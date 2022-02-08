@@ -23,7 +23,7 @@
             "UOM": "M",
             "description": "CABLE DUCT 40Wx100H 3240294 Phoenix Contact",
             "quantity": 2.1,
-            "total_price": 88.66,
+            "total_price": 93.16,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "3240294",
@@ -37,40 +37,40 @@
                         {
                             "min_quantity": 1,
                             "max_quantity": 9,
-                            "unit_price": 44.33
+                            "unit_price": 46.58
                         },
                         {
                             "min_quantity": 10,
                             "max_quantity": 49,
-                            "unit_price": 41.432
+                            "unit_price": 43.54
                         },
                         {
                             "min_quantity": 50,
                             "max_quantity": 99,
-                            "unit_price": 38.117
+                            "unit_price": 40.057
                         },
                         {
                             "min_quantity": 100,
                             "max_quantity": 249,
-                            "unit_price": 35.2166
+                            "unit_price": 37.0093
                         },
                         {
                             "min_quantity": 250,
                             "max_quantity": 499,
-                            "unit_price": 33.55956
+                            "unit_price": 35.26764
                         },
                         {
                             "min_quantity": 500,
                             "max_quantity": 999999,
-                            "unit_price": 31.4882
+                            "unit_price": 33.09084
                         }
                     ],
                     "delivery_days": {
                         "min": 2,
                         "max": 4
                     },
-                    "quantity_available": 470,
-                    "unit_price": 44.33,
+                    "quantity_available": 460,
+                    "unit_price": 46.58,
                     "quantity_by_supplier": 2
                 }
             },
@@ -138,7 +138,7 @@
                         "min": 2,
                         "max": 4
                     },
-                    "quantity_available": 31,
+                    "quantity_available": 4,
                     "unit_price": 19.76,
                     "quantity_by_supplier": 2
                 }
@@ -156,23 +156,23 @@
             "set_number": "GV26-A012=13",
             "mfg_pn": "LC1D09BD",
             "supplier": {
-                "sg.element14.com": {
+                "sg.rs-online.com": {
                     "mfg_pn": "LC1D09BD",
-                    "description": "TeSys D Series, 9 A, DIN Rail, 690 VAC, 3PST-NO, 3 Pole, 7.5 hp",
-                    "selling_length": null,
-                    "url": "https://sg.element14.com/schneider-electric/lc1d09bd/contactor-3pst-no-24vdc-din-rail/dp/2579146",
+                    "description": "Schneider Electric TeSys D LC1D 3 Pole Contactor - 9 A, 24 V dc Coil, 3NO, 4 kW",
+                    "url": "https://sg.rs-online.com/web/p/contactors/3949807",
                     "pricing_table": [
                         {
                             "min_quantity": 1,
-                            "max_quantity": 999999,
+                            "max_quantity": 1000000,
                             "unit_price": 176.01
                         }
                     ],
+                    "selling_length": null,
                     "delivery_days": {
                         "min": 2,
                         "max": 4
                     },
-                    "quantity_available": 22,
+                    "quantity_available": 34,
                     "unit_price": 176.01,
                     "quantity_by_supplier": 1
                 },
@@ -240,7 +240,7 @@
                         "min": 2,
                         "max": 4
                     },
-                    "quantity_available": 307,
+                    "quantity_available": 286,
                     "unit_price": 45.29,
                     "quantity_by_supplier": 1
                 },
@@ -274,7 +274,7 @@
             "UOM": "M",
             "description": "CABLE DUCT 80Wx100H 3240264 Phoenix Contact",
             "quantity": 2,
-            "total_price": 53.85,
+            "total_price": 56.59,
             "is_drawing": null,
             "set_number": "GV26-A012=13",
             "mfg_pn": "3240264",
@@ -288,32 +288,32 @@
                         {
                             "min_quantity": 1,
                             "max_quantity": 9,
-                            "unit_price": 53.85
+                            "unit_price": 56.59
                         },
                         {
                             "min_quantity": 10,
                             "max_quantity": 49,
-                            "unit_price": 50.327
+                            "unit_price": 52.896
                         },
                         {
                             "min_quantity": 50,
                             "max_quantity": 99,
-                            "unit_price": 46.3006
+                            "unit_price": 48.6644
                         },
                         {
                             "min_quantity": 100,
                             "max_quantity": 249,
-                            "unit_price": 42.7775
+                            "unit_price": 44.9615
                         },
                         {
                             "min_quantity": 250,
                             "max_quantity": 499,
-                            "unit_price": 40.7648
+                            "unit_price": 42.84564
                         },
                         {
                             "min_quantity": 500,
                             "max_quantity": 999999,
-                            "unit_price": 38.24846
+                            "unit_price": 40.20092
                         }
                     ],
                     "delivery_days": {
@@ -321,7 +321,7 @@
                         "max": 4
                     },
                     "quantity_available": 1,
-                    "unit_price": 53.85,
+                    "unit_price": 56.59,
                     "quantity_by_supplier": 1
                 }
             },
@@ -419,7 +419,7 @@
                         "min": 2,
                         "max": 4
                     },
-                    "quantity_available": 1228,
+                    "quantity_available": 2628,
                     "unit_price": 2.64,
                     "quantity_by_supplier": 1
                 },

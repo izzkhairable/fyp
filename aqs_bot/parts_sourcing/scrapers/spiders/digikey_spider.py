@@ -105,10 +105,11 @@ class DigikeySpider(scrapy.Spider):
             part_requirement["UOM"],
         ):
             pricing = self.get_pricing_table(
-                response.xpath(
-                    '//table[starts-with(@data-testid,"pricing-table")]/tbody/tr'
-                )
+                cleaned_all["props"]["pageProps"]["envelope"]["data"]["priceQuantity"][
+                    "pricing"
+                ][0]["pricingTiers"]
             )
+
             description = string_cleaning(
                 response.xpath(
                     "//tr[@data-testid='detailed-description']/td[2]/div/text()"
@@ -135,35 +136,17 @@ class DigikeySpider(scrapy.Spider):
             max_qty = 1000000
             if idx < len(raw_table) - 1:
                 max_qty = int(
-                    string_cleaning(
-                        raw_table[idx + 1]
-                        .xpath(
-                            "td[1]/text()",
-                        )
-                        .get()
-                        .replace(",", "")
-                    )
+                    string_cleaning(raw_table[idx + 1]["breakQty"].replace(",", ""))
                 )
             pricing.append(
                 {
                     "min_quantity": int(
-                        string_cleaning(
-                            price.xpath(
-                                "td[1]/text()",
-                            )
-                            .get()
-                            .replace(",", "")
-                        )
+                        string_cleaning(price["breakQty"].replace(",", ""))
                     ),
                     "max_quantity": max_qty - 1,
                     "unit_price": float(
                         string_cleaning(
-                            price.xpath(
-                                "td[2]/text()",
-                            )
-                            .get()
-                            .replace("$", "")
-                            .replace(",", "")
+                            price["unitPrice"].replace("$", "").replace(",", "")
                         )
                     ),
                 }

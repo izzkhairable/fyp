@@ -21,7 +21,7 @@ def retrieve_all_draft_quotations():
         one_quotation_list = list(i)
         quotation_dict = {
             "quotation_no": one_quotation_list[0],
-            "customer_email": one_quotation_list[1],
+            "customer": one_quotation_list[1],
             "assigned_staff": one_quotation_list[2],
         }
         draft_quotation_list.append(quotation_dict)
@@ -40,11 +40,11 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
         for i in cursor:
             one_quotation_item_list = list(i)
             quotation_item_dict = {
-                "row": one_quotation_item_list[0],
-                "component_no": one_quotation_item_list[2],
-                "UOM": one_quotation_item_list[4],
-                "description": one_quotation_item_list[5],
-                "quantity": one_quotation_item_list[6],
+                "row": one_quotation_item_list[2],
+                "component_no": one_quotation_item_list[3],
+                "UOM": one_quotation_item_list[5],
+                "description": one_quotation_item_list[6],
+                "quantity": one_quotation_item_list[7],
             }
 
             library_component_dict = (
@@ -69,6 +69,7 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                 draft_quotation_item_list_consignment.append(quotation_item_dict)
             else:
                 quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
+                quotation_item_dict["unit_price"] = library_component_dict["Unit Price"]
                 draft_quotation_item_list_fixed_supplier.append(quotation_item_dict)
 
         quotation["quotation_component"] = draft_quotation_item_list
