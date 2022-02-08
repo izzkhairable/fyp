@@ -617,6 +617,10 @@ def logout():
     #redirect back to login first, to be changed later
     return render_template("login.html")
 
+#route wrapper header test
+@app.route('/wrapper-test')
+def route_test():
+    return render_template("wrapper-test.html")
 
 #template for inserting data
 @app.route("/insert", methods=['POST'])
