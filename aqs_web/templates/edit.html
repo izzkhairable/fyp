@@ -201,7 +201,7 @@
               </div>
             </div>
             <div class="p-3">
-              <input type="hidden" id="quotation-no-for-cost-update" name="quotation-no-for-cost-update">
+              <input type="hidden" id="quotation-no-for-cost-update" name="quotation-no-for-cost-update"></input>
               <button type="button" onclick="updateAdditionalCosts()" class="btn btn-primary text-light shadow-sm">Update Additional Costs</button>
             </div>
           </div>
@@ -215,6 +215,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
+                  <input type="hidden" id="edit-parts-id"></input>
                   <label for="remark"><b>Remark</b></label><br>
                   <textarea id="remark" name="remark" rows="5" cols="100"></textarea><br><br>
                   <table class="table table-borderless" id="edit-suppliers">
@@ -230,7 +231,7 @@
           </div>
 
           <!-- Edit BOM Modal -->
-          <div class="modal fade" id="edit-bom" tabindex="-1" aria-labelledby="editBomLabel" aria-hidden="true">
+          <div class="modal fade" id="edit-bom" tabindex="-1" aria-labelledby="editBomModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
               <div class="modal-content">
                 <div class="modal-header">
@@ -238,18 +239,50 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                  <input type="hidden" id="edit-bom-id"></input>
                   <label for="bom-component-no"><b>Component No</b></label><br>
-                  <input id="bom-component-no" name="bom-component-no" size="50"></input><br>
+                  <input id="bom-component-no" name="bom-component-no" size="50"></input><br><br>
                   <label for="bom-uom"><b>UOM</b></label><br>
-                  <input id="bom-uom" name="bom-uom"></input><br>
+                  <input id="bom-uom" name="bom-uom"></input><br><br>
                   <label for="bom-description"><b>Description</b></label><br>
-                  <input id="bom-description" name="bom-description" size="50"></input><br>
+                  <input id="bom-description" name="bom-description" size="50"></input><br><br>
                   <label for="bom-remark"><b>Remark</b></label><br>
                   <textarea id="bom-remark" name="bom-remark" rows="5" cols="100"></textarea><br><br>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-primary shadow-sm" onclick="saveBomEdits()">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add New Component Under Bom Modal -->
+          <div class="modal fade" id="add-component-under-bom" tabindex="-1" aria-labelledby="addComponentUnderBomLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addComponentUnderBomLabel"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="hidden" id="add-component-under-bom-id"></input>
+                  <input type="hidden" id="add-component-under-bom-quotation-no"></input>
+                  <label for="new-component-no-under-bom"><b>Component No</b></label><br>
+                  <input id="new-component-no-under-bom" name="new-component-no-under-bom" size="50"></input><br><br>
+                  <label for="new-uom-under-bom"><b>UOM</b></label><br>
+                  <input id="new-uom-under-bom" name="new-uom-under-bom"></input><br><br>
+                  <label for="new-description-under-bom"><b>Description</b></label><br>
+                  <input id="new-description-under-bom" name="new-description-under-bom" size="50"></input><br><br>
+                  <b>Is Bom?</b><br>
+                  <input type="radio" id="is-bom-under-bom" name="new-is-bom?-under-bom" value="1">
+                  <label for="is-bom-under-bom">Yes</label><br>
+                  <input type="radio" id="is-not-bom-under-bom" name="new-is-bom?-under-bom" value="0">
+                  <label for="is-not-bom-under-bom">No</label><br>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary shadow-sm" onclick="addComponentUnderBom()">Add Component</button>
                 </div>
               </div>
             </div>

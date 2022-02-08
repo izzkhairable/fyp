@@ -32,7 +32,7 @@ function getQuotationParts(){
                   <th>
                     <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].component_no}', '${result[part].uom}', '${result[part].description}', '${result[part].remark}')" data-bs-target="#edit-bom" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                     <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
-                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#add-component-under-bom" onclick="insertComponentUnderBom('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-plus-lg"></i></button>
                   </th>
                 </tr>`
               }
@@ -165,7 +165,8 @@ function updateAdditionalCosts(){
 }
 
 function editParts(id, component_no, remark){
-  document.getElementById("editModalLabel").innerHTML = "Edit Part - " + id;
+  document.getElementById("editModalLabel").innerHTML = "Edit Part - " + component_no;
+  document.getElementById("edit-parts-id").value = id;
   document.getElementById("remark").value = remark;
   document.getElementById("edit-suppliers").innerHTML = `                    <tr>
   <th scope="col">Unit Price</th>
@@ -224,7 +225,8 @@ function editParts(id, component_no, remark){
 }
 
 function editBom(id, component_no, uom, description, remark){
-  document.getElementById("editBomModalLabel").innerHTML = "Edit BOM - " + id;
+  document.getElementById("editBomModalLabel").innerHTML = "Edit BOM - " + component_no;
+  document.getElementById("edit-bom-id").value = id;
   document.getElementById("bom-component-no").value = component_no;
   document.getElementById("bom-uom").value = uom;
   document.getElementById("bom-description").value = description;
@@ -254,7 +256,7 @@ function addSupplier(){
 }
 
 function saveEdits(){
-  var id = document.getElementById("editModalLabel").innerHTML.split(" - ")[1];
+  var id = document.getElementById("edit-parts-id").value;
   var edited_crawl_info = [];
   var prices = document.getElementsByName("price");
   var suppliers = document.getElementsByName("supplier");
@@ -308,7 +310,7 @@ function saveEdits(){
 }
 
 function saveBomEdits(){
-  var id = document.getElementById("editBomModalLabel").innerHTML.split(" - ")[1];
+  var id = document.getElementById("edit-bom-id").value;
   var component_no = document.getElementById("bom-component-no").value;
   var uom = document.getElementById("bom-uom").value;
   var description = document.getElementById("bom-description").value;
@@ -376,6 +378,55 @@ function deleteComponent(id, quotation_no){
             else {
               location.reload();
                 alert("Successfully deleted!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
+function insertComponentUnderBom(id, quotation_no, component_no){
+  document.getElementById("addComponentUnderBomLabel").innerHTML = "Add Component Under " + component_no;
+  document.getElementById("add-component-under-bom-id").value = id;
+  document.getElementById("add-component-under-bom-quotation-no").value = quotation_no;
+}
+
+function addComponentUnderBom(){
+  var id = document.getElementById("add-component-under-bom-id").value;
+  var quotation_no = document.getElementById("add-component-under-bom-quotation-no").value;
+  var component_no = document.getElementById("new-component-no-under-bom").value;
+  var uom = document.getElementById("new-uom-under-bom").value;
+  var description = document.getElementById("new-description-under-bom").value;
+  var is_bom = document.querySelector('input[name="new-is-bom?-under-bom"]:checked').value;
+
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/insertComponentUnderBom";
+    const data = {
+        id: id,
+        quotation_no: quotation_no,
+        component_no: component_no,
+        uom: uom,
+        description: description,
+        is_bom: is_bom
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error adding a new component.")
+            }
+            else {
+              location.reload();
+                alert("Successfully added a new component!")
             }
         } catch (error) {
             // Errors when calling the service; such as network error, 

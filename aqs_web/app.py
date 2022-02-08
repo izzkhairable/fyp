@@ -13,6 +13,7 @@ import urllib
 from urllib.parse import unquote
 import html
 import configparser
+import math
 
 import pyodbc
 
@@ -133,6 +134,43 @@ def delete_component():
             conn.commit()
             row_no += 1
 
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
+# Insert a new component under an existing BOM
+@app.route("/insertComponentUnderBom", methods=['POST'])
+def insert_component_under_bom():
+    data = request.get_json()
+    print(data)
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    get_bom = cursor.execute("SELECT row, id, lvl FROM dbo.quotation_component WHERE quotation_no=? AND id=?", data["quotation_no"], data["id"])
+    result = get_bom.fetchone()
+
+    bom_id = result.id
+    bom_lvl = math.ceil(result.lvl)
+    bom_row = result.row
+    insert_to = bom_row+1
+    row_level = cursor.execute(
+        "SELECT id from dbo.quotation_component where quotation_no=? and row >= ? ORDER BY ROW ASC", data['quotation_no'], insert_to)
+    result = row_level.fetchall()
+    row_no = insert_to+1
+    for i in result:
+        cursor.execute("UPDATE dbo.quotation_component SET row=? WHERE quotation_no=? AND id=?", row_no, data["quotation_no"], i.id)
+        conn.commit()
+        row_no+=1
+    
+    cursor.execute("INSERT INTO dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+    insert_to, data["quotation_no"], data["component_no"], bom_lvl+1, data["uom"], data["description"], 0, 0, int(data["is_bom"]), bom_id)
+
+    try:
+        conn.commit()
         cursor.close()
         return jsonify(data), 201
     except Exception:
