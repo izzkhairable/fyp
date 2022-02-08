@@ -18,6 +18,7 @@ function getQuotationParts(){
             // success case
             var markup = document.getElementById("markup").value/100 + 1;
             for (var part in result) {
+              // BOM
               if (result[part].is_bom == 1){
                 document.getElementById("parts").innerHTML += `<tr style="background-color:#F9E79F;" colspan="9">
                   <th></th>
@@ -30,11 +31,12 @@ function getQuotationParts(){
                   <th>${result[part].remark}</th>
                   <th>
                     <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].component_no}', '${result[part].uom}', '${result[part].description}', '${result[part].remark}')" data-bs-target="#edit-bom" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
                   </th>
                 </tr>`
               }
+              // loose item
               else if (result[part].is_bom == 0 && result[part].level == "0.1") {
                 document.getElementById("parts").innerHTML += `<tr style="background-color:#5DADE2;">
                 <th scope="row"><input type="checkbox"></th>
@@ -47,11 +49,12 @@ function getQuotationParts(){
                 <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                  <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                  <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
               `
               }
+              // components under bom
               else {
                 document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
@@ -64,7 +67,7 @@ function getQuotationParts(){
                 <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                  <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                  <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
               `
@@ -348,4 +351,36 @@ function saveBomEdits(){
 function deleteSupplierRow(rowid){
   var row = document.getElementById(rowid);
   row.parentNode.removeChild(row);
+}
+
+function deleteComponent(id, quotation_no){
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/deleteComponent";
+    const data = {
+        id: id,
+        quotation_no: quotation_no
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error deleting.")
+            }
+            else {
+              location.reload();
+                alert("Successfully deleted!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
 }

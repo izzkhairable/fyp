@@ -105,6 +105,43 @@ def update_labour_cost():
             "message": "Unable to commit to database."
         }), 404
 
+# Delete component
+@app.route("/deleteComponent", methods=['POST'])
+def delete_component():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                DELETE FROM dbo.quotation_component
+                WHERE quotation_no = ? AND id = ?
+                ''', data["quotation_no"], data["id"])
+    try:
+        conn.commit()
+        deleted_components = [int(data['id'])]
+        row_level = cursor.execute("SELECT id, bom_id from dbo.quotation_component WHERE quotation_no = ? ORDER BY ROW ASC", data["quotation_no"])
+        result = row_level.fetchall()
+        for i in result:
+            if i.bom_id in deleted_components:
+                deleted_components.append(i.id)
+                cursor.execute("DELETE FROM dbo.quotation_component WHERE quotation_no = ? AND id = ?", data["quotation_no"], i.id)
+                conn.commit()
+        row_level = cursor.execute("SELECT id, bom_id from dbo.quotation_component WHERE quotation_no = ? ORDER BY ROW ASC", data["quotation_no"])
+        result = row_level.fetchall()
+        row_no = 1
+        for i in result:
+            cursor.execute("UPDATE dbo.quotation_component SET row = ? WHERE quotation_no = ? AND id = ?", row_no, data["quotation_no"], i.id)
+            conn.commit()
+            row_no += 1
+
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
 # SUPERVISOR FUNCTIONS
 
 # Display top 4 salesperson under supervisor (judging by win/lose)
