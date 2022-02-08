@@ -2,12 +2,16 @@ import pyodbc
 import pandas as pd
 import json
 import math
+import configparser
+
+config = configparser.ConfigParser()
+config.read("../../sql_connect.cfg")
 
 conn = pyodbc.connect(
-    "Driver={ODBC Driver 17 for SQL Server};"
-    "Server=LAPTOP-TK0O9CKS;"
-    "Database=myerp101;"
-    "Trusted_Connection=yes;"
+    "Driver=" + config["database"]["driver"] + ";"
+    "Server=" + config["database"]["server"] + ";"
+    "Database=" + config["database"]["database"] + ";"
+    "Trusted_Connection=" + config["database"]["trusted_connection"] + ";"
 )
 
 cursor = conn.cursor()

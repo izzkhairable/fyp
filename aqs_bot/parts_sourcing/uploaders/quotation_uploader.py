@@ -2,14 +2,18 @@ import os
 import sys
 import json
 import pyodbc
+import configparser
 
 
 def quotation_uploader(file_title):
+    config = configparser.ConfigParser()
+    config.read("../../sql_connect.cfg")
+
     conn = pyodbc.connect(
-        "Driver={ODBC Driver 17 for SQL Server};"
-        "Server=LAPTOP-TK0O9CKS;"
-        "Database=myerp101;"
-        "Trusted_Connection=yes;"
+        "Driver=" + config["database"]["driver"] + ";"
+        "Server=" + config["database"]["server"] + ";"
+        "Database=" + config["database"]["database"] + ";"
+        "Trusted_Connection=" + config["database"]["trusted_connection"] + ";"
     )
 
     with open(
