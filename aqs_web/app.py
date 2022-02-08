@@ -500,10 +500,7 @@ class LoginForm(FlaskForm):
 
 @app.route("/login", methods = ['GET'])
 def login():
-    #get keyed email and password as objects and not strings
-    
-    #ISSUE: Email decoding issue when parsing into route 
-    # you gotta use unquote(email) for the @ to appear but @ breaks your login code because its using the route, meaning it will instantly run unquote
+    #get email and password as python objects, cannot parse into login as string
     keyed_email = request.args.get('email')
     keyed_password = request.args.get('password')
     
@@ -511,7 +508,7 @@ def login():
     cursor = conn.cursor()
     keyed_user = Staff.query.filter_by(staff_email = keyed_email).first()
     if keyed_user:
-              #get hashed password
+        #get hashed password
         hashed_pw = hashlib.sha256(keyed_password.encode('utf-8')).hexdigest()
         print(hashed_pw)
         #check if passwords match
