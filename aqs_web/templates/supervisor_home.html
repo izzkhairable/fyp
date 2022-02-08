@@ -27,7 +27,6 @@
 </head>
 
 <body onload="start()">
-    {% if data == 'manager' %}
     <!-- Sidebar  -->
     <div class="wrapper">
         <nav id="sidebar" class="bg-light shadow">
@@ -42,7 +41,7 @@
                         <div class="row-sm align-self-center">
                             <b>Avenger</b>
                             <br>
-                            <u>Calvin Ang</u>
+                            <u>Calvin</u>
                         </div>
                     </a>
                 </li>
@@ -56,7 +55,7 @@
                     <a href="login"><i class="fas fa-sign-in-alt"></i> Login</a>
                 </li>
                 <li>
-                    <a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </li>
                 <li>
                     <a href="settings"><i class="bi bi-three-dots"></i> Settings</a>
@@ -212,10 +211,6 @@
     </script>
     <script src="supervisor_home.js"></script>
 
-    {% else %}
-    <p>You are not Authorised to view this page</p>
-
-    {% endif %}
 </body>
 
 </html>

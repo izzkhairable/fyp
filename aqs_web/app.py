@@ -413,6 +413,7 @@ class Staff(db.Model, UserMixin):
     role = db.Column(db.String(255), nullable=False)
     supervisor = db.Column(db.String(255), nullable=False)
 
+
 class LoginForm(FlaskForm):
     #enter email
     keyed_email = StringField(validators = [InputRequired(), Length(min = 4, max = 100 )], render_kw={"placeholder": "Email"})
@@ -440,78 +441,91 @@ def login():
         print(hashed_pw)
         #check if passwords match
         if hashed_pw == keyed_user.password:
+            #set up variables
             login_user(keyed_user)
-            data = current_user.role
-            #idk how this redirect(url_for) works so you gotta figure it out
-            if data == "manager":
-                return redirect('supervisor_home')
-            elif data == "salesperson":
+            role = current_user.role
+            #username = cursor.execute("SELECT first_name FROM dbo.staff WHERE staff_email = %s", [keyed_email]).first()
+            #check roles
+            if role == "supervisor":
+                #session['username'] = username
+                return redirect(url_for('supervisor_home'))
+            elif role == "salesperson":
                 return redirect(url_for('salesperson_home'))
             else:
                 #should return something else to prevent error. MUST hve else statement
-                return redirect(url_for('salesperson_home'))
+                return redirect(url_for('login'))
     cursor.close()
     return render_template('login.html')
 
-#2/2/2022: TO DO: map out
-# 1. which link to redirect to once you login
-# 2. which api route is open to which roles
-# 3. ensure logout function is working -> which link to redirect to after logout?
+#routes need to ensure that their roles are correct.
 
+#testing route // UNCOMMENT to test route and roles
+# @app.route('/test', methods = ['GET', 'POST'])
+# @login_required
+# def test():
+#     print(current_user.role)
+#     return render_template("test.html", data = current_user.role)
 
-    # form = LoginForm()
-    # if form.validate_on_submit():
-    #      keyed_user = Staff.query.filter_by(staff_email = form.keyed_email.data).first()
-    #      if keyed_user:
-    #           #get hashed password
-    #         hashed_pw = hashlib.sha256(form.keyed_password.encode().hexdigest())
-    #         print(hashed_pw)
-    #         #  #check if passwords match
-    #         if hashed_pw == keyed_user.password:
-    #              login_user(keyed_user)
-    #              return redirect(url_for('test'))
-    # return render_template('login.html', form = LoginForm())
+#ROLES Guide:
+#supervisor: can access both supervisor & salesperson pages
+#salesperson only can access salesperson pages
+#admin:
 
-
-# @app.route('/login', methods = ['POST', 'GET'] )
-# def login():
-#     form = LoginForm()
-#     return render_template('login.html', form = form) 
-
-
-    # if request.method == 'POST':
-    #     keyed_username = request.form['keyed_email']
-    #     keyed_password = request.form['keyed_password']
-    #     user=Staff.query.filter_by(keyed_email=form.staff_email.data).first()
-    #     # username_result = cursor.execute("SELECT * FROM dbo.staff WHERE staff_email = %s", [keyed_username])
-
-    #     #will need to check password validation again through SQL query instead -> checking if hashlib function working
-    #     # user = cursor.execute("SELECT first_name FROM dbo.staff WHERE staff_email = %s", [keyed_username]).first()
-    #     # role = cursor.execute("SELECT role from dbo.staff WHERE first_name =  %s", keyed_password) 
-    #     if user:
-    #         hashed_password = hashlib.sha256(keyed_password.encode())
-    #         if keyed_password == hashed_password:
-    #             login_user(user)
-    #             #TO DO: need to ensure that logging in returns the user role
-    #             return redirect(url_for('test'), )
-
-    # else:
-    #     #use a redirecting URL // module import
-    #     return render_template("test.html")
-
-#get the current user role logged in and display: FIXED
-#able to get the role according to the login inputs :) YAY!!!
-@app.route('/test', methods = ['GET', 'POST'])
-@login_required
-def test():
-    print(current_user.role)
-    return render_template("test.html", data = current_user.role)
-
-#ISSUE: supervisor home not loading, current user.role has error when loaded.
+#login as supervisor, first page loaded
 @app.route('/supervisor_home')
 @login_required
 def supervisor_home():
-    return render_template("supervisor_home.html", data = current_user.role)
+    if current_user.role == 'supervisor':
+        #username = session['username']
+        return render_template("supervisor_home.html")
+    else:
+        return render_template("unauthorised.html")
+
+#login as salesperson, first page loaded
+@app.route('/salesperson_home')
+@login_required
+def salesperson_home():
+    if current_user.role == 'supervisor' or 'salesperson':
+        return render_template("salesperson_home.html")
+    else:
+        return render_template("unauthorised.html")
+
+#routing to supervisor_dashboard page
+@app.route('/supervisor_dashboard')
+@login_required
+def supervisor_dashboard():
+    if current_user.role == 'supervisor':
+        return render_template("supervisor_dashboard.html")
+    else:
+        #return 404 error, not authorised to enter the page
+        return render_template("unauthorised.html")
+
+#routing to supervisor_quotation_decision
+@app.route('/supervisor_quotation_decision')
+@login_required
+def supervisor_quotation_decision_page():
+    if current_user.role == 'supervisor':
+        return render_template("supervisor_quotation_decision.html")
+    else:
+        return render_template("unauthorised.html")
+    
+#routing to supervisor_quotation_template
+@app.route('/supervisor_quotation_template')
+@login_required
+def supervisor_quotation_template_page():
+    if current_user.role == 'supervisor':
+        return render_template("supervisor_quotation_template.html")
+    else:
+        return render_template("unauthorised.html")
+    
+#routing to supervisor_view_quotes
+@app.route('/supervisor_view_quotes')
+@login_required
+def supervisor_quotation_view_quotes_page():
+    if current_user.role == 'supervisor':
+        return render_template("supervisor_view_quotes.html")
+    else:
+        return render_template("unauthorised.html")
 
 #logout, clear session
 @app.route('/logout', methods = ['GET', 'POST'])
@@ -519,8 +533,8 @@ def supervisor_home():
 def logout():
     logout_user()
     session.clear()
-    #do you want to return index html??
-    return render_template("index.html")
+    #redirect back to login first, to be changed later
+    return render_template("login.html")
 
 #template for inserting data
 @app.route("/insert", methods=['POST'])
@@ -546,7 +560,8 @@ def insert():
 
 @app.route("/")
 def home():
-    return "test"
+    #for now will be returning the login page first
+    return redirect(url_for('login'))
 
 
 # to be at the bottom
