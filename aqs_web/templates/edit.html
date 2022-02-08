@@ -229,6 +229,32 @@
             </div>
           </div>
 
+          <!-- Edit BOM Modal -->
+          <div class="modal fade" id="edit-bom" tabindex="-1" aria-labelledby="editBomLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editBomModalLabel"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <label for="bom-component-no"><b>Component No</b></label><br>
+                  <input id="bom-component-no" name="bom-component-no" size="50"></input><br>
+                  <label for="bom-uom"><b>UOM</b></label><br>
+                  <input id="bom-uom" name="bom-uom"></input><br>
+                  <label for="bom-description"><b>Description</b></label><br>
+                  <input id="bom-description" name="bom-description" size="50"></input><br>
+                  <label for="bom-remark"><b>Remark</b></label><br>
+                  <textarea id="bom-remark" name="bom-remark" rows="5" cols="100"></textarea><br><br>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary shadow-sm" onclick="saveBomEdits()">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Edit Quote Details Modal-->
           <div class="modal fade" id="edit-quote" tabindex="-1" aria-labelledby="editQuoteLabel" aria-hidden="true">
             <div class="modal-dialog">

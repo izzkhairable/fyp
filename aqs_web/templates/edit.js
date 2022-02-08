@@ -29,7 +29,7 @@ function getQuotationParts(){
                   <th></th>
                   <th>${result[part].remark}</th>
                   <th>
-                    <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                    <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].component_no}', '${result[part].uom}', '${result[part].description}', '${result[part].remark}')" data-bs-target="#edit-bom" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
                   </th>
@@ -46,7 +46,7 @@ function getQuotationParts(){
                 <td>$${(result[part].total_price * markup).toFixed(2)}</td>
                 <td>${result[part].remark}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
@@ -63,7 +63,7 @@ function getQuotationParts(){
                 <td>$${(result[part].total_price * markup).toFixed(2)}</td>
                 <td>${result[part].remark}</td>
                 <td>
-                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                  <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                   <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
@@ -161,9 +161,9 @@ function updateAdditionalCosts(){
 
 }
 
-function editParts(id, remark){
+function editParts(id, component_no, remark){
   document.getElementById("editModalLabel").innerHTML = "Edit Part - " + id;
-  document.getElementById("remark").placeholder = remark;
+  document.getElementById("remark").value = remark;
   document.getElementById("edit-suppliers").innerHTML = `                    <tr>
   <th scope="col">Unit Price</th>
   <th scope="col">Supplier</th>
@@ -220,6 +220,14 @@ function editParts(id, remark){
     });
 }
 
+function editBom(id, component_no, uom, description, remark){
+  document.getElementById("editBomModalLabel").innerHTML = "Edit BOM - " + id;
+  document.getElementById("bom-component-no").value = component_no;
+  document.getElementById("bom-uom").value = uom;
+  document.getElementById("bom-description").value = description;
+  document.getElementById("bom-remark").value = remark;
+}
+
 function addSupplier(){
   var table = document.getElementById("edit-suppliers");
   var rowid = table.rows[table.rows.length - 1].id + 1;
@@ -270,6 +278,47 @@ function saveEdits(){
         edited_crawl_info: JSON.stringify(edited_crawl_info),
         unit_price: unit_price,
         qty: qty
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error saving changes.")
+            }
+            else {
+              location.reload();
+                alert("Successfully saved changes!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
+function saveBomEdits(){
+  var id = document.getElementById("editBomModalLabel").innerHTML.split(" - ")[1];
+  var component_no = document.getElementById("bom-component-no").value;
+  var uom = document.getElementById("bom-uom").value;
+  var description = document.getElementById("bom-description").value;
+  var remark = document.getElementById("bom-remark").value;
+
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/updateBomInfo";
+    const data = {
+        id: id,
+        component_no: component_no,
+        uom: uom,
+        description: description,
+        remark: remark
     };
 
     try {

@@ -61,6 +61,28 @@ def update_component():
             "message": "Unable to commit to database."
         }), 404
 
+# Updates database with edited information for each BOM
+@app.route("/updateBomInfo", methods=['POST'])
+def update_bom_info():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.quotation_component
+                SET component_no = ?, uom = ?, description = ?, remark = ?
+                WHERE id = ?
+                ''', data["component_no"], data["uom"], data["description"], data["remark"], data["id"])
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
 # Updates labour cost information for a specific quotation
 @app.route("/updateLabourCost", methods=['POST'])
 def update_labour_cost():
