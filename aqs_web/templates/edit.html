@@ -180,22 +180,60 @@
 
           <!-- Insert component button -->
           <div class="text-center">
-            Insert New Component <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#add-component"><i class="bi bi-plus-lg"></i></button>
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#add-component">Insert New Component</button>
           </div>
 
           <!-- Markup -->
           <div class="shadow bg-white col-6 p-3 my-3">
             <h5>Additional Costs</h5>
-            <div class="mx-3 p-3 d-flex">
-              <div class="col-2">
-                <label for="labour">Labour Cost: </label><br><br>
-                <label for="markup">Markup (in %): </label><br><br>
-                <label for="labour-remarks">Remarks: </label><br><br>
+            <div class="mx-3 p-3">
+              <div class="row">
+                <div class="col-3">
+                  <label for="labour">Labour Cost($): </label><br><br>
+                </div>
+                <div class="col-9">
+                  <input id="labour" name="labour" type="number"></input><br><br>
+                </div>
               </div>
-              <div class="col-10">
-                <input id="labour" name="labour" type="number"></input><br><br>
-                <input id="markup" name="markup" type="number"></input><br><br>
-                <textarea id="labour-remarks" cols="50" rows="5" name="labour-remarks" type="text"></textarea>
+              <div class="row">
+                <div class="col-3">
+                  <label for="labour-hours">Number of Labour Hours: </label><br><br>
+                </div>
+                <div class="col-9">
+                  <input id="labour-hours" name="labour-hours" type="number"></input><br><br>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <label for="total-labour-cost"><b>Total Labour Cost($): </b></label><br><br> 
+                </div>
+                <div class="col-9">
+                  <input id="total-labour-cost" class="border-0" name="total-labour-cost" type="number" disabled></input><br><br>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <label for="testing-cost">Testing Cost($): </label><br><br>
+                </div>
+                <div class="col-9">
+                  <input id="testing-cost" name="testing-cost" type="number"></input><br><br>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <label for="markup">Markup (in %): </label><br><br>
+                </div>
+                <div class="col-9">
+                  <input id="markup" name="markup" type="number"></input><br><br>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <label for="labour-remarks">Remarks: </label><br><br>
+                </div>
+                <div class="col-9">
+                  <textarea id="labour-remarks" cols="50" rows="5" name="labour-remarks" type="text"></textarea>
+                </div>
               </div>
             </div>
             <div class="p-3">

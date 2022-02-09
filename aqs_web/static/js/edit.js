@@ -109,8 +109,11 @@ function getQuotationInfo(){
             document.getElementById("point-of-contact").innerHTML = result[0].first_name + " " + result[0].last_name;
             document.getElementById("comments").value = result[0].comment;
             document.getElementById("labour").value = result[0].labour_cost;
+            document.getElementById("labour-hours").value = result[0].labour_no_of_hours;
+            document.getElementById("total-labour-cost").value = result[0].labour_cost * result[0].labour_no_of_hours;
+            document.getElementById("testing-cost").value = result[0].testing_cost;
             document.getElementById("markup").value = result[0].markup_pct;
-            document.getElementById("labour-remarks").value = result[0].labour_cost_description;
+            document.getElementById("labour-remarks").value = result[0].remark;
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -163,6 +166,8 @@ function saveQuotationEdits(){
 function updateAdditionalCosts(){
   var quotation_no = document.getElementById("quotation-no-for-cost-update").value;
   var labour_cost = document.getElementById("labour").value;
+  var labour_hours = document.getElementById("labour-hours").value;
+  var testing_cost = document.getElementById("testing-cost").value;
   var markup = document.getElementById("markup").value;
   var labour_remarks = document.getElementById("labour-remarks").value;
   $(async() => {           
@@ -170,6 +175,8 @@ function updateAdditionalCosts(){
     const data = {
       quotation_no: quotation_no,
       labour_cost: labour_cost,
+      labour_hours,
+      testing_cost,
       markup: markup,
       labour_remarks: labour_remarks
     };

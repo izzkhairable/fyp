@@ -92,9 +92,9 @@ def update_labour_cost():
     cursor = conn.cursor()
     cursor.execute('''
                 UPDATE dbo.quotation
-                SET labour_cost = ?, markup_pct = ?, labour_cost_description = ?
+                SET labour_cost = ?, labour_no_of_hours = ?, testing_cost = ?, markup_pct = ?, remark = ?
                 WHERE quotation_no = ?
-                ''', data["labour_cost"], data["markup"], data["labour_remarks"], data["quotation_no"])
+                ''', data["labour_cost"], data['labour_hours'], data['testing_cost'], data["markup"], data["labour_remarks"], data["quotation_no"])
     try:
         conn.commit()
         cursor.close()
@@ -463,7 +463,7 @@ def get_quotation_parts(quotation_no):
 def get_quotation_info(quotation_no):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_cost_description
+    cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_no_of_hours, testing_cost, remark
     FROM dbo.quotation as QT
     INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
     INNER JOIN dbo.customer as CT ON QT.customer = CT.id
