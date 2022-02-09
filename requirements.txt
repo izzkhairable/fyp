@@ -1,0 +1,13 @@
+scrapy
+pandas
+pyodbc
+flask
+passlib
+flask_cors
+flask_login
+flask_sqlalchemy
+jinja2
+openpyxl
+python-docx
+tabula
+camelot
