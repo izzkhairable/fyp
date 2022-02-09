@@ -311,6 +311,26 @@
             </div>
           </div>
 
+          <!-- Confirm Delete Modal-->
+          <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true" id="mi-modal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Delete Component</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  <input type="hidden" id="delete-component-id"></input>
+                  <input type="hidden" id="delete-component-quotation-no"></input>
+                </div>
+                <div class="modal-body" id="confirm-delete-label">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" id="delete-yes" onclick="deleteComponent()">Yes</button>
+                  <button type="button" class="btn btn-secondary" id="delete-no" data-bs-dismiss="modal">No</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       <!--closes the content div -->

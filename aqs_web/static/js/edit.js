@@ -31,7 +31,7 @@ function getQuotationParts(){
                   <th>${result[part].remark}</th>
                   <th>
                     <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].component_no}', '${result[part].uom}', '${result[part].description}', '${result[part].remark}')" data-bs-target="#edit-bom" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                    <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#confirm-delete" onclick="displayConfirmDeleteModal('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-trash-fill"></i></button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#add-component-under-bom" onclick="insertComponentUnderBom('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-plus-lg"></i></button>
                   </th>
                 </tr>`
@@ -49,7 +49,7 @@ function getQuotationParts(){
                 <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                  <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
+                  <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#confirm-delete" onclick="displayConfirmDeleteModal('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
               `
@@ -67,7 +67,7 @@ function getQuotationParts(){
                 <td>${result[part].remark}</td>
                 <td>
                   <button type="button" data-bs-toggle="modal" onclick="editParts('${result[part].id}', '${result[part].component_no}', '${result[part].remark}')" data-bs-target="#edit-parts" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
-                  <button type="button" class="btn btn-outline-secondary" onclick="deleteComponent('${result[part].id}', '${quotation_no}')"><i class="bi bi-trash-fill"></i></button>
+                  <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#confirm-delete" onclick="displayConfirmDeleteModal('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
               `
@@ -355,7 +355,9 @@ function deleteSupplierRow(rowid){
   row.parentNode.removeChild(row);
 }
 
-function deleteComponent(id, quotation_no){
+function deleteComponent(){
+  var id = document.getElementById("delete-component-id").value;
+  var quotation_no = document.getElementById("delete-component-quotation-no").value;
   $(async() => {           
     var serviceURL = "http://localhost:5000/deleteComponent";
     const data = {
@@ -434,4 +436,10 @@ function addComponentUnderBom(){
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
                 } // error
     });
+}
+
+function displayConfirmDeleteModal(id, quotation_no, component_no){
+  document.getElementById("delete-component-id").value = id;
+  document.getElementById("delete-component-quotation-no").value = quotation_no;
+  document.getElementById("confirm-delete-label").innerHTML = "Are you sure you want to delete <b>" + component_no + "</b>?";
 }

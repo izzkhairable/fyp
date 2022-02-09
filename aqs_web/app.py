@@ -398,7 +398,7 @@ def get_quotations():
 def get_quotation_parts(quotation_no):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT id, component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_id, remark, crawl_info, CONVERT(varchar, lvl) as level
+    cursor.execute('''SELECT id, lvl, component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_id, remark, crawl_info, CONVERT(varchar, lvl) as level
     FROM dbo.quotation_component as QCT
     WHERE QCT.quotation_no = ?
     ORDER BY row ASC;''', quotation_no)
