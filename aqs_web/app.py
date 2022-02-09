@@ -106,6 +106,29 @@ def update_labour_cost():
             "message": "Unable to commit to database."
         }), 404
 
+# Updates quotation information
+@app.route("/updateQuotationInfo", methods=['POST'])
+def update_quotation_info():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.quotation
+                SET comment = ?
+                WHERE quotation_no = ?
+                ''', data["comments"], data["quotation_no"])
+
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
 # Delete component
 @app.route("/deleteComponent", methods=['POST'])
 def delete_component():

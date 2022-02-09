@@ -107,6 +107,7 @@ function getQuotationInfo(){
             document.getElementById("quotation-name").innerHTML = quotation_no + " - " + result[0].company_name;
             document.getElementById("comments").innerHTML = result[0].comment;
             document.getElementById("point-of-contact").innerHTML = result[0].first_name + " " + result[0].last_name;
+            document.getElementById("comments").value = result[0].comment;
             document.getElementById("labour").value = result[0].labour_cost;
             document.getElementById("markup").value = result[0].markup_pct;
             document.getElementById("labour-remarks").value = result[0].labour_cost_description;
@@ -116,6 +117,40 @@ function getQuotationInfo(){
             } else {
                 // unexpected outcome, throw the error
                 throw response.status;
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
+function saveQuotationEdits(){
+  var quotation_no = window.location.href.split("#")[1];
+  var comments = document.getElementById("edit-comments").value;
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/updateQuotationInfo";
+    const data = {
+      quotation_no: quotation_no,
+      comments: comments
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error saving changes.")
+            }
+            else {
+              location.reload();
+                alert("Successfully saved changes!")
             }
         } catch (error) {
             // Errors when calling the service; such as network error, 
