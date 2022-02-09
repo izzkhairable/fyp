@@ -48,7 +48,7 @@
                     </div>
                 </li>
                 <li>
-                    <a href="salesperson_home.html"><i class="bi bi-person"></i> Quotations</a>
+                    <a href="salesperson_home"><i class="bi bi-person"></i> Quotations</a>
                 </li>
                 <li>
                     <a href="#"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
@@ -186,8 +186,13 @@
             </div>
           </div>
 
+          <!-- Insert component button -->
+          <div class="text-center">
+            Insert New Component <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#add-component"><i class="bi bi-plus-lg"></i></button>
+          </div>
+
           <!-- Markup -->
-          <div class="shadow bg-white col-6 p-3">
+          <div class="shadow bg-white col-6 p-3 my-3">
             <h5>Additional Costs</h5>
             <div class="mx-3 p-3 d-flex">
               <div class="col-2">
@@ -276,7 +281,7 @@
                   <label for="new-description-under-bom"><b>Description</b></label><br>
                   <input id="new-description-under-bom" name="new-description-under-bom" size="50"></input><br><br>
                   <b>Is Bom?</b><br>
-                  <input type="radio" id="is-bom-under-bom" name="new-is-bom?-under-bom" value="1">
+                  <input type="radio" id="is-bom-under-bom" name="new-is-bom?-under-bom" value="1" checked>
                   <label for="is-bom-under-bom">Yes</label><br>
                   <input type="radio" id="is-not-bom-under-bom" name="new-is-bom?-under-bom" value="0">
                   <label for="is-not-bom-under-bom">No</label><br>
@@ -284,6 +289,35 @@
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-primary shadow-sm" onclick="addComponentUnderBom()">Add Component</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add New Component Modal -->
+          <div class="modal fade" id="add-component" tabindex="-1" aria-labelledby="addComponentLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addComponentLabel">Add A New Component</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <label for="new-component-no"><b>Component No</b></label><br>
+                  <input id="new-component-no" name="new-component-no" size="50"></input><br><br>
+                  <label for="new-uom"><b>UOM</b></label><br>
+                  <input id="new-uom" name="new-uom"></input><br><br>
+                  <label for="new-description"><b>Description</b></label><br>
+                  <input id="new-description" name="new-description" size="50"></input><br><br>
+                  <b>Is Bom?</b><br>
+                  <input type="radio" id="is-bom" name="new-is-bom?" value="1" checked>
+                  <label for="is-bom">Yes</label><br>
+                  <input type="radio" id="is-not-bom" name="new-is-bom?" value="0">
+                  <label for="is-not-bom">No</label><br>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary shadow-sm" onclick="addComponent()">Add Component</button>
                 </div>
               </div>
             </div>

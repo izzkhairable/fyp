@@ -438,6 +438,47 @@ function addComponentUnderBom(){
     });
 }
 
+function addComponent(){
+  var quotation_no = window.location.href.split("#")[1];
+  var component_no = document.getElementById("new-component-no").value;
+  var uom = document.getElementById("new-uom").value;
+  var description = document.getElementById("new-description").value;
+  var is_bom = document.querySelector('input[name="new-is-bom?"]:checked').value;
+
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/insertComponent";
+    const data = {
+        quotation_no: quotation_no,
+        component_no: component_no,
+        uom: uom,
+        description: description,
+        is_bom: is_bom
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error adding a new component.")
+            }
+            else {
+              location.reload();
+                alert("Successfully added a new component!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
 function displayConfirmDeleteModal(id, quotation_no, component_no){
   document.getElementById("delete-component-id").value = id;
   document.getElementById("delete-component-quotation-no").value = quotation_no;

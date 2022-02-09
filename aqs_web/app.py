@@ -147,7 +147,6 @@ def delete_component():
 @app.route("/insertComponentUnderBom", methods=['POST'])
 def insert_component_under_bom():
     data = request.get_json()
-    print(data)
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     get_bom = cursor.execute("SELECT row, id, lvl FROM dbo.quotation_component WHERE quotation_no=? AND id=?", data["quotation_no"], data["id"])
@@ -169,6 +168,29 @@ def insert_component_under_bom():
     cursor.execute("INSERT INTO dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
     insert_to, data["quotation_no"], data["component_no"], bom_lvl+1, data["uom"], data["description"], 0, 0, int(data["is_bom"]), bom_id)
 
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
+# Inserts a new component
+@app.route("/insertComponent", methods=['POST'])
+def insert_component():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    result = cursor.execute("SELECT COUNT(*) from dbo.quotation_component")
+    rows = result.fetchone()
+    row = rows[0] + 1
+    cursor.execute('''
+                INSERT INTO dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom) values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', row, data["quotation_no"], data["component_no"], 0.1, data["uom"], data["description"], 0, 0, data["is_bom"])
     try:
         conn.commit()
         cursor.close()
