@@ -50,12 +50,22 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                 "description": one_quotation_item_list[6],
                 "quantity": one_quotation_item_list[7],
             }
-
-            library_component_dict = (
-                df.loc[df["Component number"] == quotation_item_dict["component_no"]]
-                .iloc[[0]]
-                .to_dict("r")[0]
-            )
+            library_component_dict = None
+            if (
+                df.loc[
+                    df["Component number"] == quotation_item_dict["component_no"]
+                ].empty
+                == True
+            ):
+                continue
+            else:
+                library_component_dict = (
+                    df.loc[
+                        df["Component number"] == quotation_item_dict["component_no"]
+                    ]
+                    .iloc[[0]]
+                    .to_dict("r")[0]
+                )
 
             if (
                 library_component_dict["Type"] == "Standard"
@@ -101,6 +111,7 @@ def quotation_downloader():
     draft_quotation_list_with_item = retrieve_all_items_in_quotation(
         draft_quotation_list
     )
-    file_titles = save_quotation_and_items_to_json(draft_quotation_list_with_item)
-    conn.close()
-    return file_titles
+    if draft_quotation_list_with_item != None:
+        file_titles = save_quotation_and_items_to_json(draft_quotation_list_with_item)
+        conn.close()
+        return file_titles

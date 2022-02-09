@@ -48,7 +48,7 @@ def quotation_uploader(file_title):
                 {
                     "supplier": supplier_name,
                     "url": part["supplier"][supplier_name]["url"],
-                    "quantity": quantity_by_supplier,
+                    "qty": quantity_by_supplier,
                     "unit_price": unit_price,
                 }
             )
