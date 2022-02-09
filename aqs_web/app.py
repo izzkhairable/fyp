@@ -488,15 +488,8 @@ class Staff(db.Model, UserMixin):
     role = db.Column(db.String(255), nullable=False)
     supervisor = db.Column(db.String(255), nullable=False)
 
-
-class LoginForm(FlaskForm):
-    #enter email
-    keyed_email = StringField(validators = [InputRequired(), Length(min = 4, max = 100 )], render_kw={"placeholder": "Email"})
-    #enter password
-    keyed_password = PasswordField(validators=[InputRequired(), Length(min = 4, max = 50)], render_kw={"placeholder": "Password"})
-    #submit button with the word "Login"
-    submit = SubmitField("Login")
-
+    def getFirstName(self):
+        return self.first_name
 
 @app.route("/login", methods = ['GET'])
 def login():
@@ -516,10 +509,13 @@ def login():
             #set up variables
             login_user(keyed_user)
             role = current_user.role
-            #username = cursor.execute("SELECT first_name FROM dbo.staff WHERE staff_email = %s", [keyed_email]).first()
+            username = Staff.query.filter_by(staff_email = keyed_email).first().first_name
+            #establish session with the logged in username and role
+            session['username'] = username
+            session['role'] = role
+            session['logged_in'] =  True
             #check roles
             if role == "supervisor":
-                #session['username'] = username
                 return redirect(url_for('supervisor_home'))
             elif role == "salesperson":
                 return redirect(url_for('salesperson_home'))
@@ -603,6 +599,7 @@ def supervisor_quotation_view_quotes_page():
 @app.route('/edit')
 @login_required
 def edit_page():
+    #double check: can supervisor have access to edit pages?
     if current_user.role == 'supervisor' or 'salesperson':
         return render_template('edit.html')
     else:
