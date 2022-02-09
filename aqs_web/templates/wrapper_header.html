@@ -38,10 +38,11 @@
                                 height="100" class="rounded-circle">
                         </div>
                         <br>
+                        <!-- establish session user details | jinja python flask -->
                         <div class="row-sm align-self-center">
-                            <b>Avenger</b>
+                            <b>{{ session['role'] | title }}</b>
                             <br>
-                            <u>Calvin Ang</u>
+                            <u>{{ session['username'] | title }}</u>
                         </div>
                     </a>
                 </li>
