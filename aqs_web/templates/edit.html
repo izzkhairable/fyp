@@ -136,7 +136,17 @@
                     <form class="d-flex">
                       <div class="input-group">
                         <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Search Components" aria-label="search" aria-describedby="search">
+                        <input type="text" class="form-control" size="30" placeholder="Search Components By" onkeyup="filterComponents()" id="componentSearch" aria-label="search" aria-describedby="search">
+                        <select class="form-control form-select" id="filter_components">
+                          <option value="0" selected>Component Number</option>
+                          <option value="1">Level</option>
+                          <option value="2">UOM</option>
+                          <option value="3">Description</option>
+                          <option value="4">Quantity</option>
+                          <option value="5">Unit Price</option>
+                          <option value="6">Total Price</option>
+                          <option value="7">Remarks</option>
+                      </select>
                       </div>
                     </form>                
                   </ul>   
@@ -158,7 +168,7 @@
 
             <!-- Parts -->
             <div class="mx-3">
-              <table class="table">
+              <table class="table" id="componentsTable">
                 <thead>
                   <tr>
                     <th scope="col"><i class="bi bi-app"></i></th>

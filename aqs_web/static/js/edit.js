@@ -21,20 +21,20 @@ function getQuotationParts(){
               // BOM
               if (result[part].is_bom == 1){
                 document.getElementById("parts").innerHTML += `<tr colspan="9">
-                  <th></th>
-                  <th>${result[part].component_no}</th>
-                  <th>${result[part].lvl}</th>
-                  <th>${result[part].uom}</th>
-                  <th>${result[part].description}</th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th>${result[part].remark}</th>
-                  <th>
+                  <td></td>
+                  <td>${result[part].component_no}</td>
+                  <td>${result[part].lvl}</td>
+                  <td>${result[part].uom}</td>
+                  <td>${result[part].description}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>${result[part].remark}</td>
+                  <td>
                     <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].component_no}', '${result[part].uom}', '${result[part].description}', '${result[part].remark}')" data-bs-target="#edit-bom" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#confirm-delete" onclick="displayConfirmDeleteModal('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-trash-fill"></i></button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#add-component-under-bom" onclick="insertComponentUnderBom('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-plus-lg"></i></button>
-                  </th>
+                  </td>
                 </tr>`
               }
               // loose item
@@ -528,4 +528,27 @@ function displayConfirmDeleteModal(id, quotation_no, component_no){
   document.getElementById("delete-component-id").value = id;
   document.getElementById("delete-component-quotation-no").value = quotation_no;
   document.getElementById("confirm-delete-label").innerHTML = "Are you sure you want to delete <b>" + component_no + "</b>?";
+}
+
+// Filter table
+function filterComponents() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("componentSearch");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("componentsTable");
+  tr = table.getElementsByTagName("tr");
+  condition = document.getElementById("filter_components").value;
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[condition];
+      if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+          } else {
+              tr[i].style.display = "none";
+          }
+      }
+  }
 }
