@@ -521,7 +521,8 @@ def login():
                 return redirect(url_for('salesperson_home'))
             else:
                 #should return something else to prevent error. MUST hve else statement
-                return redirect(url_for('login'))
+                #only should have 3 roles, last will auto return admin page
+                return redirect(url_for('admin'))
     cursor.close()
     return render_template('login.html')
 
@@ -604,6 +605,14 @@ def edit_page():
         return render_template('edit.html')
     else:
         return render_template("unauthorised.html")
+
+#routing to admin page
+@login_required
+def login_page():
+    if current_user.role == 'admin':
+        return render_template('admin.html')
+    else:
+        return render_template('unauthorised.html')
 
 #logout, clear session
 @app.route('/logout', methods = ['GET', 'POST'])
