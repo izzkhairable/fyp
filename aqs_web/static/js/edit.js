@@ -20,27 +20,29 @@ function getQuotationParts(){
             for (var part in result) {
               // BOM
               if (result[part].is_bom == 1){
-                document.getElementById("parts").innerHTML += `<tr style="background-color:#F9E79F;" colspan="9">
-                  <th></th>
-                  <th>${result[part].component_no}</th>
-                  <th>${result[part].uom}</th>
-                  <th>${result[part].description}</th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th>${result[part].remark}</th>
-                  <th>
+                document.getElementById("parts").innerHTML += `<tr colspan="9">
+                  <td></td>
+                  <td>${result[part].component_no}</td>
+                  <td>${result[part].lvl}</td>
+                  <td>${result[part].uom}</td>
+                  <td>${result[part].description}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>${result[part].remark}</td>
+                  <td>
                     <button type="button" data-bs-toggle="modal" onclick="editBom('${result[part].id}', '${result[part].component_no}', '${result[part].uom}', '${result[part].description}', '${result[part].remark}')" data-bs-target="#edit-bom" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#confirm-delete" onclick="displayConfirmDeleteModal('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-trash-fill"></i></button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#add-component-under-bom" onclick="insertComponentUnderBom('${result[part].id}', '${quotation_no}', '${result[part].component_no}')"><i class="bi bi-plus-lg"></i></button>
-                  </th>
+                  </td>
                 </tr>`
               }
               // loose item
               else if (result[part].is_bom == 0 && result[part].level == "0.1") {
-                document.getElementById("parts").innerHTML += `<tr style="background-color:#5DADE2;">
+                document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
                 <td>${result[part].component_no}</td>
+                <td>${result[part].lvl}</td>
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
@@ -59,6 +61,7 @@ function getQuotationParts(){
                 document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
                 <td>${result[part].component_no}</td>
+                <td>${result[part].lvl}</td>
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
@@ -107,9 +110,13 @@ function getQuotationInfo(){
             document.getElementById("quotation-name").innerHTML = quotation_no + " - " + result[0].company_name;
             document.getElementById("comments").innerHTML = result[0].comment;
             document.getElementById("point-of-contact").innerHTML = result[0].first_name + " " + result[0].last_name;
+            document.getElementById("comments").value = result[0].comment;
             document.getElementById("labour").value = result[0].labour_cost;
+            document.getElementById("labour-hours").value = result[0].labour_no_of_hours;
+            document.getElementById("total-labour-cost").value = result[0].labour_cost * result[0].labour_no_of_hours;
+            document.getElementById("testing-cost").value = result[0].testing_cost;
             document.getElementById("markup").value = result[0].markup_pct;
-            document.getElementById("labour-remarks").value = result[0].labour_cost_description;
+            document.getElementById("labour-remarks").value = result[0].remark;
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -125,9 +132,45 @@ function getQuotationInfo(){
     });
 }
 
+function saveQuotationEdits(){
+  var quotation_no = window.location.href.split("#")[1];
+  var comments = document.getElementById("edit-comments").value;
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/updateQuotationInfo";
+    const data = {
+      quotation_no: quotation_no,
+      comments: comments
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error saving changes.")
+            }
+            else {
+              location.reload();
+                alert("Successfully saved changes!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
 function updateAdditionalCosts(){
   var quotation_no = document.getElementById("quotation-no-for-cost-update").value;
   var labour_cost = document.getElementById("labour").value;
+  var labour_hours = document.getElementById("labour-hours").value;
+  var testing_cost = document.getElementById("testing-cost").value;
   var markup = document.getElementById("markup").value;
   var labour_remarks = document.getElementById("labour-remarks").value;
   $(async() => {           
@@ -135,6 +178,8 @@ function updateAdditionalCosts(){
     const data = {
       quotation_no: quotation_no,
       labour_cost: labour_cost,
+      labour_hours,
+      testing_cost,
       markup: markup,
       labour_remarks: labour_remarks
     };
@@ -438,8 +483,72 @@ function addComponentUnderBom(){
     });
 }
 
+function addComponent(){
+  var quotation_no = window.location.href.split("#")[1];
+  var component_no = document.getElementById("new-component-no").value;
+  var uom = document.getElementById("new-uom").value;
+  var description = document.getElementById("new-description").value;
+  var is_bom = document.querySelector('input[name="new-is-bom?"]:checked').value;
+
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/insertComponent";
+    const data = {
+        quotation_no: quotation_no,
+        component_no: component_no,
+        uom: uom,
+        description: description,
+        is_bom: is_bom
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error adding a new component.")
+            }
+            else {
+              location.reload();
+                alert("Successfully added a new component!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
 function displayConfirmDeleteModal(id, quotation_no, component_no){
   document.getElementById("delete-component-id").value = id;
   document.getElementById("delete-component-quotation-no").value = quotation_no;
   document.getElementById("confirm-delete-label").innerHTML = "Are you sure you want to delete <b>" + component_no + "</b>?";
+}
+
+// Filter table
+function filterComponents() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("componentSearch");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("componentsTable");
+  tr = table.getElementsByTagName("tr");
+  condition = document.getElementById("filter_components").value;
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[condition];
+      if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+          } else {
+              tr[i].style.display = "none";
+          }
+      }
+  }
 }
