@@ -67,7 +67,9 @@ def quotation_uploader(file_title):
 
         supplier_list_str = json.dumps(supplier_list)
         print(supplier_list_str)
-        average_unit_price = total_unit_price / total_num_suppliers
+        average_unit_price = 0
+        if total_unit_price > 0 and total_num_suppliers > 0:
+            average_unit_price = total_unit_price / total_num_suppliers
         cursor = conn.cursor()
         cursor.execute(
             f"UPDATE dbo.quotation_component SET crawl_info  = '{supplier_list_str}', unit_price='{average_unit_price}', quantity={total_quantity} WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"

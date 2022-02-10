@@ -37,14 +37,14 @@ class RsonlineSpider(scrapy.Spider):
             )
         )
         self.parts = json.load(self.parts_raw)
-        self.parts_from_file_raw = open(
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "../../input",
-                self.file_title + ".json",
-            )
-        )
-        self.parts_from_file = json.load(self.parts_from_file_raw)
+        # self.parts_from_file_raw = open(
+        #     os.path.join(
+        #         os.path.dirname(os.path.abspath(__file__)),
+        #         "../../input",
+        #         self.file_title + ".json",
+        #     )
+        # )
+        # self.parts_from_file = json.load(self.parts_from_file_raw)
 
         self.start_urls = []
         for part in self.parts:
@@ -61,9 +61,15 @@ class RsonlineSpider(scrapy.Spider):
         super(RsonlineSpider, self).__init__(*args, **kwargs)
 
     def parse(self, response):
-        mfg_pn = ""
+        part_requirement = get_part_requirements(
+            self.parts, response.request.url, "sg.rs-online.com"
+        )
+
         manufacturer = ""
-        if (
+        mfg_pn = ""
+        if part_requirement["found_in_item_master"] == False:
+            mfg_pn = part_requirement["mfg_pn"]
+        elif (
             response.xpath(
                 "//dl[@data-testid='key-details-desktop']/dd[2]/text()"
             ).get()
@@ -83,10 +89,6 @@ class RsonlineSpider(scrapy.Spider):
             manufacturer = response.xpath(
                 "//dl[@data-testid='key-details-desktop']/dd[3]/a/text()"
             ).get()
-        part_requirement = get_part_requirements(
-            self.parts_from_file,
-            mfg_pn,
-        )
 
         raw_qty = string_cleaning(
             response.xpath("//div[@data-testid='stock-status-0']/text()").get()

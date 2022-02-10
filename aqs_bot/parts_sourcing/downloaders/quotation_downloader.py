@@ -57,7 +57,9 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                 ].empty
                 == True
             ):
-                continue
+                quotation_item_dict["mfg_pn"] = quotation_item_dict["description"]
+                quotation_item_dict["found_in_item_master"] = False
+                draft_quotation_item_list.append(quotation_item_dict)
             else:
                 library_component_dict = (
                     df.loc[
@@ -66,25 +68,29 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                     .iloc[[0]]
                     .to_dict("r")[0]
                 )
-
-            if (
-                library_component_dict["Type"] == "Standard"
-                and isinstance(library_component_dict["Assigned Supplier"], float)
-                and isinstance(library_component_dict["Unit Price"], float)
-            ):
-                quotation_item_dict["mfg_pn"] = str(library_component_dict["Mfg pn"])
-                draft_quotation_item_list.append(quotation_item_dict)
-            elif (
-                library_component_dict["Type"] == "Consignment"
-                and str(library_component_dict["Assigned Supplier"]) != ""
-                and library_component_dict["Unit Price"] == 0
-            ):
-                quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
-                draft_quotation_item_list_consignment.append(quotation_item_dict)
-            else:
-                quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
-                quotation_item_dict["unit_price"] = library_component_dict["Unit Price"]
-                draft_quotation_item_list_fixed_supplier.append(quotation_item_dict)
+                quotation_item_dict["found_in_item_master"] = True
+                if (
+                    library_component_dict["Type"] == "Standard"
+                    and isinstance(library_component_dict["Assigned Supplier"], float)
+                    and isinstance(library_component_dict["Unit Price"], float)
+                ):
+                    quotation_item_dict["mfg_pn"] = str(
+                        library_component_dict["Mfg pn"]
+                    )
+                    draft_quotation_item_list.append(quotation_item_dict)
+                elif (
+                    library_component_dict["Type"] == "Consignment"
+                    and str(library_component_dict["Assigned Supplier"]) != ""
+                    and library_component_dict["Unit Price"] == 0
+                ):
+                    quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
+                    draft_quotation_item_list_consignment.append(quotation_item_dict)
+                else:
+                    quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
+                    quotation_item_dict["unit_price"] = library_component_dict[
+                        "Unit Price"
+                    ]
+                    draft_quotation_item_list_fixed_supplier.append(quotation_item_dict)
 
         quotation["quotation_component"] = draft_quotation_item_list
         quotation[

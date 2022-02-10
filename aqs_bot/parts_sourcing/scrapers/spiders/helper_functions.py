@@ -11,7 +11,18 @@ def string_cleaning(str):
     )
 
 
-def get_part_requirements(parts, raw_mfg_pn):
+def get_part_requirements(parts, url, supplier_domain):
+    print("I am in get_part_requirements", parts, url, supplier_domain)
+    for part in parts:
+        if supplier_domain in part["supplier_links"]:
+            if (
+                string_cleaning(part["supplier_links"][supplier_domain][0].lower())
+                == url
+            ):
+                return part["item"]
+
+
+def get_part_requirements_google(parts, raw_mfg_pn):
     mfg_pn = string_cleaning(raw_mfg_pn.lower())
     for part in parts["quotation_component"]:
         if string_cleaning(part["mfg_pn"].lower()) == mfg_pn:

@@ -1,0 +1,2 @@
+@REM Change to your own file dir if want run
+cmd /k "cd /d C:\Users\Izzat Khair\Desktop\School\Y3T1\FYP\public_code\fyp\venv\Scripts & activate.bat & cd /d    C:\Users\Izzat Khair\Desktop\School\Y3T1\FYP\public_code\fyp\aqs_bot\parts_sourcing\ & python main_controller.py"

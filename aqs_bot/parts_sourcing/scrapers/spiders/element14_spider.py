@@ -37,14 +37,14 @@ class Element14Spider(scrapy.Spider):
             )
         )
         self.parts = json.load(self.parts_raw)
-        self.parts_from_file_raw = open(
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "../../input",
-                self.file_title + ".json",
-            )
-        )
-        self.parts_from_file = json.load(self.parts_from_file_raw)
+        # self.parts_from_file_raw = open(
+        #     os.path.join(
+        #         os.path.dirname(os.path.abspath(__file__)),
+        #         "../../input",
+        #         self.file_title + ".json",
+        #     )
+        # )
+        # self.parts_from_file = json.load(self.parts_from_file_raw)
 
         self.start_urls = []
         for part in self.parts:
@@ -65,8 +65,7 @@ class Element14Spider(scrapy.Spider):
     def parse(self, response):
 
         part_requirement = get_part_requirements(
-            self.parts_from_file,
-            response.xpath('//dd[@class="ManufacturerPartNumber"]/span/text()').get(),
+            self.parts, response.request.url, "sg.element14.com"
         )
 
         quantity_available = int(
@@ -96,12 +95,17 @@ class Element14Spider(scrapy.Spider):
             if part_requirement["UOM"] == "M":
                 selling_length = get_selling_length(description, "sg.element14.com")
 
-            yield {
-                "mfg_pn": string_cleaning(
+            mfg_pn = ""
+            if part_requirement["found_in_item_master"] == True:
+                mfg_pn = string_cleaning(
                     response.xpath(
                         '//dd[@class="ManufacturerPartNumber"]/span/text()'
                     ).get()
-                ),
+                )
+            else:
+                mfg_pn = part_requirement["mfg_pn"]
+            yield {
+                "mfg_pn": mfg_pn,
                 "description": description,
                 "selling_length": selling_length,
                 "url": response.request.url,

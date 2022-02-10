@@ -6,6 +6,9 @@ from scrapy.utils.log import configure_logging
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor, defer
 import sys
+from helper_functions import (
+    get_part_requirements_google,
+)
 
 
 class GoogleSpider(scrapy.Spider):
@@ -69,13 +72,18 @@ class GoogleSpider(scrapy.Spider):
                         links_dict[domain].append(url)
                     else:
                         links_dict[domain] = [url]
-
+        part_requirement = get_part_requirements_google(
+            self.parts,
+            response.request.url.replace(
+                "https://www.google.com/search?q=", ""
+            ).replace("+", " "),
+        )
         yield {
             "description_or_mfg_pn": response.request.url.replace(
                 "https://www.google.com/search?q=", ""
             ).replace("+", " "),
             "supplier_links": links_dict,
-            "item": response.xpath("/").get(),
+            "item": part_requirement,
         }
 
 
