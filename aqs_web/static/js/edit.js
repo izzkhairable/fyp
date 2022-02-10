@@ -20,9 +20,10 @@ function getQuotationParts(){
             for (var part in result) {
               // BOM
               if (result[part].is_bom == 1){
-                document.getElementById("parts").innerHTML += `<tr style="background-color:#F9E79F;" colspan="9">
+                document.getElementById("parts").innerHTML += `<tr colspan="9">
                   <th></th>
                   <th>${result[part].component_no}</th>
+                  <th>${result[part].lvl}</th>
                   <th>${result[part].uom}</th>
                   <th>${result[part].description}</th>
                   <th></th>
@@ -38,9 +39,10 @@ function getQuotationParts(){
               }
               // loose item
               else if (result[part].is_bom == 0 && result[part].level == "0.1") {
-                document.getElementById("parts").innerHTML += `<tr style="background-color:#5DADE2;">
+                document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
                 <td>${result[part].component_no}</td>
+                <td>${result[part].lvl}</td>
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
@@ -59,6 +61,7 @@ function getQuotationParts(){
                 document.getElementById("parts").innerHTML += `<tr>
                 <th scope="row"><input type="checkbox"></th>
                 <td>${result[part].component_no}</td>
+                <td>${result[part].lvl}</td>
                 <td>${result[part].uom}</td>
                 <td>${result[part].description}</td>
                 <td>${result[part].quantity}</td>
