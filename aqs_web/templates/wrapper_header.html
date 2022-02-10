@@ -40,9 +40,18 @@
                         <br>
                         <!-- establish session user details | jinja python flask -->
                         <div class="row-sm align-self-center">
+
+                            <!-- if logged in, show name and roles -->
+                            {% if session['logged_in'] %}
                             <b>{{ session['role'] | title }}</b>
                             <br>
                             <u>{{ session['username'] | title }}</u>
+
+                            <!-- else, appear as guest -->
+                            {% else %}
+                            <b>Guest</b>
+
+                            {% endif %}
                         </div>
                     </a>
                 </li>
@@ -54,11 +63,11 @@
                 </li>
                 {% if session['logged_in']%}
                 <li>
-                    <a href="login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="/logout"><i class="fas fa-sign-in-alt"></i> Logout</a>
                 </li>
                 {%else%}
                 <li>
-                    <a href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a href="Login"><i class="fas fa-sign-out-alt"></i> Login</a>
                 </li>
                 {%endif%}
                 <li>
