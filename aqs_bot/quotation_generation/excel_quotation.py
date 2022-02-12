@@ -28,7 +28,7 @@ wb = Workbook()
 
 ws = wb.active
 quotation = cursor.execute(
-    "select labour_cost, markup_pct, labour_cost_description from dbo.quotation where quotation_no=?", 'quotation_one')
+    "select labour_cost, markup_pct, labour_no_of_hours, testing_cost, remark from dbo.quotation where quotation_no=?", 'quotation_one')
 res = quotation.fetchone()
 
 markup_pct = None
@@ -110,10 +110,17 @@ end_total_price_location = get_column_letter(8) + str(row_no-1)
 
 
 row_no+=1
-ws.cell(row=row_no, column=7).value = "LABOUR COST"
-ws.cell(row=row_no, column=8).value = res.labour_cost
+qty_location = get_column_letter(5) + str(row_no)
+unit_price_location = get_column_letter(7) + str(row_no)
+
+ws.cell(row=row_no, column=3).value = "LABOUR COST"
+ws.cell(row=row_no, column=4).value = "ASSEMBLY"
+ws.cell(row=row_no, column=5).value = res.labour_no_of_hours
+ws.cell(row=row_no, column=6).value = "HR"
+ws.cell(row=row_no, column=7).value = res.labour_cost
+ws.cell(row=row_no, column=8).value = "=" + qty_location + "*" + unit_price_location
 labour_cost_location = get_column_letter(8) + str(row_no)
-ws.cell(row=row_no, column=9).value = res.labour_cost_description
+# ws.cell(row=row_no, column=9).value = res.remark
 row_no+=2
 ws.cell(row=row_no, column=7).value = "SELLING PRICE"
 ws.cell(row=row_no, column=8).value = "=SUM(" + start_total_price_location + ":" + end_total_price_location + ")+" + labour_cost_location
