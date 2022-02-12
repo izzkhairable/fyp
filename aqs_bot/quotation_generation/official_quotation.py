@@ -3,6 +3,7 @@ from docx.shared import Inches
 import pyodbc
 import json
 import configparser
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 config = configparser.ConfigParser()
 config.read('sql_connect.cfg')
@@ -40,12 +41,16 @@ for each_row in result:
     total_price+=price
     
 
-print(total_price)
 total_price = (total_price * markup_pct) + total_price + (res.labour_cost * res.labour_no_of_hours)
 
 document = Document('aqs_bot/quotation_generation/Official Quotation Template.docx')
 
-# print(document.tables[1].cell(0,1).text)
+document.tables[3].cell(0,2).text = document.tables[3].cell(0,2).text.replace("{total_price}", str(total_price))
+img = document.tables[3].cell(2,2).add_paragraph()
+img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+r = img.add_run()
+r.add_picture('signature.jpg', width=Inches(0.8))
+
 
 table = document.tables[2]
 sn = 1
@@ -58,4 +63,4 @@ row[5].text = str(total_price)
 row[6].text = str(total_price)
 
 
-document.save('aqs_bot/quotation_generation/baby.docx')
+document.save('aqs_bot/quotation_generation/official_quote.docx')
