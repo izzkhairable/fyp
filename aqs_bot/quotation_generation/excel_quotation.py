@@ -121,8 +121,17 @@ ws.cell(row=row_no, column=7).value = res.labour_cost
 ws.cell(row=row_no, column=8).value = "=" + qty_location + "*" + unit_price_location
 labour_cost_location = get_column_letter(8) + str(row_no)
 # ws.cell(row=row_no, column=9).value = res.remark
-row_no+=2
+row_no+=1
+ws.cell(row=row_no, column=3).value = "TESTING COST"
+ws.cell(row=row_no, column=4).value = "ASSEMBLY"
+ws.cell(row=row_no, column=5).value = 1
+ws.cell(row=row_no, column=6).value = "EA"
+ws.cell(row=row_no, column=7).value = res.testing_cost
+ws.cell(row=row_no, column=8).value = res.testing_cost
+testing_cost_location = get_column_letter(8) + str(row_no)
+
+row_no+=1
 ws.cell(row=row_no, column=7).value = "SELLING PRICE"
-ws.cell(row=row_no, column=8).value = "=SUM(" + start_total_price_location + ":" + end_total_price_location + ")+" + labour_cost_location
+ws.cell(row=row_no, column=8).value = "=SUM(" + start_total_price_location + ":" + end_total_price_location + ")+" + labour_cost_location + "+" + testing_cost_location
 
 wb.save('document.xlsx')

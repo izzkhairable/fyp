@@ -16,7 +16,7 @@ cursor = conn.cursor()
 
 
 quotation = cursor.execute(
-    "select labour_cost, labour_no_of_hours, markup_pct, remark from dbo.quotation where quotation_no=?", 'quotation_one')
+    "select labour_cost, labour_no_of_hours, markup_pct, testing_cost, remark from dbo.quotation where quotation_no=?", 'quotation_one')
 res = quotation.fetchone()
 
 markup_pct = None
@@ -41,7 +41,7 @@ for each_row in result:
     total_price+=price
     
 
-total_price = (total_price * markup_pct) + total_price + (res.labour_cost * res.labour_no_of_hours)
+total_price = (total_price * markup_pct) + total_price + (res.labour_cost * res.labour_no_of_hours) + res.testing_cost
 
 document = Document('aqs_bot/quotation_generation/Official Quotation Template.docx')
 
