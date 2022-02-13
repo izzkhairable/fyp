@@ -214,11 +214,14 @@ cursor = conn.cursor()
 with open('aqs_bot/parts_extraction/config.yaml') as f:
     data = yaml.load(f, Loader=yaml.FullLoader)
     for key, v in data.items():
-        customer = cursor.execute("select * from dbo.customer where company_email=?", v['customer_email'])
+        customer = cursor.execute("select id from dbo.customer where company_name=?", v['customer'])
         result = customer.fetchone()
         if result == None:
             cursor.execute("insert into dbo.customer(company_email, company_name, company_website) values (?, ?, ?)", v['customer_email'], v['customer'], v['customer_website'])
             conn.commit()
+        else:
+            cursor.execute("update dbo.customer set company_email=?, company_name=?, company_website=? WHERE id=?", v['customer_email'], v['customer'], v['customer_website'], result.id)
+            conn.commit()            
         ## Scan Makino folder for RFQs and process each of them
         rfq_list = os.listdir(v['rfq_folder'])
         for each_rfq in rfq_list:
@@ -243,6 +246,16 @@ with open('aqs_bot/parts_extraction/config.yaml') as f:
                 except Exception as e:
                     print(e)
                     shutil.move(rfq_location, to_move_unprocessed_rfq_location)
+            elif rfq_file_extension == '.xls':
+                try:
+                    df = pd.read_excel(rfq_location)
+                    df.to_excel(v['rfq_folder'] + '/' + rfq_number + ".xlsx")
+                    processExcel(v['rfq_folder'] + '/' + rfq_number + ".xlsx")
+                    os.remove(v['rfq_folder'] + '/' + rfq_number + ".xlsx")
+                    shutil.move(rfq_location, to_archive_rfq_location)
+                except Exception as e:
+                    print(e)
+                    shutil.move(rfq_location, to_move_unprocessed_rfq_location)                
             else:
                 shutil.move(rfq_location, to_move_unprocessed_rfq_location)
             
