@@ -552,3 +552,10 @@ function filterComponents() {
       }
   }
 }
+
+function calculateLabourCost(){
+  var labour_cost = document.getElementById("labour").value;
+  var labour_hour = document.getElementById("labour-hours").value;
+  var total_labour_cost = labour_cost * labour_hour;
+  document.getElementById("total-labour-cost").value = total_labour_cost;
+}

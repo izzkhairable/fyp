@@ -178,18 +178,34 @@ def insert_component_under_bom():
     bom_id = result.id
     bom_lvl = math.ceil(result.lvl)
     bom_row = result.row
-    insert_to = bom_row+1
-    row_level = cursor.execute(
-        "SELECT id from dbo.quotation_component where quotation_no=? and row >= ? ORDER BY ROW ASC", data['quotation_no'], insert_to)
-    result = row_level.fetchall()
-    row_no = insert_to+1
-    for i in result:
-        cursor.execute("UPDATE dbo.quotation_component SET row=? WHERE quotation_no=? AND id=?", row_no, data["quotation_no"], i.id)
-        conn.commit()
-        row_no+=1
+    component_level_to_insert = bom_lvl+1
+
+    get_range = cursor.execute("SELECT row, id, lvl FROM dbo.quotation_component WHERE quotation_no=? AND row >= ? ORDER BY ROW", data['quotation_no'], bom_row)
+    result = get_range.fetchall()
+
+    row_to_insert_new_item = None
+    for each_row in result:
+        next_item = cursor.execute("SELECT row, id, lvl FROM dbo.quotation_component WHERE quotation_no=? AND row = ? ORDER BY ROW", data['quotation_no'], each_row.row+1)
+        res = get_range.fetchone()
+        if res != None:
+            if component_level_to_insert > res.lvl:
+                row_to_insert_new_item = each_row.row+1
+                break        
+        else:
+            row_to_insert_new_item = each_row.row+1
     
+    ## Fix the rows before inserting ##
+    get_range = cursor.execute("SELECT row, id, lvl FROM dbo.quotation_component WHERE quotation_no=? AND row >= ? ORDER BY ROW", data['quotation_no'], row_to_insert_new_item)
+    result = get_range.fetchall()
+
+    if len(result) > 0:
+        for each_row in result:
+            cursor.execute("UPDATE dbo.quotation_component SET row=? WHERE quotation_no=? AND id=?", each_row.row+1, data['quotation_no'], each_row.id)
+            conn.commit()
+
+    ## Now let's insert the new item ##
     cursor.execute("INSERT INTO dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom, bom_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
-    insert_to, data["quotation_no"], data["component_no"], bom_lvl+1, data["uom"], data["description"], 0, 0, int(data["is_bom"]), bom_id)
+    row_to_insert_new_item, data["quotation_no"], data["component_no"], component_level_to_insert, data["uom"], data["description"], 0, 0, int(data["is_bom"]), bom_id)
 
     try:
         conn.commit()
@@ -208,9 +224,9 @@ def insert_component():
     data = request.get_json()
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    result = cursor.execute("SELECT COUNT(*) from dbo.quotation_component")
+    result = cursor.execute("SELECT COUNT(*) from dbo.quotation_component WHERE quotation_no=?", data["quotation_no"])
     rows = result.fetchone()
-    row = rows[0] + 1
+    row = rows[0]
     cursor.execute('''
                 INSERT INTO dbo.quotation_component(row, quotation_no, component_no, lvl, uom, description, quantity, unit_price, is_bom) values (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', row, data["quotation_no"], data["component_no"], 0.1, data["uom"], data["description"], 0, 0, data["is_bom"])
