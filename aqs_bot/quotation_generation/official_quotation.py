@@ -4,7 +4,7 @@ import pyodbc
 import json
 import configparser
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-
+from docx2pdf import convert
 config = configparser.ConfigParser()
 config.read('sql_connect.cfg')
 
@@ -64,3 +64,4 @@ row[6].text = str(total_price)
 
 
 document.save('aqs_bot/quotation_generation/official_quote.docx')
+convert('aqs_bot/quotation_generation/official_quote.docx', 'aqs_bot/quotation_generation/official_quote.pdf')
