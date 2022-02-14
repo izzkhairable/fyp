@@ -99,7 +99,7 @@ def processExcel(filepath):
                 customer_id = result.id
 
 
-            cursor.execute("insert into dbo.quotation(quotation_no, customer, assigned_staff, rfq_date, status) values (?, ?, ?, ?, ?)", rfq_number, customer_id, staff_id, datetime.datetime.now(), 'draft')
+            cursor.execute("insert into dbo.quotation(quotation_no, customer, assigned_staff, rfq_date, status, markup_pct) values (?, ?, ?, ?, ?, ?)", rfq_number, customer_id, staff_id, datetime.datetime.now(), 'draft', v['default_mark_up_pct'])
             conn.commit()
             start_row = max(set(start_row_list), key = start_row_list.count)    
             
