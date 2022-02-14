@@ -56,23 +56,23 @@
                     </a>
                 </li>
                 <li>
-                    <a href="supervisor_view_quotes"><i class="bi bi-person"></i> Quotations</a>
+                    <a href="supervisor_search"><i class="bi bi-person"></i> Quotations</a>
                 </li>
                 <li>
                     <a href="supervisor_dashboard"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
                 </li>
                 {% if session['logged_in']%}
                 <li>
-                    <a href="/logout"><i class="fas fa-sign-in-alt"></i> Logout</a>
+                    <a href="logout"><i class="fas fa-sign-in-alt"></i> Logout</a>
                 </li>
-                {%else%}
-                <li>
-                    <a href="Login"><i class="fas fa-sign-out-alt"></i> Login</a>
-                </li>
-                {%endif%}
                 <li>
                     <a href="settings"><i class="bi bi-three-dots"></i> Settings</a>
                 </li>
+                {%else%}
+                <li>
+                    <a href="login"><i class="fas fa-sign-out-alt"></i> Login</a>
+                </li>
+                {%endif%}
             </ul>
         </nav>
 

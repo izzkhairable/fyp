@@ -248,15 +248,15 @@ def insert_component():
 def get_supervisor_top_salesperson(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT top 4 id, first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) as win_no,
-                    SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) as loss_no,
-                    SUM(CASE status WHEN 'win' THEN labour_cost ELSE 0 END) as earned,
-                    SUM(CASE status WHEN 'loss' THEN labour_cost ELSE 0 END) as lost
-                    FROM dbo.quotation as QT
-                    JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
+    cursor.execute('''SELECT TOP 4 id, first_name, last_name, staff_email, SUM(CASE status WHEN 'win' THEN 1 ELSE 0 END) AS win_no,
+                    SUM(CASE status WHEN 'loss' THEN 1 ELSE 0 END) AS loss_no,
+                    SUM(CASE status WHEN 'win' THEN (labour_cost*labour_no_of_hours) ELSE 0 END) AS earned,
+                    SUM(CASE status WHEN 'loss' THEN (labour_cost*labour_no_of_hours) ELSE 0 END) AS lost
+                    FROM dbo.quotation AS QT
+                    JOIN dbo.staff AS ST ON QT.assigned_staff=ST.id 
                     WHERE ST.supervisor = ?
                     GROUP BY id, first_name, last_name, staff_email
-                    ORDER BY win_no desc;''', supervisor_id)
+                    ORDER BY win_no DESC;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -272,14 +272,14 @@ def get_supervisor_top_salesperson(supervisor_id):
 def get_salespersons_under_supervisor(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT id, first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) as approved,
-    SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) as sent,
-    SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) as pending,
-    SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) as rejected
-    FROM dbo.quotation as QT
-    JOIN dbo.staff as ST ON QT.assigned_staff=ST.id 
-    WHERE ST.supervisor = ?
-    GROUP BY id, first_name, last_name, staff_email;''', supervisor_id)
+    cursor.execute('''SELECT id, first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) AS approved,
+                    SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) AS sent,
+                    SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) AS pending,
+                    SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) AS rejected
+                    FROM dbo.quotation AS QT
+                    JOIN dbo.staff as ST ON QT.assigned_staff = ST.id 
+                    WHERE ST.supervisor = ?
+                    GROUP BY id, first_name, last_name, staff_email;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -295,10 +295,11 @@ def get_salespersons_under_supervisor(supervisor_id):
 def get_quotations_numbers_supervisor(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT QT.status, COUNT(QT.Status) as num
-    FROM dbo.staff as ST JOIN dbo.quotation as QT ON ST.id = QT.assigned_staff
-    WHERE ST.supervisor = ?
-    GROUP BY QT.status;''', supervisor_id)
+    cursor.execute('''SELECT QT.status, COUNT(QT.Status) AS num
+                    FROM dbo.staff AS ST
+                    JOIN dbo.quotation AS QT ON ST.id = QT.assigned_staff
+                    WHERE ST.supervisor = ?
+                    GROUP BY QT.status;''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -315,8 +316,8 @@ def get_supervisor_salesperson_pending_quotations(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, QT.rfq_date, QT.assigned_staff, ST.first_name, ST.last_name
-                    FROM quotation as QT, staff as ST, customer as C
-                    WHERE ST.id = QT.assigned_staff and C.id = QT.customer and status = 'sent' and ST.supervisor=?''', supervisor_id)
+                    FROM dbo.quotation AS QT, dbo.staff AS ST, dbo.customer AS C
+                    WHERE ST.id = QT.assigned_staff AND C.id = QT.customer AND status = 'sent' AND ST.supervisor = ?''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -333,9 +334,9 @@ def get_supervisor_salesperson_quotations(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.assigned_staff, QT.rfq_date, status
-                   FROM staff as ST, quotation as QT, customer as C
-                   WHERE ST.id = QT.assigned_staff AND C.id = QT.customer AND ST.supervisor = ?
-                   ORDER BY QT.rfq_date desc''', supervisor_id)
+                    FROM staff AS ST, quotation AS QT, customer AS C
+                    WHERE ST.id = QT.assigned_staff AND C.id = QT.customer AND ST.supervisor = ?
+                    ORDER BY QT.rfq_date DESC''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -375,10 +376,10 @@ def check_supervisor(supervisor_id, quotation_no):
     print(supervisor_id)
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT * from quotation, staff 
-                   where staff.id = quotation.assigned_staff
-                   and supervisor = ?
-                   and quotation.quotation_no = ?''', supervisor_id, quotation_no)
+    cursor.execute('''SELECT * FROM quotation, staff 
+                   WHERE staff.id = quotation.assigned_staff
+                   AND supervisor = ?
+                   AND quotation.quotation_no = ?''', supervisor_id, quotation_no)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -394,10 +395,10 @@ def check_supervisor(supervisor_id, quotation_no):
 def get_supervisor_win_loss(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT SUM(labour_cost) as total, status FROM dbo.quotation as QT 
-                        INNER JOIN dbo.customer as CT ON QT.customer = CT.id
-                        INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-                        WHERE status = 'win' or status = 'loss' and supervisor = ?
+    cursor.execute('''SELECT SUM(labour_cost * labour_no_of_hours) AS total, status FROM dbo.quotation AS QT 
+                        INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
+                        INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
+                        WHERE (status = 'win' OR status = 'loss') AND supervisor = ?
                         GROUP BY status''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
@@ -414,14 +415,14 @@ def get_supervisor_win_loss(supervisor_id):
 def get_supervisor_dashboard_data(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT year(rfq_date) as rfq_year, month(rfq_date) as rfq_month, status, COUNT(DISTINCT(QT.quotation_no)) as no_of_quotations, sum(labour_cost) as revenue,
-                        sum(CASE when DATEDIFF(day, rfq_date, generation_date) < 12 THEN 1 ELSE 0 END) as on_time
-                        FROM dbo.quotation as QT 
-                        INNER JOIN dbo.customer as CT ON QT.customer = CT.id
-                        INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-                        WHERE status = 'win' or status = 'loss' and supervisor = ?
+    cursor.execute('''SELECT YEAR(rfq_date) AS rfq_year, MONTH(rfq_date) AS rfq_month, status, COUNT(DISTINCT(QT.quotation_no)) AS no_of_quotations, SUM(labour_cost * labour_no_of_hours) AS revenue,
+                        sum(CASE WHEN DATEDIFF(day, rfq_date, generation_date) < 12 THEN 1 ELSE 0 END) AS on_time
+                        FROM dbo.quotation AS QT 
+                        INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
+                        INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
+                        WHERE (status = 'win' or status = 'loss') AND supervisor = ?
                         GROUP BY status, rfq_date
-                        ORDER BY rfq_date desc''', supervisor_id)
+                        ORDER BY rfq_date DESC''', supervisor_id)
     
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -439,11 +440,11 @@ def get_supervisor_dashboard_data(supervisor_id):
 def get_quotations():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT CT.company_name as company, ST.first_name, ST.last_name, SUM(QCT.unit_price*QCT.quantity) as total_cost, SUM(QCT.quantity) as total_parts, QT.quotation_no, status FROM dbo.quotation as QT 
-    INNER JOIN dbo.customer as CT ON QT.customer = CT.id
-    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    LEFT JOIN dbo.quotation_component as QCT ON QT.quotation_no = QCT.quotation_no
-    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status''')
+    cursor.execute('''SELECT CT.company_name AS company, ST.first_name, ST.last_name, SUM(QCT.unit_price * QCT.quantity) AS total_cost, SUM(QCT.quantity) AS total_parts, QT.quotation_no, status FROM dbo.quotation AS QT 
+                    INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
+                    INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
+                    LEFT JOIN dbo.quotation_component AS QCT ON QT.quotation_no = QCT.quotation_no
+                    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status''')
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -459,10 +460,10 @@ def get_quotations():
 def get_quotation_parts(quotation_no):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT id, lvl, component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) as total_price, is_bom, bom_id, remark, crawl_info, CONVERT(varchar, lvl) as level
-    FROM dbo.quotation_component as QCT
-    WHERE QCT.quotation_no = ?
-    ORDER BY row ASC;''', quotation_no)
+    cursor.execute('''SELECT id, lvl, component_no, uom, description, quantity, unit_price, CONVERT(varchar, unit_price*quantity) AS total_price, is_bom, bom_id, remark, crawl_info, CONVERT(varchar, lvl) AS level
+                    FROM dbo.quotation_component AS QCT
+                    WHERE QCT.quotation_no = ?
+                    ORDER BY row ASC;''', quotation_no)
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -480,10 +481,10 @@ def get_quotation_info(quotation_no):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
     cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_no_of_hours, testing_cost, remark
-    FROM dbo.quotation as QT
-    INNER JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
-    INNER JOIN dbo.customer as CT ON QT.customer = CT.id
-    WHERE QT.quotation_no = ?;''', quotation_no)
+                    FROM dbo.quotation AS QT
+                    INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
+                    INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
+                    WHERE QT.quotation_no = ?;''', quotation_no)
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -500,7 +501,7 @@ def get_quotation_info(quotation_no):
 def get_partinfo(id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT crawl_info from dbo.quotation_component WHERE id = ?''', id)
+    cursor.execute('''SELECT crawl_info FROM dbo.quotation_component WHERE id = ?''', id)
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -631,29 +632,20 @@ def supervisor_dashboard():
         return render_template("unauthorised.html")
 
 #routing to supervisor_quotation_decision
-@app.route('/supervisor_quotation_decision')
+@app.route('/supervisor_quotation')
 @login_required
 def supervisor_quotation_decision_page():
     if current_user.role == 'supervisor':
-        return render_template("supervisor_quotation_decision.html")
+        return render_template("supervisor_quotation.html")
     else:
         return render_template("unauthorised.html")
     
-#routing to supervisor_quotation_template
-@app.route('/supervisor_quotation_template')
-@login_required
-def supervisor_quotation_template_page():
-    if current_user.role == 'supervisor':
-        return render_template("supervisor_quotation_template.html")
-    else:
-        return render_template("unauthorised.html")
-    
-#routing to supervisor_view_quotes
-@app.route('/supervisor_view_quotes')
+#routing to supervisor_search
+@app.route('/supervisor_search')
 @login_required
 def supervisor_quotation_view_quotes_page():
     if current_user.role == 'supervisor':
-        return render_template("supervisor_view_quotes.html")
+        return render_template("supervisor_search.html")
     else:
         return render_template("unauthorised.html")
 

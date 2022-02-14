@@ -23,7 +23,7 @@ function getAllQuotations() {
                     document.getElementById("quotations").innerHTML += `<tr>`;
                     document.getElementById("quotations").innerHTML += `
                   <th scope="row"><input type="checkbox"></th>
-                  <td><a href="supervisor_quotation_decision#${result[quotation].quotation_no}" class="link-primary"><u>${result[quotation].quotation_no}</u></a></td>
+                  <td><a href="supervisor_quotation#${result[quotation].quotation_no}" class="link-primary"><u>${result[quotation].quotation_no}</u></a></td>
                   <td>${result[quotation].company_name}</td>
                   <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
                   <td>${result[quotation].rfq_date}</td>

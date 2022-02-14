@@ -63,9 +63,9 @@ function getTopSalesperson() {
                     document.getElementById("salesperson").innerHTML += `<tr>
                   <th scope="row"><img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="30"
                     height="30" class="rounded-circle"></th>
-                  <td class="fw-bold text-primary"><a href="salesperson_profile#id=${result[salesperson].id}"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
-                  <td class="fw-bold text-success text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Win"><u>${result[salesperson].win_no}</u></a></td>
-                  <td class="fw-bold text-danger text-center"><a href="supervisor_view_quotes#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Loss"><u>${result[salesperson].loss_no}</u></a></td>
+                  <td class="fw-bold text-primary"><a href="profile#id=${result[salesperson].id}"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
+                  <td class="fw-bold text-success text-center"><a href="supervisor_search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Win"><u>${result[salesperson].win_no}</u></a></td>
+                  <td class="fw-bold text-danger text-center"><a href="supervisor_search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Loss"><u>${result[salesperson].loss_no}</u></a></td>
                   <td id="${result[salesperson].id}-profit" class="fw-bold text-center"></td>
                 </tr>`
                     var profit = result[salesperson].earned - result[salesperson].lost;
