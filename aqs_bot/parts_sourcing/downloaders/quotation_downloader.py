@@ -50,45 +50,36 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                 "description": one_quotation_item_list[6],
                 "quantity": one_quotation_item_list[7],
             }
-            library_component_dict = None
-            if (
-                df.loc[
-                    df["Component number"] == quotation_item_dict["component_no"]
-                ].empty
-                == True
-            ):
+
+            library_component_dict = find_in_item_mater(
+                quotation_item_dict["component_no"]
+            )
+            if library_component_dict == None:
                 quotation_item_dict["mfg_pn"] = quotation_item_dict["description"]
                 quotation_item_dict["found_in_item_master"] = False
                 draft_quotation_item_list.append(quotation_item_dict)
             else:
-                library_component_dict = (
-                    df.loc[
-                        df["Component number"] == quotation_item_dict["component_no"]
-                    ]
-                    .iloc[[0]]
-                    .to_dict("r")[0]
-                )
                 quotation_item_dict["found_in_item_master"] = True
                 if (
-                    library_component_dict["Type"] == "Standard"
-                    and isinstance(library_component_dict["Assigned Supplier"], float)
-                    and isinstance(library_component_dict["Unit Price"], float)
+                    library_component_dict["type"] == "standard"
+                    and library_component_dict["supplier"] == None
+                    and library_component_dict["unit_price"] == None
                 ):
                     quotation_item_dict["mfg_pn"] = str(
-                        library_component_dict["Mfg pn"]
+                        library_component_dict["mfg_pn"]
                     )
                     draft_quotation_item_list.append(quotation_item_dict)
                 elif (
-                    library_component_dict["Type"] == "Consignment"
-                    and str(library_component_dict["Assigned Supplier"]) != ""
-                    and library_component_dict["Unit Price"] == 0
+                    library_component_dict["type"] == "consignment"
+                    and library_component_dict["supplier"] != None
+                    and library_component_dict["unit_price"] == 0
                 ):
-                    quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
+                    quotation_item_dict["mfg_pn"] = library_component_dict["mfg_pn"]
                     draft_quotation_item_list_consignment.append(quotation_item_dict)
                 else:
-                    quotation_item_dict["mfg_pn"] = library_component_dict["Mfg pn"]
+                    quotation_item_dict["mfg_pn"] = library_component_dict["mfg_pn"]
                     quotation_item_dict["unit_price"] = library_component_dict[
-                        "Unit Price"
+                        "unit_price"
                     ]
                     draft_quotation_item_list_fixed_supplier.append(quotation_item_dict)
 
@@ -110,6 +101,33 @@ def save_quotation_and_items_to_json(draft_quotation_list):
             json.dump(quotation, fp)
         file_titles.append(quotation["quotation_no"])
     return file_titles
+
+
+def find_in_item_mater(component_no):
+    conn_minor = pyodbc.connect(
+        "Driver=" + config["database"]["driver"] + ";"
+        "Server=" + config["database"]["server"] + ";"
+        "Database=" + config["database"]["database"] + ";"
+        "Trusted_Connection=" + config["database"]["trusted_connection"] + ";"
+    )
+    cursor_minor = conn_minor.cursor()
+    cursor_minor.execute(
+        f"SELECT * FROM dbo.item_master WHERE component_no='{component_no}'"
+    )
+    item_tuple = cursor_minor.fetchone()
+    if item_tuple != None:
+        item_list = list(item_tuple)
+        item_dict = {
+            "unit_price": item_list[1],
+            "mfg_pn": item_list[3],
+            "supplier": item_list[5],
+            "type": item_list[4],
+            "last_updated": item_list[7],
+        }
+        conn_minor.close()
+        return item_dict
+    else:
+        return None
 
 
 def quotation_downloader():

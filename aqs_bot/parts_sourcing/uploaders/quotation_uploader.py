@@ -71,9 +71,14 @@ def quotation_uploader(file_title):
         if total_unit_price > 0 and total_num_suppliers > 0:
             average_unit_price = total_unit_price / total_num_suppliers
         cursor = conn.cursor()
-        cursor.execute(
-            f"UPDATE dbo.quotation_component SET crawl_info  = '{supplier_list_str}', unit_price='{average_unit_price}', quantity={total_quantity} WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
-        )
+        if len(supplier_list) > 0:
+            cursor.execute(
+                f"UPDATE dbo.quotation_component SET crawl_info  = '{supplier_list_str}', unit_price='{average_unit_price}', quantity={total_quantity} WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
+            )
+        else:
+            cursor.execute(
+                f"UPDATE dbo.quotation_component SET unit_price='{average_unit_price}', quantity={total_quantity} WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
+            )
         conn.commit()
     for part in combined_final["quotation_component_consignment"]:
         cursor = conn.cursor()
