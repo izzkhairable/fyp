@@ -23,12 +23,12 @@ function getQuotationInfo() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                document.getElementById("markup-value").value = result[0].markup_pct;
                 document.getElementById("quotation-name").innerHTML = quotation_no + " - " + result[0].company_name;
                 document.getElementById("quotation_no").innerHTML = quotation_no + `<i class="bi bi-box-arrow-in-up-right"></i>`;
                 document.getElementById("comments").innerHTML = result[0].comment;
-                document.getElementById("point-of-contact").innerHTML = result[0].first_name + " " + result[0].last_name +
-                    `
+                document.getElementById("point-of-contact").innerHTML =
+                    `<a class='link-primary fw-bold' href='profile#id=${result[0].assigned_staff}'><u>` + result[0].first_name + " " + result[0].last_name +
+                    `</u></a>
                 <a href=""><i class="bi bi-telephone"></i></a>
                 <a href="mailto:${result[0].staff_email}"><i class="bi bi-envelope"></i></a>
                 `;
@@ -53,7 +53,7 @@ function getQuotationInfo() {
                 } else if (result[0].status == "sent") {
                     quotation_status.className = "btn btn-warning float-right";
                     quotation_status.innerHTML = "Pending Approval";
-                    
+
                     checkQuotationRights(supervisor_id, quotation_no);
 
                 } else if (result[0].status == "rejected") {
@@ -68,7 +68,13 @@ function getQuotationInfo() {
                 }
 
                 document.getElementById("quotation_no_modal").innerHTML = quotation_no + " from " + result[0].first_name + " " + result[0].last_name;
-
+                document.getElementById("labour").value = result[0].labour_cost;
+                document.getElementById("labour-hours").value = result[0].labour_no_of_hours;
+                document.getElementById("total-labour-cost").value = result[0].labour_cost * result[0].labour_no_of_hours;
+                document.getElementById("testing-cost").value = result[0].testing_cost;
+                document.getElementById("markup").value = result[0].markup_pct;
+                document.getElementById("labour-remarks").value = result[0].remark;
+                calculateLabourCost()
                 getQuotationParts();
 
             } else if (response.status == 404) {
@@ -104,7 +110,7 @@ function getSupervisorName(sup_id) {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                document.getElementById('in-charge').innerHTML = result[0].first_name + " " + result[0].last_name;
+                document.getElementById('in-charge').innerHTML = `<a class='fw-bold link-primary' href='profile#id=${sup_id}'><u>` + result[0].first_name + " " + result[0].last_name + `</u></a>`;
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -137,7 +143,7 @@ function getQuotationParts() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                var markup = document.getElementById("markup-value").value/100 + 1;
+                var markup = document.getElementById("markup").value / 100 + 1;
                 var total_quotation_price = 0;
                 for (var part in result) {
                     if (result[part].remark == null) {
@@ -146,27 +152,25 @@ function getQuotationParts() {
                     total_price = parseFloat((result[part].total_price * markup).toFixed(2));
                     total_quotation_price += total_price
                     if (result[part].is_bom == 1) {
-                        document.getElementById("parts").innerHTML += `<th style="background-color:#F9E79F;" colspan="9">${result[part].description}</th>`
-                    } else if (result[part].is_bom == 0 && result[part].level == "0.1") {
-                        document.getElementById("parts").innerHTML += `
-                        <tr style="background-color:#5DADE2;">
-                            <th scope="row"><input type="checkbox"></th>
+                        document.getElementById("parts").innerHTML += `<tr colspan="9" class="fw-bold">
+                            <td></td>
                             <td>${result[part].component_no}</td>
+                            <td>${result[part].lvl}</td>
                             <td>${result[part].uom}</td>
                             <td>${result[part].description}</td>
-                            <td>${result[part].quantity}</td>
-                            <td>$${(result[part].unit_price * markup).toFixed(2)}</td>
-                            <td>${total_price}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td>${result[part].remark}</td>
                             <td>
-                                <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
                             </td>
-                        </tr>
-                        `
-                    } else {
+                        </tr>`;
+                    } else if (result[part].is_bom == 0 && result[part].level == "0.1") {
+                        // loose item
                         document.getElementById("parts").innerHTML += `<tr>
-                        <th scope="row"><input type="checkbox"></th>
+                        <th scope="row"></th>
                         <td>${result[part].component_no}</td>
+                        <td>${result[part].lvl}</td>
                         <td>${result[part].uom}</td>
                         <td>${result[part].description}</td>
                         <td>${result[part].quantity}</td>
@@ -174,10 +178,24 @@ function getQuotationParts() {
                         <td>$${(result[part].total_price * markup).toFixed(2)}</td>
                         <td>${result[part].remark}</td>
                         <td>
-                        <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                            <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
                         </td>
-                    </tr>
-                    `
+                    </tr>`;
+                    } else {
+                        document.getElementById("parts").innerHTML += `<tr>
+                            <th scope="row"></th>
+                            <td>${result[part].component_no}</td>
+                            <td>${result[part].lvl}</td>
+                            <td>${result[part].uom}</td>
+                            <td>${result[part].description}</td>
+                            <td>${result[part].quantity}</td>
+                            <td>$${(result[part].unit_price * markup).toFixed(2)}</td>
+                            <td>$${(result[part].total_price * markup).toFixed(2)}</td>
+                            <td>${result[part].remark}</td>
+                            <td>
+                                <button type="button" data-bs-toggle="modal" onclick="viewParts('${result[part].id}', '${result[part].remark}')" data-bs-target="#view-parts" class="btn btn-outline-secondary"><i class="bi bi-eye"></i></button>
+                            </td>
+                        </tr>`;
                     }
                 }
                 document.getElementById("parts").innerHTML += `
@@ -191,7 +209,8 @@ function getQuotationParts() {
                     <td colspan="3">
                         Total: <b>$${total_quotation_price.toFixed(2)}</b>
                     </td>
-                </tr>`
+                </tr>`;
+                calculateTotalOverallCost(total_quotation_price);
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);
@@ -216,7 +235,7 @@ function viewParts(component_no, remark) {
         <th scope="col">Supplier</th>
         <th scope="col">Link</th>   
         <th scope="col">Quantity</th>
-    </tr>`
+    </tr>`;
     $(async () => {
         // Change serviceURL to your own
         var serviceURL = "http://localhost:5000/partinfo/" + component_no;
@@ -349,4 +368,42 @@ function checkQuotationRights(sup_id, quotation_no) {
             location.href = "supervisor_home";
         } // error
     });
+}
+
+// Filter table
+function filterComponents() {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("componentSearch");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("componentsTable");
+    tr = table.getElementsByTagName("tr");
+    condition = document.getElementById("filter_components").value;
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[condition];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+
+// Calculate labour costs
+function calculateLabourCost() {
+    var labour_cost = document.getElementById("labour").value;
+    var labour_hour = document.getElementById("labour-hours").value;
+    var total_labour_cost = labour_cost * labour_hour;
+    document.getElementById("total-labour-cost").value = total_labour_cost;
+}
+
+function calculateTotalOverallCost(total_quotation_price) {
+    var total_labour_cost = parseFloat(document.getElementById("total-labour-cost").value);
+    var testing_cost = parseFloat(document.getElementById("testing-cost").value);
+    var total_overall_cost = total_quotation_price + total_labour_cost + testing_cost;
+    document.getElementById('overall-cost').value = total_overall_cost;
 }

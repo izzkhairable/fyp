@@ -52,6 +52,28 @@
                 <!-- Quote Information -->
                 <div class="shadow bg-white">
                     <nav class="navbar navbar-expand-lg navbar-light">
+                        <div class="container-fluid">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <form class="d-flex">
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon1"><i
+                                                class="bi bi-search"></i></span>
+                                        <input type="text" class="form-control" size="30"
+                                            placeholder="Search Components By" onkeyup="filterComponents()" id="componentSearch">
+                                        <select class="form-control form-select" id="filter_components">
+                                            <option value="0" selected>Component Number</option>
+                                            <option value="1">Level</option>
+                                            <option value="2">UOM</option>
+                                            <option value="3">Description</option>
+                                            <option value="4">Quantity</option>
+                                            <option value="5">Unit Price</option>
+                                            <option value="6">Total Price</option>
+                                            <option value="7">Remarks</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </ul>
+                        </div>
                         <div class="container-fluid justify-content-end">
                             <div class="d-flex dropdown flex-row bd-highlight ms-3">
                                 <button type="button" data-bs-toggle="modal" data-bs-target="#approvedModal"
@@ -116,11 +138,12 @@
 
                     <!-- Parts -->
                     <div class="mx-3">
-                        <table class="table">
+                        <table class="table" id="componentsTable">
                             <thead>
                                 <tr>
-                                    <th scope="col"><i class="bi bi-app"></i></th>
+                                    <th scope="col"></th>
                                     <th scope="col">Component Number</th>
+                                    <th scope="col">Level</th>
                                     <th scope="col">UOM</th>
                                     <th scope="col">Description</th>
                                     <th scope="col">Quantity</th>
@@ -134,6 +157,70 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- Markup -->
+                <div class="shadow bg-white col-6 p-3 my-3">
+                    <h5>Additional Costs</h5>
+                    <hr>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="labour">Labour Cost ($): </label>
+                        </div>
+                        <div class="col-8">
+                            <input id="labour" name="labour" type="number" disabled>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="labour-hours">Number of Labour Hours: </label>
+                        </div>
+                        <div class="col-8">
+                            <input id="labour-hours" name="labour-hours" type="number" disabled>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="total-labour-cost"><b>Total Labour Cost ($): </b></label>
+                        </div>
+                        <div class="col-8">
+                            <input id="total-labour-cost" class="border-0" name="total-labour-cost" type="number" disabled>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="testing-cost">Testing Cost ($): </label>
+                        </div>
+                        <div class="col-8">
+                            <input id="testing-cost" name="testing-cost" type="number" disabled>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="markup">Markup (in %): </label>
+                        </div>
+                        <div class="col-8">
+                            <input id="markup" name="markup" type="number" disabled>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="labour-remarks">Remarks: </label>
+                        </div>
+                        <div class="col-8">
+                            <textarea id="labour-remarks" cols="50" rows="5" name="labour-remarks"
+                                type="text" disabled></textarea>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-4">
+                            <label for="overall-cost"><b>Total Overall Cost ($): </b></label>
+                        </div>
+                        <div class="col-8">
+                            <input id="overall-cost" name="overall-cost" type="number" disabled>
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 <!-- View Parts Modal -->
@@ -160,7 +247,6 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" id="markup-value">
             <!--closes the content div -->
         </div>
         <!-- closes wrapper div body -->

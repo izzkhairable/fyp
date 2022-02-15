@@ -26,7 +26,7 @@ function getAllQuotations() {
                   <th scope="row"><input type="checkbox"></th>
                   <td><a href="supervisor_quotation#${result[quotation].quotation_no}" class="link-primary"><u>${result[quotation].quotation_no}</u></a></td>
                   <td>${result[quotation].company_name}</td>
-                  <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
+                  <td><a class="link-primary fw-bold" href="profile#id=${result[quotation].assigned_staff}"><u>${result[quotation].first_name} ${result[quotation].last_name}</u></a></td>
                   <td>${result[quotation].rfq_date}</td>
                   <td id="status_${result[quotation].quotation_no}"></td>
                 </tr>`;
@@ -45,6 +45,9 @@ function getAllQuotations() {
                     } else if (result[quotation].status == "win") {
                         document.getElementById("status_" + result[quotation].quotation_no).className = "text-success fw-bold";
                         document.getElementById("status_" + result[quotation].quotation_no).innerHTML = "Win";
+                    } else if (result[quotation].status == "scraped") {
+                        document.getElementById("status_" + result[quotation].quotation_no).className = "text-secondary";
+                        document.getElementById("status_" + result[quotation].quotation_no).innerHTML = "Scraped";
                     } else {
                         document.getElementById("status_" + result[quotation].quotation_no).className = "text-danger fw-bold";
                         document.getElementById("status_" + result[quotation].quotation_no).innerHTML = "Loss";

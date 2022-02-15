@@ -2,47 +2,8 @@ var supervisor_id = document.getElementById('staff_id').value;
 
 function start() {
     getTopSalesperson();
-    getSalespersonTotalQuotes();
     getWinLoss();
     document.addEventListener('DOMContentLoaded', dashboardData('month'));
-}
-
-function getSalespersonTotalQuotes() {
-    $(async () => {
-        // Change serviceURL to your own
-        var getSalespersonTotalQuotes = "http://localhost:5000/supervisorQuotationNumbers/" + supervisor_id;
-        try {
-            const response =
-                await fetch(
-                    getSalespersonTotalQuotes, {
-                        method: 'GET'
-                    }
-                );
-            const result = await response.json();
-            if (response.status === 200) {
-                // success case
-                for (var status in result) {
-                    if (result[status].status == 'approved') {
-                        document.getElementById("approved").innerHTML = result[status].num;
-                    } else if (result[status].status == 'sent') {
-                        document.getElementById("sent").innerHTML = result[status].num;
-                    } else {
-                        document.getElementById("rejected").innerHTML = result[status].num;
-                    }
-                }
-            } else if (response.status == 404) {
-                // No Rows
-                console.log(result.message);
-            } else {
-                // unexpected outcome, throw the error
-                throw response.status;
-            }
-        } catch (error) {
-            // Errors when calling the service; such as network error, 
-            // service offline, etc
-            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
-        } // error
-    });
 }
 
 function getTopSalesperson() {
@@ -106,13 +67,18 @@ function getWinLoss() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
-                for (var month in result) {
-                    if (result[month].status == 'win') {
-                        document.getElementById("job-win").innerHTML = "$" + result[month].total;
+                var total = 0
+                for (var row in result) {
+                    total += result[row].number
+                    if (result[row].status == 'win') {
+                        document.getElementById("job-win").innerHTML = "$" + result[row].total;
+                        document.getElementById("win").innerHTML = result[row].number;
                     } else {
-                        document.getElementById("job-loss").innerHTML = "$" + result[month].total;
+                        document.getElementById("job-loss").innerHTML = "$" + result[row].total;
+                        document.getElementById("loss").innerHTML = result[row].number;
                     }
                 }
+                document.getElementById('total').innerHTML = total
             } else if (response.status == 404) {
                 // No Rows
                 console.log(result.message);

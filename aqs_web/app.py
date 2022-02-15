@@ -322,7 +322,6 @@ def get_salespersons_under_supervisor(supervisor_id):
     cursor = conn.cursor()
     cursor.execute('''SELECT id, first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) AS approved,
                     SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) AS sent,
-                    SUM(CASE status WHEN 'pending' THEN 1 ELSE 0 END) AS pending,
                     SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) AS rejected
                     FROM dbo.quotation AS QT
                     JOIN dbo.staff as ST ON QT.assigned_staff = ST.id 
@@ -443,7 +442,7 @@ def check_supervisor(supervisor_id, quotation_no):
 def get_supervisor_win_loss(supervisor_id):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT SUM(labour_cost * labour_no_of_hours) AS total, status FROM dbo.quotation AS QT 
+    cursor.execute('''SELECT COUNT(status) AS number, SUM(labour_cost * labour_no_of_hours) AS total, status FROM dbo.quotation AS QT 
                         INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
                         INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
                         WHERE (status = 'win' OR status = 'loss') AND supervisor = ?
@@ -529,7 +528,7 @@ def get_quotation_parts(quotation_no):
 def get_quotation_info(quotation_no):
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_no_of_hours, testing_cost, remark
+    cursor.execute('''SELECT assigned_staff, comment, status, first_name, last_name, company_name, supervisor, staff_email, markup_pct, labour_cost, labour_no_of_hours, testing_cost, remark
                     FROM dbo.quotation AS QT
                     INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
                     INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
@@ -711,10 +710,10 @@ def salesperson_home():
     else:
         return render_template("unauthorised.html")
     
-#routing to edit page
-@app.route('/edit')
+#routing to salesperson edit page
+@app.route('/salesperson_edit_quotation')
 @login_required
-def edit():
+def salesperson_edit():
     #double check: can supervisor have access to edit pages?
     if current_user.role == 'supervisor' or 'salesperson':
         return render_template('salesperson_edit_quotation.html')

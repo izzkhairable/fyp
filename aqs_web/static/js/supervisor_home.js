@@ -67,21 +67,22 @@ function getSalespersonTotalQuotes() {
             const result = await response.json();
             if (response.status === 200) {
                 // success case
+                var draft = 0
                 for (var status in result) {
                     if (result[status].status == 'approved') {
                         document.getElementById("approved").innerHTML = result[status].num;
                         var approved = result[status].num;
                     } else if (result[status].status == 'sent') {
                         document.getElementById("sent").innerHTML = result[status].num;
-                        var sent = result[status].num;
-                    } else if (result[status].status == 'draft') {
-                        document.getElementById("draft").innerHTML = result[status].num;
-                        var draft = result[status].num;
+                        var sent = result[status].num;;
                     } else if (result[status].status == 'rejected') {
                         document.getElementById("rejected").innerHTML = result[status].num;
-                        var rejected = result[status].num
+                        var rejected = result[status].num;
+                    } else {
+                        draft += result[status].num;
                     }
                 }
+                document.getElementById("draft").innerHTML = draft;
                 google.charts.load("current", {
                     packages: ["corechart"]
                 });
