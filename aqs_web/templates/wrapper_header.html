@@ -32,7 +32,13 @@
         <nav id="sidebar" class="bg-light shadow">
             <ul class="list-unstyled components">
                 <li>
+                    {% if ((session['logged_in']) and (session['role'] == 'supervisor')) %}
                     <a href="supervisor_home">
+                    {% elif ((session['logged_in']) and (session['role'] == 'salesperson')) %}
+                    <a href="salesperson_home">
+                    {% else %}
+                    <a href="guest_home">
+                    {% endif %}
                         <div class="row-sm">
                             <img src="https://c.tenor.com/9qZhM0uswAYAAAAd/bully-maguire-dance.gif" width="100"
                                 height="100" class="rounded-circle">
@@ -56,10 +62,22 @@
                     </a>
                 </li>
                 <li>
+                    {% if ((session['logged_in']) and (session['role'] == 'supervisor')) %}
                     <a href="supervisor_search"><i class="bi bi-person"></i> Quotations</a>
+                    {% elif ((session['logged_in']) and (session['role'] == 'salesperson')) %}
+                    <a href="salesperson_home"><i class="bi bi-person"></i> Quotations</a>
+                    {% else %}
+                    <a href="guest_home"><i class="bi bi-person"></i> Quotations</a>
+                    {% endif %}
                 </li>
                 <li>
+                    {% if ((session['logged_in']) and (session['role'] == 'supervisor')) %}
                     <a href="supervisor_dashboard"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
+                    {% elif ((session['logged_in']) and (session['role'] == 'salesperson')) %}
+                    <a href="salesperson_dashboard"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
+                    {% else %}
+                    <a href="guest_dashboard"><i class="bi bi-file-earmark-bar-graph"></i> Dashboard</a>
+                    {% endif %}
                 </li>
                 {% if session['logged_in']%}
                 <li>
@@ -88,7 +106,13 @@
             <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
                 <div class="container-fluid">
                     <div style="width: 262px">
+                        {% if ((session['logged_in']) and (session['role'] == 'supervisor')) %}
                         <a class="fw-bold text-primary fs-6" href="supervisor_home">TSH Quotation Management</a>
+                        {% elif ((session['logged_in']) and (session['role'] == 'salesperson')) %}
+                        <a class="fw-bold text-primary fs-6" href="salesperson_home">TSH Quotation Management</a>
+                        {% else %}
+                        <a class="fw-bold text-primary fs-6" href="guest_home">TSH Quotation Management</a>
+                        {% endif %}
                     </div>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
