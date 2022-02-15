@@ -39,6 +39,28 @@ CORS(app)
 
 # SALESPERSON FUNCTIONS
 
+# Updates status to sent upon submitting quotation for review
+@app.route("/submitForReview", methods=['POST'])
+def submit_for_review():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.quotation
+                SET status = 'sent'
+                WHERE quotation_no = ?
+                ''', data["quotation_no"])
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
 # Updates database with edited information for each component
 @app.route("/updateComponent", methods=['POST'])
 def update_component():
@@ -118,6 +140,32 @@ def update_quotation_info():
                 WHERE quotation_no = ?
                 ''', data["comments"], data["quotation_no"])
 
+    try:
+        conn.commit()
+        cursor.close()
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
+# Delete Quotation
+@app.route("/deleteQuotation", methods=['POST'])
+def delete_quotation():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                DELETE FROM dbo.quotation_component
+                WHERE quotation_no = ?
+                ''', data["quotation_no"])
+    conn.commit()
+    cursor.execute('''
+            DELETE FROM dbo.quotation
+            WHERE quotation_no = ?
+            ''', data["quotation_no"])            
     try:
         conn.commit()
         cursor.close()

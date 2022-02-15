@@ -18,12 +18,18 @@ function get_quotations() {
           // success case
           for (var quotation in result) {
               if (result[quotation].first_name + " " + result[quotation].last_name == document.getElementById("username").innerHTML) {
-                var button = `<td><button type="button" class="btn btn-warning btn-sm">Pending</button></td>`;
-                if (result[quotation].status == 'sent'){
-                    button = `<td><button type="button" class="btn btn-success btn-sm">Sent</button></td>`
+                var button = `<td><button type="button" class="btn btn-secondary btn-sm">Draft</button></td>`;
+                if (result[quotation].status == 'approved'){
+                    button = `<td><button type="button" class="btn btn-success btn-sm">Approved</button></td>`
                 }
-                if (result[quotation].status == 'requires_editing') {
-                    button = `<td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>`
+                if (result[quotation].status == 'rejected') {
+                    button = `<td><button type="button" class="btn btn-danger btn-sm">Rejected</button></td>`
+                }
+                if (result[quotation].status == 'sent'){
+                    button = `<td><button type="button" class="btn btn-primary btn-sm">Sent</button></td>`
+                }
+                if (result[quotation].status == 'scraped'){
+                    button = `<td><button type="button" class="btn btn-warning btn-sm">Scraped</button></td>`
                 }
                 document.getElementById("quotations").innerHTML +=
                 `<tr>
@@ -33,7 +39,7 @@ function get_quotations() {
                     <td>${result[quotation].rfq_date}</td>
                     ${button}
                     <td>
-                        <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#confirm-delete-quotation" onclick="displayConfirmDeleteQuotationModal('${result[quotation].quotation_no}')"><i class="bi bi-trash-fill"></i></button>
                     </td>
                 </tr>`
             }
@@ -51,6 +57,43 @@ function get_quotations() {
           console.log('There is a problem retrieving the data, please try again later.<br />' + error);
               } // error
   });
+}
+
+function displayConfirmDeleteQuotationModal(quotation_no){
+    document.getElementById("delete-quotation-no").value = quotation_no;
+    document.getElementById("confirm-delete-quotation-label").innerHTML = "Are you sure you want to delete <b>" + quotation_no + "</b>?";
+}
+
+function deleteQuotation(){
+    var quotation_no = document.getElementById("delete-quotation-no").value;
+    $(async() => {           
+        var serviceURL = "http://localhost:5000/deleteQuotation";
+        const data = {
+            quotation_no: quotation_no
+        };
+    
+        try {
+            const response =
+            await fetch(
+            serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }}
+            );
+            const result = await response.json();
+            if (response.status === 500) {
+                alert("There is an error deleting the quotation.")
+                }
+                else {
+                  location.reload();
+                    alert("Successfully deleted the quotation!")
+                }
+            } catch (error) {
+                // Errors when calling the service; such as network error, 
+                // service offline, etc
+                console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                    } // error
+        });
 }
 
 function insert(){

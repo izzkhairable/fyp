@@ -103,6 +103,27 @@
               </table>
             </div>
           </div>
+
+          <!-- Confirm Delete Modal-->
+          <div class="modal fade" id="confirm-delete-quotation" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+          aria-hidden="true" id="mi-modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Delete Quotation</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <input type="hidden" id="delete-quotation-no"></input>
+              </div>
+              <div class="modal-body" id="confirm-delete-quotation-label">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="deleteQuotation()">Yes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         </div>
       <!--closes the content div -->
       </div>

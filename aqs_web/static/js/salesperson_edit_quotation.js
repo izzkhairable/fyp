@@ -559,3 +559,35 @@ function calculateLabourCost(){
   var total_labour_cost = labour_cost * labour_hour;
   document.getElementById("total-labour-cost").value = total_labour_cost;
 }
+
+function submitForReview(){
+  var quotation_no = window.location.href.split("#")[1];
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/submitForReview";
+    const data = {
+      quotation_no: quotation_no,
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error sending quotation for review.")
+            }
+            else {
+              location.reload();
+                alert("Successfully sent quotation for review!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
