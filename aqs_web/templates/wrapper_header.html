@@ -51,7 +51,7 @@
                             {% if session['logged_in'] %}
                             <b>{{ session['role'] | title }}</b>
                             <br>
-                            <u id="username">{{ session['username'] | title }}</u>
+                            <u id="username">{{ session['first_name'] | title }} {{ session['last_name'] | title }}</u>
 
                             <!-- else, appear as guest -->
                             {% else %}

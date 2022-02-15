@@ -621,9 +621,11 @@ def login():
             id = current_user.id
             email = current_user.staff_email
             name_query = Staff.query.filter_by(staff_email = keyed_email).first()
-            username = name_query.first_name + " " + name_query.last_name
+            first_name = name_query.first_name 
+            last_name = name_query.last_name
             #establish session with the logged in username and role
-            session['username'] = username
+            session['first_name'] = first_name
+            session['last_name'] = last_name
             session['role'] = role
             session['id'] = id
             session['email'] = email
