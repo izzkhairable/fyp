@@ -444,7 +444,8 @@ def get_quotations():
                     INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
                     INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
                     LEFT JOIN dbo.quotation_component AS QCT ON QT.quotation_no = QCT.quotation_no
-                    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status, rfq_date''')
+                    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status, rfq_date
+                    ORDER BY rfq_date ASC''')
 
     columns = [column[0] for column in cursor.description]
     results = {}
@@ -668,7 +669,7 @@ def salesperson_home():
 def edit():
     #double check: can supervisor have access to edit pages?
     if current_user.role == 'supervisor' or 'salesperson':
-        return render_template('edit.html')
+        return render_template('salesperson_edit_quotation.html')
     else:
         return render_template("unauthorised.html")
 

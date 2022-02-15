@@ -16,27 +16,27 @@ function get_quotations() {
       const result = await response.json();
       if (response.status === 200) {
           // success case
-          console.log(result);
           for (var quotation in result) {
-              var button = `<td><button type="button" class="btn btn-warning btn-sm">Pending</button></td>`;
-              if (result[quotation].status == 'sent'){
-                  button = `<td><button type="button" class="btn btn-success btn-sm">Sent</button></td>`
-              }
-              if (result[quotation].status == 'requires_editing') {
-                button = `<td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>`
-              }
-              document.getElementById("quotations").innerHTML +=
-              `<tr>
-                <th scope="row"><input type="checkbox"></th>
-                <td><a href="edit#${result[quotation].quotation_no}" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
-                <td>${result[quotation].company}</td>
-                <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
-                <td>${result[quotation].rfq_date}</td>
-                ${button}
-                <td>
-                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
-                </td>
-            </tr>`
+              if (result[quotation].first_name + " " + result[quotation].last_name == document.getElementById("username").innerHTML) {
+                var button = `<td><button type="button" class="btn btn-warning btn-sm">Pending</button></td>`;
+                if (result[quotation].status == 'sent'){
+                    button = `<td><button type="button" class="btn btn-success btn-sm">Sent</button></td>`
+                }
+                if (result[quotation].status == 'requires_editing') {
+                    button = `<td><button type="button" class="btn btn-danger btn-sm">Requires Editing</button></td>`
+                }
+                document.getElementById("quotations").innerHTML +=
+                `<tr>
+                    <th scope="row"><input type="checkbox"></th>
+                    <td><a href="edit#${result[quotation].quotation_no}" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
+                    <td>${result[quotation].company}</td>
+                    <td>${result[quotation].rfq_date}</td>
+                    ${button}
+                    <td>
+                        <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                    </td>
+                </tr>`
+            }
           }
           } else if (response.status == 404) {
               // No Rows
