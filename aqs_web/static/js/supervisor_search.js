@@ -1,3 +1,5 @@
+var supervisor_id = document.getElementById('staff_id').value;
+
 function start() {
     getAllQuotations();
     checkForFilters();
@@ -6,7 +8,6 @@ function start() {
 function getAllQuotations() {
     $(async () => {
         // Change serviceURL to your own
-        var supervisor_id = 1;
         var serviceURL = "http://localhost:5000/supervisorAllQuotations/" + supervisor_id;
         document.getElementById("quotations").innerHTML = "";
         try {

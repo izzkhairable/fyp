@@ -75,6 +75,12 @@
                 {%endif%}
             </ul>
         </nav>
+        <!-- staff_id -->
+        {% if session['logged_in'] %}
+        <input type="hidden" id="staff_id" value="{{ session['id'] | title }}">
+        {% else %}
+        <input type="hidden" id="staff_id" value="null">
+        {% endif %}
 
         <!-- Page Content  -->
         <div id="content">

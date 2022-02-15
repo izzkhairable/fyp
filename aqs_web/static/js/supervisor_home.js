@@ -1,3 +1,5 @@
+var supervisor_id = document.getElementById('staff_id').value;
+
 function start() {
     getSalesperson();
     getSalespersonTotalQuotes();
@@ -5,7 +7,6 @@ function start() {
 }
 
 function getSalesperson() {
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getSalesperson = "http://localhost:5000/salesperson/" + supervisor_id;
@@ -53,7 +54,6 @@ function getSalesperson() {
 }
 
 function getSalespersonTotalQuotes() {
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getSalespersonTotalQuotes = "http://localhost:5000/supervisorQuotationNumbers/" + supervisor_id;
@@ -123,7 +123,6 @@ function getSalespersonTotalQuotes() {
 }
 
 function getQuotesThatRequireAttention() {
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getQuotesThatRequireAttention = "http://localhost:5000/supervisorQuotationAttention/" + supervisor_id;

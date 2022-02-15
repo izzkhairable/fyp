@@ -565,16 +565,20 @@ def login():
     if keyed_user:
         #get hashed password
         hashed_pw = hashlib.sha256(keyed_password.encode('utf-8')).hexdigest()
-        print(hashed_pw)
         #check if passwords match
         if hashed_pw == keyed_user.password:
             #set up variables
             login_user(keyed_user)
             role = current_user.role
-            username = Staff.query.filter_by(staff_email = keyed_email).first().first_name
+            id = current_user.id
+            email = current_user.staff_email
+            name_query = Staff.query.filter_by(staff_email = keyed_email).first()
+            username = name_query.first_name + " " + name_query.last_name
             #establish session with the logged in username and role
             session['username'] = username
             session['role'] = role
+            session['id'] = id
+            session['email'] = email
             session['logged_in'] =  True
             #check roles
             if role == "supervisor":
@@ -587,6 +591,15 @@ def login():
                 return render_template('admin.html')
     cursor.close()
     return render_template('login.html')
+
+#logout, clear session
+@app.route('/logout', methods = ['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    session.clear()
+    #redirect back to login first, to be changed later
+    return render_template("login.html")
 
 #routes need to ensure that their roles are correct.
 
@@ -612,15 +625,6 @@ def supervisor_home():
     else:
         return render_template("unauthorised.html")
 
-#login as salesperson, first page loaded
-@app.route('/salesperson_home')
-@login_required
-def salesperson_home():
-    if current_user.role == 'supervisor' or 'salesperson':
-        return render_template("salesperson_home.html")
-    else:
-        return render_template("unauthorised.html")
-
 #routing to supervisor_dashboard page
 @app.route('/supervisor_dashboard')
 @login_required
@@ -634,7 +638,7 @@ def supervisor_dashboard():
 #routing to supervisor_quotation_decision
 @app.route('/supervisor_quotation')
 @login_required
-def supervisor_quotation_decision_page():
+def supervisor_quotation():
     if current_user.role == 'supervisor':
         return render_template("supervisor_quotation.html")
     else:
@@ -643,16 +647,25 @@ def supervisor_quotation_decision_page():
 #routing to supervisor_search
 @app.route('/supervisor_search')
 @login_required
-def supervisor_quotation_view_quotes_page():
+def supervisor_search():
     if current_user.role == 'supervisor':
         return render_template("supervisor_search.html")
     else:
         return render_template("unauthorised.html")
 
+#login as salesperson, first page loaded
+@app.route('/salesperson_home')
+@login_required
+def salesperson_home():
+    if current_user.role == 'supervisor' or 'salesperson':
+        return render_template("salesperson_home.html")
+    else:
+        return render_template("unauthorised.html")
+    
 #routing to edit page
 @app.route('/edit')
 @login_required
-def edit_page():
+def edit():
     #double check: can supervisor have access to edit pages?
     if current_user.role == 'supervisor' or 'salesperson':
         return render_template('edit.html')
@@ -662,25 +675,27 @@ def edit_page():
 #routing to admin page
 @app.route('/admin')
 @login_required
-def login_page():
+def admin():
     if current_user.role == 'admin':
         return render_template('admin.html')
     else:
         return render_template('unauthorised.html')
 
-#logout, clear session
-@app.route('/logout', methods = ['GET', 'POST'])
+#routing to admin page
+@app.route('/profile')
 @login_required
-def logout():
-    logout_user()
-    session.clear()
-    #redirect back to login first, to be changed later
-    return render_template("login.html")
+def profile():
+    return render_template('profile.html')
 
-#route wrapper header test
-@app.route('/wrapper-test')
-def route_test():
-    return render_template("wrapper-test.html")
+@app.route("/")
+def home():
+    #for now will be returning the login page first
+    return redirect(url_for('login'))
+
+
+# to be at the bottom
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 #template for inserting data
 @app.route("/insert", methods=['POST'])
@@ -703,14 +718,3 @@ def insert():
             "code": 404,
             "message": "Unable to commit to database."
         }), 404
-
-@app.route("/")
-def home():
-    #for now will be returning the login page first
-    return redirect(url_for('login'))
-
-
-# to be at the bottom
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
-    

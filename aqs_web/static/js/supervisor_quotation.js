@@ -1,3 +1,5 @@
+var supervisor_id = document.getElementById('staff_id').value;
+
 function start() {
     if (window.location.href.split("#")[1] == null) {
         alert("You can't access this page without any quotation.")
@@ -7,7 +9,6 @@ function start() {
 }
 
 function getQuotationInfo() {
-    var supervisor_id = 1;
     var quotation_no = window.location.href.split("#")[1];
     $(async () => {
         // Change serviceURL to your own
@@ -89,10 +90,10 @@ function getQuotationInfo() {
     });
 }
 
-function getSupervisorName(supervisor_id) {
+function getSupervisorName(sup_id) {
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/supervisorInfo/" + supervisor_id;
+        var serviceURL = "http://localhost:5000/supervisorInfo/" + sup_id;
         try {
             const response =
                 await fetch(
@@ -311,10 +312,10 @@ function quotationDecision(decision) {
 }
 
 // check if this quotation is meant for this supervisor's approval
-function checkQuotationRights(supervisor_id, quotation_no) {
+function checkQuotationRights(sup_id, quotation_no) {
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/supervisorCheck/" + supervisor_id + "/" + quotation_no;
+        var serviceURL = "http://localhost:5000/supervisorCheck/" + sup_id + "/" + quotation_no;
         try {
             const response =
                 await fetch(

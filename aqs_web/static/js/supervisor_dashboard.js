@@ -1,3 +1,5 @@
+var supervisor_id = document.getElementById('staff_id').value;
+
 function start() {
     getTopSalesperson();
     getSalespersonTotalQuotes();
@@ -6,7 +8,6 @@ function start() {
 }
 
 function getSalespersonTotalQuotes() {
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getSalespersonTotalQuotes = "http://localhost:5000/supervisorQuotationNumbers/" + supervisor_id;
@@ -45,7 +46,6 @@ function getSalespersonTotalQuotes() {
 }
 
 function getTopSalesperson() {
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getTopSalesperson = "http://localhost:5000/supervisorTopSalesperson/" + supervisor_id;
@@ -93,7 +93,6 @@ function getTopSalesperson() {
 }
 
 function getWinLoss() {
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getWinLoss = "http://localhost:5000/supervisorWinLossAmount/" + supervisor_id;
@@ -131,7 +130,6 @@ function getWinLoss() {
 
 function dashboardData(filter) {
     var return_dict = {};
-    var supervisor_id = "1";
     $(async () => {
         // Change serviceURL to your own
         var getDashboardData = "http://localhost:5000/supervisorDashboard/" + supervisor_id;
