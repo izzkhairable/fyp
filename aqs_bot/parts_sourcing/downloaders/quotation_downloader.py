@@ -1,8 +1,11 @@
+from calendar import month
 import pyodbc
 import pandas as pd
 import json
 import math
 import configparser
+from datetime import datetime
+import yaml
 
 config = configparser.ConfigParser()
 config.read("../../sql_connect.cfg")
@@ -16,7 +19,19 @@ conn = pyodbc.connect(
 
 cursor = conn.cursor()
 cursor.execute("SELECT * FROM dbo.quotation WHERE status='draft'")
-df = pd.read_excel("./input/component_library.xlsx")
+
+
+with open("./config.yaml") as file:
+    bot_config = yaml.load(file, Loader=yaml.FullLoader)
+    max_duration_raw = bot_config["item_master_price"]["max_duration_since_updated"]
+    duration_unit = bot_config["item_master_price"]["duration_unit"]
+    max_duration = 0
+    if duration_unit == "months":
+        max_duration = max_duration_raw * 30.437
+    elif duration_unit == "years":
+        max_duration = max_duration_raw * 365.25
+    else:
+        max_duration = max_duration_raw
 
 
 def retrieve_all_draft_quotations():
@@ -64,6 +79,7 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                     library_component_dict["type"] == "standard"
                     and library_component_dict["supplier"] == None
                     and library_component_dict["unit_price"] == None
+                    and library_component_dict["to_be_updated"] == True
                 ):
                     quotation_item_dict["mfg_pn"] = str(
                         library_component_dict["mfg_pn"]
@@ -124,6 +140,14 @@ def find_in_item_mater(component_no):
             "type": item_list[4],
             "last_updated": item_list[7],
         }
+
+        diff_delta = datetime.now() - item_dict["last_updated"]
+        if diff_delta.days > max_duration:
+            item_dict["to_be_updated"] = True
+
+        else:
+            item_dict["to_be_updated"] = False
+
         conn_minor.close()
         return item_dict
     else:

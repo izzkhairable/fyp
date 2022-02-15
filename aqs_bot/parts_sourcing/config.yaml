@@ -1,0 +1,13 @@
+suppliers_to_scrape:
+  - mouser.sg
+  - digikey.sg
+  - sg.element14.com
+  - sg.rs-online.com
+  - sg.misumi-ec.com
+  - se.com
+  - b2b.harting.com
+
+item_master_price:
+  max_duration_since_updated: 2
+  # duration unit must be either "days", "months" or "years"
+  duration_unit: days
