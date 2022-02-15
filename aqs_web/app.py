@@ -681,11 +681,17 @@ def admin():
     else:
         return render_template('unauthorised.html')
 
-#routing to admin page
+#routing to profile page
 @app.route('/profile')
 @login_required
 def profile():
     return render_template('profile.html')
+
+#routing to settings page
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html')
 
 @app.route("/")
 def home():
