@@ -440,11 +440,11 @@ def get_supervisor_dashboard_data(supervisor_id):
 def get_quotations():
     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
     cursor = conn.cursor()
-    cursor.execute('''SELECT CT.company_name AS company, ST.first_name, ST.last_name, SUM(QCT.unit_price * QCT.quantity) AS total_cost, SUM(QCT.quantity) AS total_parts, QT.quotation_no, status FROM dbo.quotation AS QT 
+    cursor.execute('''SELECT CT.company_name AS company, ST.first_name, ST.last_name, SUM(QCT.unit_price * QCT.quantity) AS total_cost, SUM(QCT.quantity) AS total_parts, QT.quotation_no, status, rfq_date FROM dbo.quotation AS QT 
                     INNER JOIN dbo.customer AS CT ON QT.customer = CT.id
                     INNER JOIN dbo.staff AS ST ON QT.assigned_staff = ST.id
                     LEFT JOIN dbo.quotation_component AS QCT ON QT.quotation_no = QCT.quotation_no
-                    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status''')
+                    GROUP BY QT.quotation_no, CT.company_name, ST.first_name, ST.last_name, status, rfq_date''')
 
     columns = [column[0] for column in cursor.description]
     results = {}

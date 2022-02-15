@@ -31,9 +31,8 @@ function get_quotations() {
                 <td><a href="edit#${result[quotation].quotation_no}" class="link-primary">${result[quotation].quotation_no} <i class="bi bi-box-arrow-in-up-right"></i></a></td>
                 <td>${result[quotation].company}</td>
                 <td>${result[quotation].first_name} ${result[quotation].last_name}</td>
+                <td>${result[quotation].rfq_date}</td>
                 ${button}
-                <td>$${result[quotation].total_cost}</td>
-                <td>${result[quotation].total_parts}</td>
                 <td>
                     <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
                 </td>
@@ -91,4 +90,27 @@ function insert(){
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
                 } // error
     });
+}
+
+// Filter table
+function filter() {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    condition = document.getElementById("filter_condition").value;
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[condition];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
 }
