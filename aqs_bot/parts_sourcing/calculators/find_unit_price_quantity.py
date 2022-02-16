@@ -33,8 +33,20 @@ def find_unit_price_quantity(file_title):
                         if (
                             part["quantity"] >= price_row["min_quantity"]
                             and part["quantity"] <= price_row["max_quantity"]
+                            and supplier["sold_in_bag"] == None
                         ):
                             supplier["unit_price"] = price_row["unit_price"]
+                            supplier["quantity_by_supplier"] = part["quantity"]
+                        elif (
+                            supplier["sold_in_bag"] != None
+                            and math.ceil(part["quantity"] / supplier["sold_in_bag"])
+                            >= price_row["min_quantity"]
+                            and math.ceil(part["quantity"] / supplier["sold_in_bag"])
+                            <= price_row["max_quantity"]
+                        ):
+                            supplier["unit_price"] = (
+                                price_row["unit_price"] / supplier["sold_in_bag"]
+                            )
                             supplier["quantity_by_supplier"] = part["quantity"]
 
                 elif part["UOM"] == "EA" and supplier["quantity_available"] > 0:
@@ -42,9 +54,23 @@ def find_unit_price_quantity(file_title):
                         if (
                             part["quantity"] >= price_row["min_quantity"]
                             and part["quantity"] <= price_row["max_quantity"]
+                            and supplier["sold_in_bag"] == None
                         ):
                             supplier["unit_price"] = price_row["unit_price"]
 
+                            supplier["quantity_by_supplier"] = supplier[
+                                "quantity_available"
+                            ]
+                        elif (
+                            supplier["sold_in_bag"] != None
+                            and math.ceil(part["quantity"] / supplier["sold_in_bag"])
+                            >= price_row["min_quantity"]
+                            and math.ceil(part["quantity"] / supplier["sold_in_bag"])
+                            <= price_row["max_quantity"]
+                        ):
+                            supplier["unit_price"] = (
+                                price_row["unit_price"] / supplier["sold_in_bag"]
+                            )
                             supplier["quantity_by_supplier"] = supplier[
                                 "quantity_available"
                             ]

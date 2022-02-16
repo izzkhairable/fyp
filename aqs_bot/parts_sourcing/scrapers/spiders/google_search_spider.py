@@ -9,6 +9,7 @@ import sys
 from helper_functions import (
     get_part_requirements_google,
 )
+import yaml
 
 
 class GoogleSpider(scrapy.Spider):
@@ -26,13 +27,6 @@ class GoogleSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         self.file_title = kwargs.get("file_title")
-        self.suppliers_raw = open(
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "../../input",
-                "suppliers.json",
-            )
-        )
         self.parts_raw = open(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
@@ -40,8 +34,11 @@ class GoogleSpider(scrapy.Spider):
                 self.file_title + ".json",
             )
         )
-        self.suppliers = json.load(self.suppliers_raw)
         self.parts = json.load(self.parts_raw)
+
+        with open("./config.yaml") as file:
+            bot_config = yaml.load(file, Loader=yaml.FullLoader)
+            self.suppliers = bot_config["to_run"]["suppliers_spiders"]
 
         self.start_urls = []
         for part in self.parts["quotation_component"]:

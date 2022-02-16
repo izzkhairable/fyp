@@ -16,9 +16,10 @@ def get_part_requirements(parts, url, supplier_domain):
     for part in parts:
         if supplier_domain in part["supplier_links"]:
             if (
-                string_cleaning(part["supplier_links"][supplier_domain][0].lower())
+                part["supplier_links"][supplier_domain][0]
                 == url
             ):
+                print("This is the item found", part["item"])
                 return part["item"]
 
 

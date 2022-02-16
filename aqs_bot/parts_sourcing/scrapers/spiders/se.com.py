@@ -19,6 +19,7 @@ class SchneiderSpider(scrapy.Spider):
             "json": "scrapy.exporters.JsonItemExporter",
         },
         "FEED_EXPORT_ENCODING": "utf-8",
+        "DOWNLOAD_DELAY": 2,
     }
 
     def __init__(self, *args, **kwargs):

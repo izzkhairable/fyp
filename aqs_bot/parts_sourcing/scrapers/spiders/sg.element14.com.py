@@ -25,6 +25,7 @@ class Element14Spider(scrapy.Spider):
             "json": "scrapy.exporters.JsonItemExporter",
         },
         "FEED_EXPORT_ENCODING": "utf-8",
+        "DOWNLOAD_DELAY": 2,
     }
 
     def __init__(self, *args, **kwargs):
@@ -104,6 +105,15 @@ class Element14Spider(scrapy.Spider):
                 )
             else:
                 mfg_pn = part_requirement["mfg_pn"]
+
+            sold_in_bag = response.xpath(
+                '//dl[@id="unitMesureSection"]/dd/strong/text()'
+            ).get()
+            if sold_in_bag != None and "Pack of" in sold_in_bag:
+                sold_in_bag = int(string_cleaning(sold_in_bag.replace("Pack of", "")))
+            else:
+                sold_in_bag = None
+
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -112,6 +122,7 @@ class Element14Spider(scrapy.Spider):
                 "pricing_table": pricing,
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
+                "sold_in_bag": sold_in_bag,
             }
 
     def get_pricing_table(self, raw_table):

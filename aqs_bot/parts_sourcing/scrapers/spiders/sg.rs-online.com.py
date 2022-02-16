@@ -25,6 +25,7 @@ class RsonlineSpider(scrapy.Spider):
             "json": "scrapy.exporters.JsonItemExporter",
         },
         "FEED_EXPORT_ENCODING": "utf-8",
+        "DOWNLOAD_DELAY": 2,
     }
 
     def __init__(self, *args, **kwargs):
@@ -117,6 +118,16 @@ class RsonlineSpider(scrapy.Spider):
             if part_requirement["UOM"] == "M":
                 selling_length = get_selling_length(description, "sg.rs-online.com")
 
+            sold_in_bag = response.xpath(
+                '//p[@data-testid="price-heading"]/text()'
+            ).get()
+            if sold_in_bag != None and "Price 1 Bag of" in sold_in_bag:
+                sold_in_bag = int(
+                    string_cleaning(sold_in_bag.replace("Price 1 Bag of", ""))
+                )
+            else:
+                sold_in_bag = None
+
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -125,6 +136,7 @@ class RsonlineSpider(scrapy.Spider):
                 "selling_length": selling_length,
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
+                "sold_in_bag": sold_in_bag,
             }
 
     def get_pricing_table(self, raw_table):

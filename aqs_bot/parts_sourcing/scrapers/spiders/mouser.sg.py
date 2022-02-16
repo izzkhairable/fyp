@@ -25,6 +25,7 @@ class MouserSpider(scrapy.Spider):
             "json": "scrapy.exporters.JsonItemExporter",
         },
         "FEED_EXPORT_ENCODING": "utf-8",
+        "DOWNLOAD_DELAY": 2,
     }
 
     def __init__(self, *args, **kwargs):
@@ -128,6 +129,7 @@ class MouserSpider(scrapy.Spider):
                 "pricing_table": pricing,
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
+                "sold_in_bag": None,
             }
 
     def get_pricing_table(self, raw_table):
@@ -155,6 +157,8 @@ class MouserSpider(scrapy.Spider):
                             "th/a/text()",
                         )
                         .get()
+                        .replace(",", "")
+                        .replace(" ", "")
                     )
                 )
             pricing.append(
@@ -163,7 +167,10 @@ class MouserSpider(scrapy.Spider):
                         string_cleaning(
                             price.xpath(
                                 "th/a/text()",
-                            ).get()
+                            )
+                            .get()
+                            .replace(",", "")
+                            .replace(" ", "")
                         )
                     ),
                     "max_quantity": max_qty - 1,

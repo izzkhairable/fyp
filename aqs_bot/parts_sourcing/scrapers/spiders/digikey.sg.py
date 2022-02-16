@@ -25,6 +25,7 @@ class DigikeySpider(scrapy.Spider):
             "json": "scrapy.exporters.JsonItemExporter",
         },
         "FEED_EXPORT_ENCODING": "utf-8",
+        "DOWNLOAD_DELAY": 2,
     }
 
     def __init__(self, *args, **kwargs):
@@ -124,6 +125,15 @@ class DigikeySpider(scrapy.Spider):
                 )
             else:
                 mfg_pn = part_requirement["mfg_pn"]
+
+            # sold_in_bag = cleaned_all["props"]["pageProps"]["envelope"]["data"][
+            #     "priceQuantity"
+            # ]["pricing"][0]["packaging"]
+            # if sold_in_bag != None and "per Pkg" in sold_in_bag:
+            #     sold_in_bag = int(string_cleaning(sold_in_bag.replace("per Pkg", "")))
+            # else:
+            #     sold_in_bag = None
+
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -132,6 +142,7 @@ class DigikeySpider(scrapy.Spider):
                 "pricing_table": pricing,
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
+                "sold_in_bag": None,
             }
 
     def get_pricing_table(self, raw_table):

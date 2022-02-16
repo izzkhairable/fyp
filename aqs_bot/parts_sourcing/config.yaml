@@ -14,6 +14,9 @@ to_run:
     - ./combiners/combine_final_results
     - ./uploaders/quotation_uploader
 
+settings:
+  delete_input_outputs_after_uploaded: On
+
 item_master_price:
   max_duration_since_updated: 2
   # duration unit must be either "days", "months" or "years"
