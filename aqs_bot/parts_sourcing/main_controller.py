@@ -1,65 +1,21 @@
 import os
 import sys
 from downloaders.quotation_downloader import quotation_downloader
+import yaml
 
 file_titles = quotation_downloader()
-
+with open("./config.yaml") as file:
+    bot_config = yaml.load(file, Loader=yaml.FullLoader)
 
 for file_title in file_titles:
+    print("_____________Running Google Spider____________")
     os.system(f"python ./scrapers/spiders/google_search_spider.py {file_title}")
-    print("_____________Running Mouser Spider____________")
-    os.system(f"python ./scrapers/spiders/mouser_spider.py {file_title}")
-    print("_____________Running Digikey Spider____________")
-    os.system(f"python ./scrapers/spiders/digikey_spider.py {file_title}")
-    print("_____________Running Element14 Spider____________")
-    os.system(f"python ./scrapers/spiders/element14_spider.py {file_title}")
-    print("_____________Running RsOnline Spider____________")
-    os.system(f"python ./scrapers/spiders/rsonline_spider.py {file_title}")
-    print("_____________Running Misumi Spider____________")
-    os.system(f"python ./scrapers/spiders/misumi_spider.py {file_title}")
-    print("_____________Running Harting Spider____________")
-    os.system(f"python ./scrapers/spiders/harting_spider.py {file_title}")
-    print("_____________Running Schneider Spider____________")
-    os.system(f"python ./scrapers/spiders/schneider_spider.py {file_title}")
-    print("_____________Running Combine Results Function____________")
-    os.system(f"python ./combiners/combine_results.py {file_title}")
-    print("_____________Running  Find Unit Price Quantity Function____________")
-    os.system(f"python ./calculators/find_unit_price_quantity.py {file_title}")
-    print("_____________Running Find Best Supplier Function____________")
-    os.system(f"python ./calculators/find_best_supplier.py {file_title}")
-    print("_____________Running Combine Final Results Function____________")
-    os.system(f"python ./combiners/combine_final_results.py {file_title}")
-    print("_____________Running Quotation Uploader Function____________")
-    os.system(f"python ./uploaders/quotation_uploader.py {file_title}")
+
+    for supplier in bot_config["to_run"]["suppliers_spiders"]:
+        print(f"_____________Running {supplier} Spider____________")
+        os.system(f"python ./scrapers/spiders/{supplier}.py {file_title}")
+    for function_dir in bot_config["to_run"]["sequential_functions"]:
+        print("_____________Running Combine Results Function____________")
+        os.system(f"python {function_dir}.py {file_title}")
+
     print(f"End of {file_title} part sourcing bot process")
-
-
-# ------------- FOR TESTING WITHOUT DOWNLOADER OR UPLOADER ------------------
-# file_title = "26VSMTC-0012-ST=14.json".replace(".json", "")
-# file_title = "quotation_izzat.json".replace(".json", "")
-# os.system(f"python ./scrapers/spiders/google_search_spider.py {file_title}")
-# print("_____________Running Mouser Spider____________")
-# os.system(f"python ./scrapers/spiders/mouser_spider.py {file_title}")
-# print("_____________Running Digikey Spider____________")
-# os.system(f"python ./scrapers/spiders/digikey_spider.py {file_title}")
-# print("_____________Running Element14 Spider____________")
-# os.system(f"python ./scrapers/spiders/element14_spider.py {file_title}")
-# print("_____________Running RsOnline Spider____________")
-# os.system(f"python ./scrapers/spiders/rsonline_spider.py {file_title}")
-# print("_____________Running Misumi Spider____________")
-# os.system(f"python ./scrapers/spiders/misumi_spider.py {file_title}")
-# print("_____________Running Harting Spider____________")
-# os.system(f"python ./scrapers/spiders/harting_spider.py {file_title}")
-# print("_____________Running Schneider Spider____________")
-# os.system(f"python ./scrapers/spiders/schneider_spider.py {file_title}")
-# print("_____________Running Combine Results Function____________")
-# os.system(f"python ./combiners/combine_results.py {file_title}")
-# print("_____________Running  Find Unit Price Quantity Function____________")
-# os.system(f"python ./calculators/find_unit_price_quantity.py {file_title}")
-# print("_____________Running Find Best Supplier Function____________")
-# os.system(f"python ./calculators/find_best_supplier.py {file_title}")
-# print("_____________Running Combine Final Results Function____________")
-# os.system(f"python ./combiners/combine_final_results.py {file_title}")
-# print("_____________Running Quotation Uploader Function____________")
-# os.system(f"python ./uploaders/quotation_uploader.py {file_title}")
-# print(f"End of {file_title} part sourcing bot process")

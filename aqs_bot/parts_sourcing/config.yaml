@@ -1,11 +1,18 @@
-suppliers_to_scrape:
-  - mouser.sg
-  - digikey.sg
-  - sg.element14.com
-  - sg.rs-online.com
-  - sg.misumi-ec.com
-  - se.com
-  - b2b.harting.com
+to_run:
+  suppliers_spiders:
+    - mouser.sg
+    - digikey.sg
+    - sg.element14.com
+    - sg.rs-online.com
+    - sg.misumi-ec.com
+    - se.com
+    - b2b.harting.com
+  sequential_functions:
+    - ./combiners/combine_results
+    - ./calculators/find_unit_price_quantity
+    - ./calculators/find_best_supplier
+    - ./combiners/combine_final_results
+    - ./uploaders/quotation_uploader
 
 item_master_price:
   max_duration_since_updated: 2
