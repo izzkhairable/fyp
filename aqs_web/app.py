@@ -578,6 +578,42 @@ def get_supervisor_info(supervisor_id):
     cursor.close()
     return results
 
+#admin, show in salesperson comment section
+#returns all the list of rejection reasons
+#awaiting updated db for rejection reasons
+# @app.route("/rejectionReasons")
+# def get_rejectionReasons():
+#     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+#     cursor = conn.cursor()
+#     cursor.execute('''SELECT *
+#                     FROM rejection''')
+    
+#     columns = [column[0] for column in cursor.description]
+#     results = {}
+#     i = 0
+#     for row in cursor:
+#         results[i] = dict(zip(columns, row))
+#         i += 1
+#     cursor.close()
+#     return results
+
+#admin adding rejection reasons
+# @app.route("/addRejectionReason")
+# def add_RejectionReason():
+#     conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+#     cursor = conn.cursor()
+#     cursor.execute('''SELECT *
+#                     FROM rejection''')
+    
+#     columns = [column[0] for column in cursor.description]
+#     results = {}
+#     i = 0
+#     for row in cursor:
+#         results[i] = dict(zip(columns, row))
+#         i += 1
+#     cursor.close()
+#     return results
+
 #for login required
 login_manager = LoginManager()
 login_manager.init_app(app)
