@@ -22,7 +22,7 @@ This repository contains the source code for Automated Quotation System to autom
     * Public/Guest Portal
 
 ## Known Issues
-The are no known issues
+There are no known issues
 
 ## System Requirement
 * Windows OS
