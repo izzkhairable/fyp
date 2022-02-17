@@ -81,7 +81,7 @@
                     Action
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">Delete</a></li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirm-multiple-delete" onclick="checkIfCheckboxSelected()">Delete</a></li>
                   </ul>
                 </div>
 
@@ -97,7 +97,7 @@
               <table class="table" id="componentsTable">
                 <thead>
                   <tr>
-                    <th scope="col"><i class="bi bi-app"></i></th>
+                    <th scope="col"><input type="checkbox" name="deleteList" value="" onclick="checkAllBoxes(this)"></th>
                     <th scope="col">Component Number</th>
                     <th scope="col">Level</th>
                     <th scope="col">UOM</th>
@@ -339,6 +339,26 @@
               </div>
             </div>
           </div>
+
+          <!-- Confirm Multiple Delete Modal-->
+          <div class="modal fade" id="confirm-multiple-delete" tabindex="-1" role="dialog" aria-labelledby="confirmMultipleDeleteLabel"
+          aria-hidden="true" id="mi-modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Delete Components</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="confirm-multiple-delete-label">
+                Are you sure you want to delete the selected components?
+              </div>
+              <div class="modal-footer" id="confirm-multiple-delete-footer">
+                <button type="button" class="btn btn-primary" onclick="deleteMultipleComponents()">Yes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         </div>
 

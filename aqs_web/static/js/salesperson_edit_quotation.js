@@ -2,6 +2,7 @@ function start(){
   getQuotationInfo();
 }
 
+// Gets all components and BOMs info
 function getQuotationParts(){
   var quotation_no = window.location.href.split("#")[1];
   $(async() => {           
@@ -21,7 +22,7 @@ function getQuotationParts(){
               // BOM
               if (result[part].is_bom == 1){
                 document.getElementById("parts").innerHTML += `<tr colspan="9">
-                  <td></td>
+                  <td><input type="checkbox" name="deleteList" value="${result[part].id}"></td>
                   <td>${result[part].component_no}</td>
                   <td>${result[part].lvl}</td>
                   <td>${result[part].uom}</td>
@@ -40,7 +41,7 @@ function getQuotationParts(){
               // loose item
               else if (result[part].is_bom == 0 && result[part].level == "0.1") {
                 document.getElementById("parts").innerHTML += `<tr>
-                <th scope="row"><input type="checkbox"></th>
+                <th scope="row"><input type="checkbox" name="deleteList" value="${result[part].id}"></th>
                 <td>${result[part].component_no}</td>
                 <td>${result[part].lvl}</td>
                 <td>${result[part].uom}</td>
@@ -59,7 +60,7 @@ function getQuotationParts(){
               // components under bom
               else {
                 document.getElementById("parts").innerHTML += `<tr>
-                <th scope="row"><input type="checkbox"></th>
+                <th scope="row"><input type="checkbox" name="deleteList" value="${result[part].id}"></th>
                 <td>${result[part].component_no}</td>
                 <td>${result[part].lvl}</td>
                 <td>${result[part].uom}</td>
@@ -91,6 +92,7 @@ function getQuotationParts(){
     });
 }
 
+// Gets the quotation info
 function getQuotationInfo(){
   var quotation_no = window.location.href.split("#")[1];
   $(async() => {           
@@ -132,6 +134,7 @@ function getQuotationInfo(){
     });
 }
 
+// Saves edits done to the quotation
 function saveQuotationEdits(){
   var quotation_no = window.location.href.split("#")[1];
   var comments = document.getElementById("edit-comments").value;
@@ -166,6 +169,7 @@ function saveQuotationEdits(){
     });
 }
 
+// Updates additional costs
 function updateAdditionalCosts(){
   var quotation_no = document.getElementById("quotation-no-for-cost-update").value;
   var labour_cost = document.getElementById("labour").value;
@@ -209,6 +213,7 @@ function updateAdditionalCosts(){
 
 }
 
+// Edit components
 function editParts(id, component_no, remark){
   document.getElementById("editModalLabel").innerHTML = "Edit Part - " + component_no;
   document.getElementById("edit-parts-id").value = id;
@@ -269,6 +274,7 @@ function editParts(id, component_no, remark){
     });
 }
 
+// Updates the edit Bom modal based on the selected BOM
 function editBom(id, component_no, uom, description, remark){
   document.getElementById("editBomModalLabel").innerHTML = "Edit BOM - " + component_no;
   document.getElementById("edit-bom-id").value = id;
@@ -278,6 +284,7 @@ function editBom(id, component_no, uom, description, remark){
   document.getElementById("bom-remark").value = remark;
 }
 
+// Add supplier row to the component edit modal
 function addSupplier(){
   var table = document.getElementById("edit-suppliers");
   var rowid = table.rows[table.rows.length - 1].id + 1;
@@ -300,6 +307,7 @@ function addSupplier(){
 </tr>`;
 }
 
+// Saves editing done to components
 function saveEdits(){
   var id = document.getElementById("edit-parts-id").value;
   var edited_crawl_info = [];
@@ -354,6 +362,7 @@ function saveEdits(){
     });
 }
 
+// Saves editing done to BOMs
 function saveBomEdits(){
   var id = document.getElementById("edit-bom-id").value;
   var component_no = document.getElementById("bom-component-no").value;
@@ -400,6 +409,7 @@ function deleteSupplierRow(rowid){
   row.parentNode.removeChild(row);
 }
 
+// Deletes the selected component
 function deleteComponent(){
   var id = document.getElementById("delete-component-id").value;
   var quotation_no = document.getElementById("delete-component-quotation-no").value;
@@ -434,12 +444,14 @@ function deleteComponent(){
     });
 }
 
+// Updates the insert component modal to show the component_no of the BOM
 function insertComponentUnderBom(id, quotation_no, component_no){
   document.getElementById("addComponentUnderBomLabel").innerHTML = "Add Component Under " + component_no;
   document.getElementById("add-component-under-bom-id").value = id;
   document.getElementById("add-component-under-bom-quotation-no").value = quotation_no;
 }
 
+// Adds component under a specific BOM
 function addComponentUnderBom(){
   var id = document.getElementById("add-component-under-bom-id").value;
   var quotation_no = document.getElementById("add-component-under-bom-quotation-no").value;
@@ -483,6 +495,7 @@ function addComponentUnderBom(){
     });
 }
 
+// Adds component to the database
 function addComponent(){
   var quotation_no = window.location.href.split("#")[1];
   var component_no = document.getElementById("new-component-no").value;
@@ -524,6 +537,7 @@ function addComponent(){
     });
 }
 
+// Display the modal to confirm delete
 function displayConfirmDeleteModal(id, quotation_no, component_no){
   document.getElementById("delete-component-id").value = id;
   document.getElementById("delete-component-quotation-no").value = quotation_no;
@@ -553,6 +567,7 @@ function filterComponents() {
   }
 }
 
+// Calculates total labour cost and updates it
 function calculateLabourCost(){
   var labour_cost = document.getElementById("labour").value;
   var labour_hour = document.getElementById("labour-hours").value;
@@ -560,6 +575,7 @@ function calculateLabourCost(){
   document.getElementById("total-labour-cost").value = total_labour_cost;
 }
 
+// Changes status of quotation to 'sent'
 function submitForReview(){
   var quotation_no = window.location.href.split("#")[1];
   $(async() => {           
@@ -590,4 +606,68 @@ function submitForReview(){
             console.log('There is a problem retrieving the data, please try again later.<br />' + error);
                 } // error
     });
+}
+
+// Delete multiple components based on checkboxes selected
+function deleteMultipleComponents(){
+  var quotation_no = window.location.href.split("#")[1];
+  var selected = document.querySelectorAll('input[name="deleteList"]:checked');
+  var selectList = [];
+  for (var i=0; i<selected.length; i++) {
+    if (selected[i].value != "") {
+      selectList.push(selected[i].value);
+    }
+  }
+  console.log(selectList);
+  $(async() => {           
+    var serviceURL = "http://localhost:5000/deleteMultipleComponents";
+    const data = {
+        quotation_no: quotation_no,
+        selectList
+    };
+
+    try {
+        const response =
+        await fetch(
+        serviceURL, { method: 'POST', body: JSON.stringify(data), headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }}
+        );
+        const result = await response.json();
+        if (response.status === 500) {
+            alert("There is an error deleting the selected components.")
+            }
+            else {
+              location.reload();
+                alert("Successfully deleted the selected components!")
+            }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            console.log('There is a problem retrieving the data, please try again later.<br />' + error);
+                } // error
+    });
+}
+
+// Checks all checkboxes for deleting
+function checkAllBoxes(source){
+  var deleteList = document.getElementsByName("deleteList");
+  for (var i=0; i<deleteList.length; i++){
+    deleteList[i].checked = source.checked;
+  }
+}
+
+// Check if any checkboxes are selected
+function checkIfCheckboxSelected(){
+  var selected = document.querySelectorAll('input[name="deleteList"]:checked');
+  if (selected.length == 0) {
+    document.getElementById("confirm-multiple-delete-label").innerHTML = "You did not select any components.";
+    document.getElementById("confirm-multiple-delete-footer").innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>`;
+  }
+  else {
+    document.getElementById("confirm-multiple-delete-label").innerHTML = "Are you sure you want to delete the selected components?"
+    document.getElementById("confirm-multiple-delete-footer").innerHTML = `<button type="button" class="btn btn-primary" onclick="deleteMultipleComponents()">Yes</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>`;
+  }
 }
