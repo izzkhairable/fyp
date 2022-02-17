@@ -134,4 +134,4 @@ row_no+=1
 ws.cell(row=row_no, column=7).value = "SELLING PRICE"
 ws.cell(row=row_no, column=8).value = "=SUM(" + start_total_price_location + ":" + end_total_price_location + ")+" + labour_cost_location + "+" + testing_cost_location
 
-wb.save('document.xlsx')
+wb.save('aqs_bot/quotation_generation/document.xlsx')
