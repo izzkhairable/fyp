@@ -21,6 +21,9 @@ This repository contains the source code for Automated Quotation System to autom
     * Salesperson Portal
     * Public/Guest Portal
 
+## Known Issues
+The are no known issues
+
 ## System Requirement
 * Windows OS
 * Microsoft SQL Server 2008 Installed
@@ -53,7 +56,7 @@ pip install -r requirements.txt
 
    1. Execute the queries in the file by clicking "Execute" button
       
-      <img width="179" alt="image" src="https://user-images.githubusercontent.com/60332263/154436249-87be1913-b329-4ba5-88c3-e0fc81367b1e.png">
+      <img width="200" alt="image" src="https://user-images.githubusercontent.com/60332263/154436249-87be1913-b329-4ba5-88c3-e0fc81367b1e.png">
 
 ### For Parts Sourcing Bot
 Change directory via the following command
@@ -67,3 +70,12 @@ python main_controller.py
 ```
 
 > You should see the quotation_component, quotation and item_master table updated
+
+### For Part Extraction Bot
+> To be added...
+### For Quotation Generation Bot
+> To be added...
+### For Win-Loss Tracker Bot
+> To be added...
+### For Web Application
+> To be added...
