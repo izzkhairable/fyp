@@ -39,7 +39,12 @@
       <!-- the list of reasons will be pulled from the database into here -->
       <p id = "reasons"></p>
       <!-- for each reasoning, add a delete button that will enable the person to delete -> prompt user for confirmation -->
-      <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Add New Reason</button>
+      <form>
+        <input class="form-control" type="text" placeholder="Default input">
+        
+        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px" onclick="addReason()">Add New Reason</button>
+      </form>
+      
 
 
     </div>
