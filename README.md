@@ -32,13 +32,28 @@ This repository contains the source code for Automated Quotation System to autom
 
 **Pre-requisite Steps**
 
-1. Installing Application/System Dependecies
+1. Installing Application/System Dependencies
 ```
 pip install -r requirements.txt
 ```
 
 2. Import Sample Database into Microsoft SQL Server 2008
 
+   1. Open SQL Server Management Studio 
+
+      <img width="235" alt="image" src="https://user-images.githubusercontent.com/60332263/154434841-d8037df6-e180-4510-9644-478c4b8f236d.png">
+
+   1. Connect to database & select folder icon
+
+      <img src="https://user-images.githubusercontent.com/60332263/154434376-983874cc-2910-4032-bf5a-058d0b025bbc.png" alt="drawing" width="200"/>
+      
+   1. Select the aqs.sql file found in the repo
+ 
+      <img width="530" alt="image" src="https://user-images.githubusercontent.com/60332263/154435405-6e8a4680-0a30-4263-a91d-f571eef1c30c.png">
+
+   1. Execute the queries in the file by clicking "Execute" button
+      
+      <img width="179" alt="image" src="https://user-images.githubusercontent.com/60332263/154436249-87be1913-b329-4ba5-88c3-e0fc81367b1e.png">
 
 ### For Parts Sourcing Bot
 Change directory via the following command
