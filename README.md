@@ -1,7 +1,17 @@
 # Automated Quotation System (AQS)
 This repository contains the source code for Automated Quotation System to automate the groundwork tasks involved for each customer’s request for quotation (RFQ) and provide a standardised way to track RFQs.
 
-### Contributors
+### Screenshots
+> To be added...
+
+### Client
+TSH Synergy Pte Ltd
+
+<img width="200" alt="image" src="https://user-images.githubusercontent.com/60332263/154437668-095eccf6-b9cf-4da7-9296-a2d50f4af127.png">
+
+### Project By
+<img width="190" alt="image" src="https://user-images.githubusercontent.com/60332263/154437956-5e90398a-6c33-4812-a03a-fd9b64cbdf89.png">
+
 | Name  | Github |
 | ------------- |:-------------:|
 | Calvin Ang Chong Yap   | calvinacy     |
