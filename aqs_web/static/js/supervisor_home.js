@@ -78,7 +78,7 @@ function getSalespersonTotalQuotes() {
                     } else if (result[status].status == 'rejected') {
                         document.getElementById("rejected").innerHTML = result[status].num;
                         var rejected = result[status].num;
-                    } else {
+                    } else if (result[status].status == 'draft' || result[status].status == 'scraped') {
                         draft += result[status].num;
                     }
                 }

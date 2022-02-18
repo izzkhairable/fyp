@@ -9,7 +9,7 @@
     <title>TSH - Automated Quotation System</title>
 </head>
 
-<body onload="start()">
+<body>
     {% include 'wrapper_header.html' %}
     <div class="wrapper">
         <!-- Page Content  -->
@@ -18,14 +18,14 @@
                 <div class="shadow p-2 flex-fill bd-highlight bg-white">
                     <div class="text-center">Settings</div>
                     <hr>
-                    <form class="p-3">
+                    <div class="p-3">
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-5">
-                                    <label>First Name</label><span class="fw-bold text-danger" id="first_name_error_msg"></span>
+                                    <label>First Name</label>
                                 </div>
                                 <div class="col-5">
-                                    <label>Last Name</label><span class="fw-bold text-danger" id="last_name_error_msg"></span>
+                                    <label>Last Name</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -33,10 +33,12 @@
                                     <input type="text" class="form-control" id="first_name"
                                         placeholder="Enter first name" value="{{ session['first_name'] | title }}"
                                         onkeyup="checkFirstName()" disabled>
+                                    <span class="fw-bold text-danger" id="first_name_error_msg"></span>
                                 </div>
                                 <div class="col-5">
                                     <input type="text" class="form-control" id="last_name" placeholder="Enter last name"
                                         value="{{ session['last_name'] | title }}" onkeyup="checkLastName()" disabled>
+                                    <span class="fw-bold text-danger" id="last_name_error_msg"></span>
                                 </div>
                                 <div class="col-2">
                                     <button type="button" class="btn btn-success w-100" id="change_name"
@@ -49,10 +51,17 @@
                         <br>
                         <div class="form-group">
                             <label>Email address</label>
+                            <span class="fw-bold text-danger" id="email_error_msg"></span>
                             <div class="row">
                                 <div class="col-10">
                                     <input type="email" class="form-control" id="email" placeholder="Enter email"
-                                        value="{{ session['email'] }}" disabled>
+                                        value="{{ session['email'] }}" onkeyup="checkEmail()" disabled>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-success w-100" id="change_email"
+                                        onclick="changeEmail()">Change Email</button>
+                                    <button type="button" id="save_email" hidden class="btn btn-success w-100"
+                                        onclick="saveEmail()">Save Changes</button>
                                 </div>
                             </div>
                         </div>
@@ -70,13 +79,14 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-10">
-                                    <label>Password</label><span class="fw-bold text-danger" id="password_error_msg"></span>
+                                    <label>Password</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-10">
                                     <input type="password" class="form-control" id="password"
                                         placeholder="Enter Existing Password" onkeyup="checkPassword()" disabled>
+                                    <span class="fw-bold text-danger" id="password_error_msg"></span>
                                 </div>
                                 <div class="col-2">
                                     <button type="button" class="btn btn-success w-100" id="change_password"
@@ -97,7 +107,8 @@
                                 <div class="row">
                                     <div class="col-10">
                                         <input type="password" class="form-control" id="password_new"
-                                            placeholder="Enter New Password" onkeyup="checkNewPassword()">
+                                            placeholder="Enter New Password" onkeyup="checkNewPassword()" disabled>
+                                        <span class="fw-bold text-danger" id="password_new_error_msg"></span>
                                     </div>
                                 </div>
                             </div>
@@ -111,31 +122,53 @@
                                 <div class="row">
                                     <div class="col-10">
                                         <input type="password" class="form-control" id="password_new_2"
-                                            placeholder="Re-Enter New Password" onkeyup="checkNewPassword2()" >
+                                            placeholder="Re-Enter New Password" onkeyup="checkNewPassword2()" disabled>
+                                        <span class="fw-bold text-danger" id="password_new_2_error_msg"></span>
                                     </div>
                                 </div>
                             </div>
                             <br>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-10">
-                                    <label>Add Signature (only accept .PNG)</label>
+                        <form id="signature_submit" action="/uploadSignature" method="POST" enctype="multipart/form-data">
+                            <div class="form-group">
+                                {% if session['signature'] != None %}
+                                <div class="row">
+                                    <div class="col-10">
+                                        <label>Current Signature</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <img src="{{ url_for('static', filename=session['signature']) }}">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <label>Change Signature (only accept .PNG)</label>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row">
+                                    <div class="col-10">
+                                        <label>Add Signature (only accept .PNG)</label>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-10">
+                                        <input type="file" class="form-control" id="signature" name="signature" onchange="checkFile()"
+                                            accept="image/png">
+                                    </div>
+                                    <div class="col-2">
+                                        <button type="button" class="btn btn-success w-100" id="submit_signature" onclick="submitSignature()" disabled
+                                            >Submit Signature</button>
+                                    </div>
+                                    <small class="form-text text-muted">Please limit the file size to below 1MB.</small>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-10">
-                                    <input type="file" class="form-control" id="signature" onchange="checkFile()"
-                                        accept="image/png">
-                                </div>
-                                <div class="col-2">
-                                    <button type="button" class="btn btn-success w-100"
-                                        onclick="submitSignature()">Submit Signature</button>
-                                </div>
-                                <small class="form-text text-muted">Please limit the file size to below 1MB.</small>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
