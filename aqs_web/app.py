@@ -1,21 +1,22 @@
+from asyncio.windows_events import NULL
+import os
+import hashlib
+import urllib
+import html
+import configparser
+import math
+import pyodbc
 from sqlite3 import Cursor
 from jinja2 import *
-from flask import Flask, request, jsonify, redirect, url_for, render_template, session
+from flask import Flask, request, jsonify, redirect, url_for, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf import FlaskForm
+from sqlalchemy import null
 from wtforms.validators import InputRequired, Length
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from passlib.hash import sha256_crypt
 from wtforms import StringField, PasswordField, SubmitField
-import hashlib
-import urllib
-from urllib.parse import unquote
-import html
-import configparser
-import math
-
-import pyodbc
 
 config = configparser.ConfigParser()
 config.read('../sql_connect.cfg')
@@ -30,6 +31,8 @@ app.static_folder = 'static'
 params = urllib.parse.quote_plus('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
 app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = './static/signatures'
+app.config['ALLOWED_IMAGE_EXTENSIONS'] = ['PNG']
 
 #i dont know how to configure secret key, but it is needed for flask_wtf
 app.config['SECRET_KEY'] = 'thisisasecretkey'
@@ -617,6 +620,133 @@ def get_supervisor_info(supervisor_id):
     cursor.close()
     return results
 
+# Update name
+@app.route("/updateName", methods=['POST'])
+def update_name():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.staff
+                SET first_name = ?, last_name = ?
+                WHERE id = ?
+                ''', data['first_name'], data['last_name'], data['id'])
+    try:
+        conn.commit()
+        cursor.close()
+        session['first_name'] = data['first_name']
+        session['last_name'] = data['last_name']
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+        
+# Update email
+@app.route("/updateEmail", methods=['POST'])
+def update_email():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.staff
+                SET staff_email = ?
+                WHERE id = ?
+                ''', data['email'], data['id'])
+    try:
+        conn.commit()
+        cursor.close()
+        session['email'] = data['email']
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
+
+# Update password
+@app.route("/updatePassword", methods=['POST'])
+def update_password():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    filtered_user = Staff.query.filter_by(id = data['id']).first()
+    #get hashed password
+    hashed_pw = hashlib.sha256(data['old_password'].encode('utf-8')).hexdigest()
+    #check if passwords match
+    if hashed_pw == filtered_user.password:
+        cursor.execute('''
+                    UPDATE dbo.staff
+                    SET password = ?
+                    WHERE id = ?
+                    ''', data['new_password'], data['id'])
+        try:
+            conn.commit()
+            cursor.close()
+            return jsonify(data), 201
+        except Exception:
+            cursor.close()
+            return jsonify({
+                "code": 404,
+                "message": "Unable to commit to database."
+            }), 404
+
+# Upload file
+def allowed_image(filename):
+    if not "." in filename:
+        return False
+    ext = filename.rsplit('.',1)[1]
+    
+    if ext.upper() in app.config['ALLOWED_IMAGE_EXTENSIONS']:
+        return True
+    else:
+        return False
+
+@app.route('/uploadSignature', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if request.files:
+            signature = request.files['signature']
+            if signature.filename == "":
+                print("Image must have a filename")
+                return redirect(request.url)
+            if not allowed_image(signature.filename):
+                print('That image extension is not allowed')
+                return redirect(request.url)
+            else:
+                filename = session['first_name'] + "_" + session['last_name'] + "_Signature.png"
+                signature.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(request.url)
+    return render_template('settings.html')
+
+# Update signature path
+@app.route("/updateSignaturePath", methods=['POST'])
+def update_signature():
+    data = request.get_json()
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''
+                UPDATE dbo.staff
+                SET signature_path = ?
+                WHERE id = ?
+                ''', data['signature_name'], data['id'])
+    try:
+        conn.commit()
+        cursor.close()
+        session['signature'] = "signatures/" + data['signature_name']
+        return jsonify(data), 201
+    except Exception:
+        cursor.close()
+        return jsonify({
+            "code": 404,
+            "message": "Unable to commit to database."
+        }), 404
+
 #admin, show in salesperson comment section
 #returns all the list of rejection reasons
 #awaiting updated db for rejection reasons
@@ -671,8 +801,8 @@ class Staff(db.Model, UserMixin):
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(255), nullable=False)
-    supervisor = db.Column(db.String(255), nullable=False)
-
+    supervisor = db.Column(db.String(255), nullable=True)
+    signature_path = db.Column(db.String(255), nullable=True)
     def getFirstName(self):
         return self.first_name
 
@@ -695,12 +825,17 @@ def login():
             role = current_user.role
             id = current_user.id
             email = current_user.staff_email
-            name_query = Staff.query.filter_by(staff_email = keyed_email).first()
-            first_name = name_query.first_name 
-            last_name = name_query.last_name
+            query = Staff.query.filter_by(staff_email = keyed_email).first()
+            first_name = query.first_name 
+            last_name = query.last_name
+            signature = query.signature_path
             #establish session with the logged in username and role
             session['first_name'] = first_name
             session['last_name'] = last_name
+            if (signature is None):
+                session['signature'] = None;
+            else:
+                session['signature'] = "signatures/" + signature
             session['role'] = role
             session['id'] = id
             session['email'] = email
