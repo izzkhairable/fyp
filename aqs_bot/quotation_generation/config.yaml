@@ -1,0 +1,10 @@
+column_configuration:
+  Level: Level
+  Row: Row
+  Part_No: Component Number
+  Object_Description: Object Description
+  Quantity: Qty
+  UOM: Component Unit
+  Unit_Price: Price
+  Total_Price: Total Price
+  Remarks: Remarks
