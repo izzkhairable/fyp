@@ -677,13 +677,14 @@ def update_password():
     filtered_user = Staff.query.filter_by(id = data['id']).first()
     #get hashed password
     hashed_pw = hashlib.sha256(data['old_password'].encode('utf-8')).hexdigest()
+    new_pw = hashlib.sha256(data['new_password'].encode('utf-8')).hexdigest()
     #check if passwords match
     if hashed_pw == filtered_user.password:
         cursor.execute('''
                     UPDATE dbo.staff
                     SET password = ?
                     WHERE id = ?
-                    ''', data['new_password'], data['id'])
+                    ''', new_pw, data['id'])
         try:
             conn.commit()
             cursor.close()
