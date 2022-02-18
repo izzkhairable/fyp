@@ -198,7 +198,9 @@ def processExcel(filepath):
                                     row_unique_key_no, rfq_number, part_no, current_level, uom, description, qty, None, is_bom, None)
                             conn.commit()
 
-                current_row_no+=1     
+                current_row_no+=1  
+        cursor.execute("INSERT INTO dbo.notification (notification_msg, viewed_status, staff, notification_datetime) VALUES (?, ?, ?, ?)", "New RFQ - " + rfq_number + " has been successfully processed.", 0, staff_id, datetime.datetime.now())
+        conn.commit()
     else:
         print("None of the columns you specified are found")
 
