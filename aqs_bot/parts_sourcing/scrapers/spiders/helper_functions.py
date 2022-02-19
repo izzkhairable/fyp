@@ -15,10 +15,7 @@ def get_part_requirements(parts, url, supplier_domain):
     print("I am in get_part_requirements", parts, url, supplier_domain)
     for part in parts:
         if supplier_domain in part["supplier_links"]:
-            if (
-                part["supplier_links"][supplier_domain][0]
-                == url
-            ):
+            if part["supplier_links"][supplier_domain][0] == url:
                 print("This is the item found", part["item"])
                 return part["item"]
 

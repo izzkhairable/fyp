@@ -134,6 +134,11 @@ class DigikeySpider(scrapy.Spider):
             # else:
             #     sold_in_bag = None
 
+            lead_time = response.xpath("//div[@id='stdLeadTime']/text()").get()
+            if lead_time != None:
+                lead_time = (
+                    int(string_cleaning(lead_time.lower().replace("weeks", ""))) * 7
+                )
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -143,6 +148,7 @@ class DigikeySpider(scrapy.Spider):
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
                 "sold_in_bag": None,
+                "lead_time": lead_time,
             }
 
     def get_pricing_table(self, raw_table):

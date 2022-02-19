@@ -12,6 +12,8 @@ from helper_functions import (
     get_selling_length,
 )
 import sys
+from get_rsonline_lead_time import get_rsonline_lead_time
+from datetime import datetime
 
 
 class RsonlineSpider(scrapy.Spider):
@@ -128,6 +130,12 @@ class RsonlineSpider(scrapy.Spider):
             else:
                 sold_in_bag = None
 
+            lead_time = get_rsonline_lead_time(response.request.url)
+            print("Yo this is lead_time", lead_time)
+            if lead_time != None:
+                lead_time = lead_time.split(" back order for despatch ")[1][0:10]
+                diff_delta = datetime.strptime(lead_time, "%d/%m/%Y") - datetime.now()
+                lead_time = diff_delta.days
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -137,6 +145,7 @@ class RsonlineSpider(scrapy.Spider):
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
                 "sold_in_bag": sold_in_bag,
+                "lead_time": lead_time,
             }
 
     def get_pricing_table(self, raw_table):

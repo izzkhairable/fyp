@@ -121,6 +121,13 @@ class MouserSpider(scrapy.Spider):
             else:
                 mfg_pn = part_requirement["mfg_pn"]
 
+            lead_time = response.xpath(
+                "//div[@aria-labelledby='factoryLeadTimeLabelHeader']/text()"
+            ).get()
+            if lead_time != None:
+                lead_time = (
+                    int(string_cleaning(lead_time.lower().replace("weeks", ""))) * 7
+                )
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -130,6 +137,7 @@ class MouserSpider(scrapy.Spider):
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
                 "sold_in_bag": None,
+                "lead_time": lead_time,
             }
 
     def get_pricing_table(self, raw_table):

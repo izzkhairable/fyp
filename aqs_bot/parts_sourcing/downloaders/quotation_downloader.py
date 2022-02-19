@@ -99,6 +99,7 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                     quotation_item_dict["unit_price"] = library_component_dict[
                         "unit_price"
                     ]
+                    quotation_item_dict["supplier"] = library_component_dict["supplier"]
                     draft_quotation_item_list_fixed_supplier.append(quotation_item_dict)
 
         quotation["quotation_component"] = draft_quotation_item_list

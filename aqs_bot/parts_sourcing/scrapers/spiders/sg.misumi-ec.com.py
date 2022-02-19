@@ -69,6 +69,7 @@ class MisumiSpider(scrapy.Spider):
             "selling_length": None,
             "delivery_days": None,
             "quantity_available": None,
+            "lead_time": None,
         }
 
 

@@ -51,6 +51,7 @@ def quotation_uploader(file_title):
                     "url": part["supplier"][supplier_name]["url"],
                     "qty": quantity_by_supplier,
                     "unit_price": unit_price,
+                    "lead_time": part["supplier"][supplier_name]["lead_time"],
                 }
             )
             if supplier_name not in ["sg.misumi-ec.com", "se.com", "b2b.harting.com"]:
@@ -82,24 +83,24 @@ def quotation_uploader(file_title):
                 )
             else:
                 cursor.execute(
-                    f"UPDATE dbo.item_master SET supplier='{','.join(supplier_name_list)}',unit_price='{average_unit_price}' WHERE component_no ='{part['component_no']}';"
+                    f"UPDATE dbo.item_master SET last_updated=CURRENT_TIMESTAMP, supplier='{','.join(supplier_name_list)}',unit_price='{average_unit_price}' WHERE component_no ='{part['component_no']}';"
                 )
                 conn.commit()
         if len(supplier_list) < 1 and part["found_in_item_master"] == False:
             cursor.execute(
-                f"UPDATE dbo.quotation_component SET remark='Failed to source for supplier selling part and part not in item master' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
+                f"UPDATE dbo.quotation_component SET remark='No supplier found online' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
             )
         conn.commit()
     for part in combined_final["quotation_component_consignment"]:
         cursor = conn.cursor()
         cursor.execute(
-            f"UPDATE dbo.quotation_component SET unit_price='0' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
+            f"UPDATE dbo.quotation_component SET remark='Consignment item', unit_price='0' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
         )
         conn.commit()
     for part in combined_final["quotation_component_fixed_supplier"]:
         cursor = conn.cursor()
         cursor.execute(
-            f"UPDATE dbo.quotation_component SET unit_price='{part['unit_price']}' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
+            f"UPDATE dbo.quotation_component SET remark='{part['supplier']}', unit_price='{part['unit_price']}' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
         )
         conn.commit()
 

@@ -12,6 +12,7 @@ from helper_functions import (
     get_selling_length,
 )
 import sys
+from datetime import datetime
 
 
 class Element14Spider(scrapy.Spider):
@@ -114,6 +115,14 @@ class Element14Spider(scrapy.Spider):
             else:
                 sold_in_bag = None
 
+            lead_time = response.xpath(
+                "//p[@class='needMoreScoPara'][2]/strong[2]/text()"
+            ).get()
+            if lead_time != None:
+                lead_time = string_cleaning(lead_time)
+                diff_delta = datetime.strptime(lead_time, "%d/%m/%y") - datetime.now()
+                lead_time = diff_delta.days
+
             yield {
                 "mfg_pn": mfg_pn,
                 "description": description,
@@ -123,6 +132,7 @@ class Element14Spider(scrapy.Spider):
                 "delivery_days": {"min": 2, "max": 4},
                 "quantity_available": quantity_available,
                 "sold_in_bag": sold_in_bag,
+                "lead_time": lead_time,
             }
 
     def get_pricing_table(self, raw_table):
