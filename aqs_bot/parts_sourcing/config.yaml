@@ -15,9 +15,9 @@ to_run:
     - ./uploaders/quotation_uploader
 
 settings:
-  delete_input_outputs_after_uploaded: On
+  delete_input_outputs_after_uploaded: Off
 
 item_master_price:
-  max_duration_since_updated: 2
+  max_duration_since_updated: 1
   # duration unit must be either "days", "months" or "years"
   duration_unit: days

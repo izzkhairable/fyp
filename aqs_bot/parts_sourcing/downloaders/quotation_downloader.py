@@ -64,11 +64,15 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                 "UOM": one_quotation_item_list[5],
                 "description": one_quotation_item_list[6],
                 "quantity": one_quotation_item_list[7],
+                "customer_id": one_quotation_item_list[1],
             }
 
             library_component_dict = find_in_item_mater(
                 quotation_item_dict["component_no"]
             )
+
+            company_name = find_company_name(quotation["customer"])
+
             if library_component_dict == None:
                 quotation_item_dict["mfg_pn"] = quotation_item_dict["description"]
                 quotation_item_dict["found_in_item_master"] = False
@@ -77,8 +81,6 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                 quotation_item_dict["found_in_item_master"] = True
                 if (
                     library_component_dict["type"] == "standard"
-                    and library_component_dict["supplier"] == None
-                    and library_component_dict["unit_price"] == None
                     and library_component_dict["to_be_updated"] == True
                 ):
                     quotation_item_dict["mfg_pn"] = str(
@@ -87,7 +89,7 @@ def retrieve_all_items_in_quotation(draft_quotation_list):
                     draft_quotation_item_list.append(quotation_item_dict)
                 elif (
                     library_component_dict["type"] == "consignment"
-                    and library_component_dict["supplier"] != None
+                    and library_component_dict["supplier"] == company_name
                     and library_component_dict["unit_price"] == 0
                 ):
                     quotation_item_dict["mfg_pn"] = library_component_dict["mfg_pn"]
@@ -151,6 +153,27 @@ def find_in_item_mater(component_no):
         conn_minor.close()
         return item_dict
     else:
+        conn_minor.close()
+        return None
+
+
+def find_company_name(customer_id):
+    conn_minor = pyodbc.connect(
+        "Driver=" + config["database"]["driver"] + ";"
+        "Server=" + config["database"]["server"] + ";"
+        "Database=" + config["database"]["database"] + ";"
+        "Trusted_Connection=" + config["database"]["trusted_connection"] + ";"
+    )
+    cursor_minor = conn_minor.cursor()
+    cursor_minor.execute(f"SELECT * FROM dbo.customer WHERE id={customer_id}")
+    item_tuple = cursor_minor.fetchone()
+    if item_tuple != None:
+        company_name = item_tuple[1]
+        conn_minor.close()
+        print("This is company name", company_name)
+        return company_name
+    else:
+        conn_minor.close()
         return None
 
 

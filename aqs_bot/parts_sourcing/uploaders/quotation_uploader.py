@@ -75,10 +75,16 @@ def quotation_uploader(file_title):
             cursor.execute(
                 f"UPDATE dbo.quotation_component SET crawl_info  = '{supplier_list_str}',  remark='{','.join(supplier_name_list)}',unit_price='{average_unit_price}', quantity={total_quantity} WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
             )
+            conn.commit()
             if part["found_in_item_master"] == False:
                 send_email(
                     part["component_no"], part["description"], average_unit_price
                 )
+            else:
+                cursor.execute(
+                    f"UPDATE dbo.item_master SET supplier='{','.join(supplier_name_list)}',unit_price='{average_unit_price}' WHERE component_no ='{part['component_no']}';"
+                )
+                conn.commit()
         if len(supplier_list) < 1 and part["found_in_item_master"] == False:
             cursor.execute(
                 f"UPDATE dbo.quotation_component SET remark='Failed to source for supplier selling part and part not in item master' WHERE component_no ='{part['component_no']}' AND row='{part['row']}';"
