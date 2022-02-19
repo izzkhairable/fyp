@@ -314,7 +314,7 @@ function checkFile() {
 }
 
 function submitSignature() {
-    signature_name = document.getElementById('first_name').value + "_" + document.getElementById('last_name').value + "_Signature.png";
+    signature_name = String(staff_id) + "_" + document.getElementById('first_name').value + "_" + document.getElementById('last_name').value + "_Signature.png";
     $(async () => {
         var serviceURL = "http://localhost:5000/updateSignaturePath";
         const data = {

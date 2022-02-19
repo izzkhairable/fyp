@@ -781,7 +781,7 @@ def upload_file():
                 print('That image extension is not allowed')
                 return redirect(request.url)
             else:
-                filename = session['first_name'] + "_" + session['last_name'] + "_Signature.png"
+                filename = str(session['id']) + "_" + session['first_name'] + "_" + session['last_name'] + "_Signature.png"
                 signature.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
     return render_template('settings.html')
