@@ -922,6 +922,12 @@ def profile():
 def settings():
     return render_template('settings.html')
 
+#redirect to login for now (once guest home is implemented, it will redirect there next time)
+@app.route("/")
+def home():
+    #for now will be returning the login page first
+    return redirect(url_for('login'))
+
 # to be at the bottom
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
