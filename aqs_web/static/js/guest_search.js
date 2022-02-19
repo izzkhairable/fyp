@@ -1,4 +1,3 @@
-var supervisor_id = document.getElementById('staff_id').value;
 document.getElementById('page-name').innerHTML = 'Search Quotations';
 
 
@@ -10,7 +9,7 @@ function start() {
 function getAllQuotations() {
     $(async () => {
         // Change serviceURL to your own
-        var serviceURL = "http://localhost:5000/supervisorAllQuotations/" + supervisor_id;
+        var serviceURL = "http://localhost:5000/allQuotations/";
         document.getElementById("quotations").innerHTML = "";
         try {
             const response =

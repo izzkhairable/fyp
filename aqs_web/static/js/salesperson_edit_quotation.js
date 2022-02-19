@@ -1,3 +1,5 @@
+var supervisor_id = document.getElementById('staff_id').value;
+
 function start(){
   getQuotationInfo();
 }
@@ -5,6 +7,7 @@ function start(){
 // Gets all components and BOMs info
 function getQuotationParts(){
   var quotation_no = window.location.href.split("#")[1];
+  document.getElementById("page-name").innerHTML = quotation_no;
   $(async() => {           
     // Change serviceURL to your own
     var serviceURL = "http://localhost:5000/quotationParts/" + quotation_no;

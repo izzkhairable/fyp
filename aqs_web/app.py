@@ -524,6 +524,67 @@ def get_supervisor_dashboard_data(supervisor_id):
 
 # GENERAL FUNCTIONS
 
+# Displays all quotations from salesperson under supervisor
+@app.route("/allQuotations/")
+def get_salesperson_quotations():
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT QT.quotation_no, C.company_name, ST.first_name, ST.last_name, QT.assigned_staff, QT.rfq_date, status
+                    FROM staff AS ST, quotation AS QT, customer AS C
+                    WHERE ST.id = QT.assigned_staff AND C.id = QT.customer AND ST.role = 'salesperson'
+                    ORDER BY QT.rfq_date DESC''')
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
+# Display all the salesperson + their quotation analytics
+@app.route("/salesperson/")
+def get_salespersons():
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT id, first_name, last_name, staff_email, SUM(CASE status WHEN 'approved' THEN 1 ELSE 0 END) AS approved,
+                    SUM(CASE status WHEN 'sent' THEN 1 ELSE 0 END) AS sent,
+                    SUM(CASE status WHEN 'rejected' THEN 1 ELSE 0 END) AS rejected
+                    FROM dbo.quotation AS QT
+                    JOIN dbo.staff as ST ON QT.assigned_staff = ST.id
+                    WHERE ST.role = 'salesperson'
+                    GROUP BY id, first_name, last_name, staff_email;''')
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
+# Display total quotation numbers of all salesperson
+@app.route("/quotationNumbers/")
+def get_quotations_numbers():
+    conn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';Trusted_Connection='+trusted_connection+';')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT QT.status, COUNT(QT.Status) AS num
+                    FROM dbo.staff AS ST
+                    JOIN dbo.quotation AS QT ON ST.id = QT.assigned_staff
+                    WHERE ST.role = 'salesperson'
+                    GROUP BY QT.status;''')
+    
+    columns = [column[0] for column in cursor.description]
+    results = {}
+    i = 0
+    for row in cursor:
+        results[i] = dict(zip(columns, row))
+        i += 1
+    cursor.close()
+    return results
+
 # Display all quotations
 @app.route("/quotations")
 def get_quotations():
@@ -868,48 +929,37 @@ def logout():
 #salesperson only can access salesperson pages
 #admin:
 
-#login to home
-@app.route('/home')
-def homepage():
-    if current_user.role == 'supervisor':
-        #username = session['username']
-        return render_template("supervisor_home.html")
-    elif current_user.role == 'salesperson':
-        return render_template("salesperson_home.html")
-    elif current_user.role == 'admin':
-        return render_template("admin.html")
-    else:
-        return render_template("guest_home.html")
-
 #login to dashboard
 @app.route('/dashboard')
 def dashboard():
-    if current_user.role == 'supervisor':
-        #username = session['username']
-        return render_template("supervisor_dashboard.html")
-    elif current_user.role == 'salesperson':
-        return render_template("salesperson_dashboard.html")
+    if (current_user.is_authenticated):
+        if current_user.role == 'supervisor':
+            #username = session['username']
+            return render_template("supervisor_dashboard.html")
+        elif current_user.role == 'salesperson':
+            return render_template("salesperson_dashboard.html")
     else:
         return render_template("guest_dashboard.html")
     
 #routing to quotation
 @app.route('/quotation')
-@login_required
 def quotation():
-    if current_user.role == 'supervisor':
-        return render_template("supervisor_quotation.html")
-    elif current_user.role == 'salesperson':
-        return render_template("salesperson_edit_quotation.html")
+    if (current_user.is_authenticated):
+        if current_user.role == 'supervisor':
+            return render_template("supervisor_quotation.html")
+        elif current_user.role == 'salesperson':
+            return render_template("salesperson_edit_quotation.html")
     else:
-        return render_template("unauthorised.html")
+        return render_template("guest_quotation.html")
     
 #routing to search
 @app.route('/search')
 def search():
-    if current_user.role == 'supervisor':
-        return render_template("supervisor_search.html")
+    if (current_user.is_authenticated):
+        if current_user.role == 'supervisor':
+            return render_template("supervisor_search.html")
     else:
-        return render_template("search.html")
+        return render_template("guest_search.html")
 
 #routing to profile page
 @app.route('/profile')
@@ -922,11 +972,30 @@ def profile():
 def settings():
     return render_template('settings.html')
 
-#redirect to login for now (once guest home is implemented, it will redirect there next time)
+#redirect to home
 @app.route("/")
 def home():
-    #for now will be returning the login page first
-    return redirect(url_for('login'))
+    if (current_user.is_authenticated):
+        if current_user.role == 'supervisor':
+            return render_template("supervisor_home.html")
+        elif current_user.role == 'salesperson':
+            return render_template("salesperson_home.html")
+        elif current_user.role == 'admin':
+            return render_template("admin.html")
+    else:
+        return render_template("guest_home.html")
+    
+@app.route("/home")
+def homepage():
+    if (current_user.is_authenticated):
+        if current_user.role == 'supervisor':
+            return render_template("supervisor_home.html")
+        elif current_user.role == 'salesperson':
+            return render_template("salesperson_home.html")
+        elif current_user.role == 'admin':
+            return render_template("admin.html")
+    else:
+        return render_template("guest_home.html")
 
 # to be at the bottom
 if __name__ == '__main__':

@@ -69,8 +69,15 @@
           <label for="password" class="form-label" value={{request.form.username}}>Password</label>
           <input type="password" class="form-control" id="password" name='password'>
         </div>
+        <div class="row">
+          <div class="col">
+            <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Login</button>
+          </div>
+          <div class="col">
+            <a href="/home"><button type="button" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Access as guest</button></a>
+          </div>
+        </div>
         
-        <button type="submit" class="mt-3 btn btn-outline-primary btn-sm" style="width:100px">Login</button>
       </div>
       </form>
     </div>

@@ -1,4 +1,6 @@
 var supervisor_id = document.getElementById('staff_id').value;
+document.getElementById('page-name').innerHTML = 'Dashboard';
+
 
 function start() {
     getTopSalesperson();

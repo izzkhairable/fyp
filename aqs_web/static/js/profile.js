@@ -1,0 +1,1 @@
+document.getElementById('page-name').innerHTML = 'Profile';

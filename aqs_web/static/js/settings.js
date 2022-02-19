@@ -1,4 +1,6 @@
 var staff_id = document.getElementById('staff_id').value;
+document.getElementById('page-name').innerHTML = 'Settings';
+
 
 function changeName() {
     document.getElementById('change_name').hidden = true;

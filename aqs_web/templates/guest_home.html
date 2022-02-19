@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>TSH - Automated Quotation System</title>
+</head>
+
+<body onload="start()">
+    {% include 'wrapper_header.html' %}
+    <div class="wrapper">
+        <!-- Page Content  -->
+        <div id="content">
+            <!-- Dashboard -->
+            <div id="dashboard">
+                <div class="pt-3 fw-bold d-flex flex-row bd-highlight mb-3">
+                    <!-- Dashboard Diagram -->
+                    <div class="shadow p-2 text-center flex-fill bd-highlight bg-white">All Salesperson Quotations by
+                        Status
+                        <hr>
+                        <div class="row text-center" id="dashboard-chart">
+                        </div>
+                    </div>
+                    <!-- Overall Salesperson Stats -->
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Need
+                        Amendment
+                        <hr>
+                        <p class="fw-bold fs-2 text-danger" id="rejected">0</p>
+                    </div>
+
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Pending
+                        Review
+                        <hr>
+                        <p class="fw-bold fs-2 text-primary" id="sent">0</p>
+                    </div>
+
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Sent to
+                        Customer
+                        <hr>
+                        <p class="fw-bold fs-2 text-success" id="approved">0</p>
+                    </div>
+
+                    <div class="shadow align-self-start p-2 ms-3 text-center flex-fill bd-highlight bg-white">Draft
+                        <hr>
+                        <p class="fw-bold fs-2 text-secondary" id="draft">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Salesperson -->
+            <div>
+                <div class="pt-3 d-flex flex-row bd-highlight mb-3">
+                    <!-- Salesperson Table -->
+                    <div class="shadow align-self-start col bg-white">
+                        <!-- Basics for table visualisation -->
+                        <div class="mx-3">
+                            <table class="table">
+                                <thead>
+                                    <tr class="fw-bold">
+                                        <th scope="colgroup" colspan="3">All Salespersons</th>
+                                        <th scope="col" class="text-center"><button class="btn btn-danger btn-sm"
+                                                disabled>Needs
+                                                Amendment</button>
+                                        </th>
+                                        <th scope="col" class="text-center"><button class="btn btn-primary btn-sm"
+                                                disabled>Pending
+                                                Approval</button></th>
+                                        <th scope="col" class="text-center"><button class="btn btn-success btn-sm"
+                                                disabled>Sent To
+                                                Customer</button></th>
+                                    </tr>
+
+                                </thead>
+                                <tbody id="salesperson">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- For dashboard -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <script src="{{url_for('static', filename = 'js/guest_home.js')}}"></script>
+</body>
+</html>
