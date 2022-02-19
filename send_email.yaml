@@ -1,0 +1,23 @@
+rfq_processed_email_template: 
+    subject: 'New RFQs Processed!'
+    body: |  #Do not delete this | symbol.
+        Dear Staff, 
+        
+        An error occured while running the code. 
+        The error message is: {error_msg}
+        This is an auto-generated e-mail. Do not reply. For assistance, please e-mail Data Support at {data_support_email}
+
+sales_manager_approval_request_template: 
+    subject: 'Approval required!'
+    body: |  #Do not delete this | symbol.
+        Dear Staff, 
+        
+        You require approval for this RFQ: 12345
+
+
+sales_manager_approval_response_template: 
+    subject: 'Quotation {quotation_no} {outcome}'
+    body: |  #Do not delete this | symbol.
+        Dear Staff, 
+        
+        You quotation has been {outcome}.
