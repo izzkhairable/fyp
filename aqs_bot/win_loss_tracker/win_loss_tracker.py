@@ -8,6 +8,8 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read('sql_connect.cfg')
+config2 = configparser.ConfigParser()#
+config2.read('aqs_bot\win_loss_tracker\win_loss_tracker.cfg')
 
 conn = pyodbc.connect('Driver=' + config['database']['driver'] + ';'
                       'Server=' + config['database']['server'] + ';'
@@ -19,8 +21,8 @@ cursor = conn.cursor()
 quotation_list = cursor.execute("select quotation_no, rfq_date from dbo.quotation where status=? or status=?", 'sent', 'lose')
 result = quotation_list.fetchall()
 
-po_folder = config['win_loss_tracker']['po_folder']
-loss_after_x_days = int(config['win_loss_tracker']['loss_after_x_days'])
+po_folder = config2['win_loss_tracker']['po_folder']
+loss_after_x_days = int(config2['win_loss_tracker']['loss_after_x_days'])
 
 text_list = []
 
