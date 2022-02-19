@@ -870,7 +870,7 @@ def logout():
 
 #login to home
 @app.route('/home')
-def home():
+def homepage():
     if current_user.role == 'supervisor':
         #username = session['username']
         return render_template("supervisor_home.html")
