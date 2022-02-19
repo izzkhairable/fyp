@@ -7,6 +7,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>TSH - Automated Quotation System</title>
+
+    <style>
+        /* Add a green text color and a checkmark when the requirements are right */
+        .valid {
+            color: green;
+        }
+
+        .valid:before {
+            position: relative;
+            left: -35px;
+        }
+
+        /* Add a red text color and an "x" icon when the requirements are wrong */
+        .invalid {
+            color: red;
+        }
+
+        .invalid:before {
+            position: relative;
+            left: -35px;
+        }
+    </style>
 </head>
 
 <body>
@@ -101,7 +123,8 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-10">
-                                        <label>Enter New Password</label><span class="fw-bold text-danger" id="new_password_error_msg"></span>
+                                        <label>Enter New Password</label><span class="fw-bold text-danger"
+                                            id="new_password_error_msg"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -116,7 +139,8 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-10">
-                                        <label>Re-Enter New Password</label><span class="fw-bold text-danger" id="new_password2_error_msg"></span>
+                                        <label>Re-Enter New Password</label><span class="fw-bold text-danger"
+                                            id="new_password2_error_msg"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -128,8 +152,23 @@
                                 </div>
                             </div>
                             <br>
+                            <div id="message" hidden>
+                                <label>New Password must contain the following:</label>
+                                <br>
+                                <div class="row">
+                                    <div class="col">
+                                        <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+                                        <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+                                    </div>
+                                    <div class="col">
+                                        <p id="number" class="invalid">A <b>number</b></p>
+                                        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <form id="signature_submit" action="/uploadSignature" method="POST" enctype="multipart/form-data">
+                        <form id="signature_submit" action="/uploadSignature" method="POST"
+                            enctype="multipart/form-data">
                             <div class="form-group">
                                 {% if session['signature'] != None %}
                                 <div class="row">
@@ -157,12 +196,12 @@
                                 {% endif %}
                                 <div class="row">
                                     <div class="col-10">
-                                        <input type="file" class="form-control" id="signature" name="signature" onchange="checkFile()"
-                                            accept="image/png">
+                                        <input type="file" class="form-control" id="signature" name="signature"
+                                            onchange="checkFile()" accept="image/png">
                                     </div>
                                     <div class="col-2">
-                                        <button type="button" class="btn btn-success w-100" id="submit_signature" onclick="submitSignature()" disabled
-                                            >Submit Signature</button>
+                                        <button type="button" class="btn btn-success w-100" id="submit_signature"
+                                            onclick="submitSignature()" disabled>Submit Signature</button>
                                     </div>
                                     <small class="form-text text-muted">Please limit the file size to below 1MB.</small>
                                 </div>

@@ -27,9 +27,9 @@ function getSalesperson() {
                     height="30" class="rounded-circle"></th>
                   <td class="fw-bold text-primary"><a href="profile#id=${result[salesperson].id}"><u>${result[salesperson].first_name} ${result[salesperson].last_name}</u></a></td>
                   <td>${result[salesperson].staff_email}</td>
-                  <td class="fw-bold text-danger text-center"><a href="supervisor_search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Need Amendment"><u>${result[salesperson].rejected}</u></a></td>
-                  <td class="fw-bold text-primary text-center"><a href="supervisor_search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Pending Approval"><u>${result[salesperson].sent}</u></a></td>
-                  <td class="fw-bold text-success text-center"><a href="supervisor_search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Sent to Customer"><u>${result[salesperson].approved}</u></a></td>
+                  <td class="fw-bold text-danger text-center"><a href="search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Need Amendment"><u>${result[salesperson].rejected}</u></a></td>
+                  <td class="fw-bold text-primary text-center"><a href="search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Pending Approval"><u>${result[salesperson].sent}</u></a></td>
+                  <td class="fw-bold text-success text-center"><a href="search#salesperson=${result[salesperson].first_name} ${result[salesperson].last_name}&status=Sent to Customer"><u>${result[salesperson].approved}</u></a></td>
                 </tr>`
                 }
             } else if (response.status == 404) {
@@ -141,7 +141,7 @@ function getQuotesThatRequireAttention() {
                 for (var quotation in result) {
                     document.getElementById("quotations-for-review").innerHTML += `
                     <div class="container rounded" style="background-color:rgb(0, 191, 255, 0.2);">
-                        <span class="text-primary"><a href="supervisor_quotation_decision#${result[quotation].quotation_no}"><u>${result[quotation].quotation_no}</u></a></span><br>
+                        <span class="text-primary"><a href="quotation#${result[quotation].quotation_no}"><u>${result[quotation].quotation_no}</u></a></span><br>
                         ${result[quotation].company_name}<br>
                         ${result[quotation].rfq_date}<br>
                         Assigned to: ${result[quotation].first_name} ${result[quotation].last_name}

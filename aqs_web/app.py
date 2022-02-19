@@ -841,15 +841,7 @@ def login():
             session['id'] = id
             session['email'] = email
             session['logged_in'] =  True
-            #check roles
-            if role == "supervisor":
-                return redirect(url_for('supervisor_home'))
-            elif role == "salesperson":
-                return redirect(url_for('salesperson_home'))
-            else:
-                #should return something else to prevent error. MUST hve else statement
-                #only should have 3 roles, last will auto return admin page, must render template
-                return render_template('admin.html')
+            return redirect(url_for('home'))
     cursor.close()
     return render_template('login.html')
 
@@ -876,75 +868,51 @@ def logout():
 #salesperson only can access salesperson pages
 #admin:
 
-#login as supervisor, first page loaded
-@app.route('/supervisor_home')
-@login_required
-def supervisor_home():
+#login to home
+@app.route('/home')
+def home():
     if current_user.role == 'supervisor':
         #username = session['username']
         return render_template("supervisor_home.html")
+    elif current_user.role == 'salesperson':
+        return render_template("salesperson_home.html")
+    elif current_user.role == 'admin':
+        return render_template("admin.html")
     else:
-        return render_template("unauthorised.html")
+        return render_template("guest_home.html")
 
-#routing to supervisor_dashboard page
-@app.route('/supervisor_dashboard')
-@login_required
-def supervisor_dashboard():
+#login to dashboard
+@app.route('/dashboard')
+def dashboard():
     if current_user.role == 'supervisor':
+        #username = session['username']
         return render_template("supervisor_dashboard.html")
+    elif current_user.role == 'salesperson':
+        return render_template("salesperson_dashboard.html")
     else:
-        #return 404 error, not authorised to enter the page
-        return render_template("unauthorised.html")
-
-#routing to supervisor_quotation_decision
-@app.route('/supervisor_quotation')
+        return render_template("guest_dashboard.html")
+    
+#routing to quotation
+@app.route('/quotation')
 @login_required
-def supervisor_quotation():
+def quotation():
     if current_user.role == 'supervisor':
         return render_template("supervisor_quotation.html")
+    elif current_user.role == 'salesperson':
+        return render_template("salesperson_edit_quotation.html")
     else:
         return render_template("unauthorised.html")
     
-#routing to supervisor_search
-@app.route('/supervisor_search')
-@login_required
-def supervisor_search():
+#routing to search
+@app.route('/search')
+def search():
     if current_user.role == 'supervisor':
         return render_template("supervisor_search.html")
     else:
-        return render_template("unauthorised.html")
-
-#login as salesperson, first page loaded
-@app.route('/salesperson_home')
-@login_required
-def salesperson_home():
-    if current_user.role == 'supervisor' or 'salesperson':
-        return render_template("salesperson_home.html")
-    else:
-        return render_template("unauthorised.html")
-    
-#routing to salesperson edit page
-@app.route('/salesperson_edit_quotation')
-@login_required
-def salesperson_edit():
-    #double check: can supervisor have access to edit pages?
-    if current_user.role == 'supervisor' or 'salesperson':
-        return render_template('salesperson_edit_quotation.html')
-    else:
-        return render_template("unauthorised.html")
-
-#routing to admin page
-@app.route('/admin')
-@login_required
-def admin():
-    if current_user.role == 'admin':
-        return render_template('admin.html')
-    else:
-        return render_template('unauthorised.html')
+        return render_template("search.html")
 
 #routing to profile page
 @app.route('/profile')
-@login_required
 def profile():
     return render_template('profile.html')
 
@@ -953,12 +921,6 @@ def profile():
 @login_required
 def settings():
     return render_template('settings.html')
-
-@app.route("/")
-def home():
-    #for now will be returning the login page first
-    return redirect(url_for('login'))
-
 
 # to be at the bottom
 if __name__ == '__main__':
