@@ -1,8 +1,6 @@
 template1:
   assigned_staff: darrenho.2019@scis.smu.edu.sg
   customer: Blizzard
-  customer_email: darkdrium94@gmail.com
-  customer_website: http://www.blizzard.com
   default_mark_up_pct: 10
   rfq_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\rfq
   archive_folder: C:\Users\Darren Ho\Documents\GitHub\fyp\aqs_bot\parts_extraction\input\archive

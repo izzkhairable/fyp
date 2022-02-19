@@ -13,7 +13,13 @@ import shutil
 import sys
 import configparser
 
+def removeQuotation(quotation_no):
+    cursor.execute("DELETE FROM dbo.quotation_component WHERE quotation_no=?", quotation_no)
+    conn.commit()
+    cursor.execute("DELETE FROM dbo.quotation WHERE quotation_no=?", quotation_no)
+    conn.commit()
 
+            
 def processPDF(filepath):
     print("Processing PDF...")
     tabula.convert_into(filepath, v['rfq_folder'] + '/' + rfq_number + ".csv", output_format="csv", pages='all')
@@ -92,7 +98,7 @@ def processExcel(filepath):
             if result != None:
                 staff_id = result.id
             
-            check_if_customer_exist = cursor.execute("select id from dbo.customer where company_email=?", v['customer_email'])
+            check_if_customer_exist = cursor.execute("select id from dbo.customer where company_name=?", v['customer'])
             result = check_if_customer_exist.fetchone()
             customer_id = None
             if result != None:
@@ -149,15 +155,15 @@ def processExcel(filepath):
                     qty = row[qty_col_index].value
                     uom = row[uom_col_index].value
                     is_bom = 0 
-
+                    
                     row_unique_key_no+=1
-
+                    
+                    current_level = None
                     try:
                         current_level = float(level)
                     except:
                         if str(row[level_col_index].value).startswith('.'):
                             current_level = float(str(row[level_col_index].value).replace('.', ''))
-                    
                     next_level = None
                     try:
                         next_level = float(ws[current_row_no+1][level_col_index].value)
@@ -199,8 +205,9 @@ def processExcel(filepath):
                             conn.commit()
 
                 current_row_no+=1  
-        cursor.execute("INSERT INTO dbo.notification (notification_msg, viewed_status, staff, notification_datetime) VALUES (?, ?, ?, ?)", "New RFQ - " + rfq_number + " has been successfully processed.", 0, staff_id, datetime.datetime.now())
-        conn.commit()
+        if staff_id != None:
+            cursor.execute("INSERT INTO dbo.notification (notification_msg, viewed_status, staff, notification_datetime) VALUES (?, ?, ?, ?)", "New RFQ - " + rfq_number + " has been successfully processed.", 0, staff_id, datetime.datetime.now())
+            conn.commit()
     else:
         print("None of the columns you specified are found")
 
@@ -215,15 +222,7 @@ cursor = conn.cursor()
 
 with open('aqs_bot/parts_extraction/config.yaml') as f:
     data = yaml.load(f, Loader=yaml.FullLoader)
-    for key, v in data.items():
-        customer = cursor.execute("select id from dbo.customer where company_name=?", v['customer'])
-        result = customer.fetchone()
-        if result == None:
-            cursor.execute("insert into dbo.customer(company_email, company_name, company_website) values (?, ?, ?)", v['customer_email'], v['customer'], v['customer_website'])
-            conn.commit()
-        else:
-            cursor.execute("update dbo.customer set company_email=?, company_name=?, company_website=? WHERE id=?", v['customer_email'], v['customer'], v['customer_website'], result.id)
-            conn.commit()            
+    for key, v in data.items():    
         ## Scan Makino folder for RFQs and process each of them
         rfq_list = os.listdir(v['rfq_folder'])
         for each_rfq in rfq_list:
@@ -241,6 +240,7 @@ with open('aqs_bot/parts_extraction/config.yaml') as f:
                 except Exception as e:
                     print(e)
                     shutil.move(rfq_location, to_move_unprocessed_rfq_location)
+                    removeQuotation(rfq_number)
             elif rfq_file_extension == '.xlsx':
                 try:
                     processExcel(rfq_location)
@@ -248,6 +248,7 @@ with open('aqs_bot/parts_extraction/config.yaml') as f:
                 except Exception as e:
                     print(e)
                     shutil.move(rfq_location, to_move_unprocessed_rfq_location)
+                    removeQuotation(rfq_number)
             elif rfq_file_extension == '.xls':
                 try:
                     df = pd.read_excel(rfq_location)
@@ -257,7 +258,8 @@ with open('aqs_bot/parts_extraction/config.yaml') as f:
                     shutil.move(rfq_location, to_archive_rfq_location)
                 except Exception as e:
                     print(e)
-                    shutil.move(rfq_location, to_move_unprocessed_rfq_location)                
+                    shutil.move(rfq_location, to_move_unprocessed_rfq_location)
+                    removeQuotation(rfq_number)                
             else:
                 shutil.move(rfq_location, to_move_unprocessed_rfq_location)
             
